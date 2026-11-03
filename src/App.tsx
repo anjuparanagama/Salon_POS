@@ -23,6 +23,31 @@ function AppContent() {
           { label: "Salon Management" },
           { label: "Services", href: ROUTES.SERVICES, isCurrent: true },
         ];
+      case ROUTES.PRODUCTS:
+        return [
+          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
+          { label: "Salon Inventory" },
+          { label: "Products", href: ROUTES.PRODUCTS, isCurrent: true },
+        ];
+      case ROUTES.LEDGER:
+      case ROUTES.LEDGER_INCOME:
+        return [
+          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
+          { label: "Financial Ledger" },
+          { label: "Income & Sales", href: ROUTES.LEDGER_INCOME, isCurrent: true },
+        ];
+      case ROUTES.LEDGER_EXPENSES:
+        return [
+          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
+          { label: "Financial Ledger" },
+          { label: "Operating Expenses", href: ROUTES.LEDGER_EXPENSES, isCurrent: true },
+        ];
+      case ROUTES.LEDGER_TRANSACTIONS:
+        return [
+          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
+          { label: "Financial Ledger" },
+          { label: "Transactions & Refunds", href: ROUTES.LEDGER_TRANSACTIONS, isCurrent: true },
+        ];
       default:
         return [
           { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
