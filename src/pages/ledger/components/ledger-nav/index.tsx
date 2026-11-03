@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 import { TrendingUp, TrendingDown, ArrowLeftRight, BookOpen } from "lucide-react";
 import { ROUTES } from "../../../../routes/sidebar.routes";
 import type { LedgerTab } from "../../../../interface/ledger.types";
@@ -7,33 +8,34 @@ export type LedgerNavProps = {
   activeTab: LedgerTab;
 };
 
-const tabs: { id: LedgerTab; label: string; href: string; icon: typeof TrendingUp; description: string }[] = [
-  {
-    id: "income",
-    label: "Income & Sales",
-    href: ROUTES.LEDGER_INCOME,
-    icon: TrendingUp,
-    description: "Service & product sales revenue",
-  },
-  {
-    id: "expenses",
-    label: "Expenses & Overhead",
-    href: ROUTES.LEDGER_EXPENSES,
-    icon: TrendingDown,
-    description: "Rent, utilities, salaries & stock",
-  },
-  {
-    id: "transactions",
-    label: "Transactions & Refunds",
-    href: ROUTES.LEDGER_TRANSACTIONS,
-    icon: ArrowLeftRight,
-    description: "Payments ledger & customer refunds",
-  },
-];
-
 export function LedgerNav({ activeTab }: LedgerNavProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation(["ledger", "common"]);
+
+  const tabs: { id: LedgerTab; label: string; href: string; icon: typeof TrendingUp; description: string }[] = [
+    {
+      id: "income",
+      label: t("ledger:tabs.income", "Income & Sales"),
+      href: ROUTES.LEDGER_INCOME,
+      icon: TrendingUp,
+      description: "Service & product sales revenue",
+    },
+    {
+      id: "expenses",
+      label: t("ledger:tabs.expenses", "Expenses & Overhead"),
+      href: ROUTES.LEDGER_EXPENSES,
+      icon: TrendingDown,
+      description: "Rent, utilities, salaries & stock",
+    },
+    {
+      id: "transactions",
+      label: t("ledger:tabs.transactions", "Transactions & Refunds"),
+      href: ROUTES.LEDGER_TRANSACTIONS,
+      icon: ArrowLeftRight,
+      description: "Payments ledger & customer refunds",
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-3">
@@ -43,9 +45,11 @@ export function LedgerNav({ activeTab }: LedgerNavProps) {
           <BookOpen className="size-4" />
         </span>
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">Salon Financial Ledger</h1>
+          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+            {t("ledger:title", "Salon Financial Ledger")}
+          </h1>
           <p className="text-xs text-slate-500">
-            Real-time income breakdown, operational expenditures, and payment reconciliation.
+            {t("ledger:subtitle", "Track income, operational expenses, transactions, and cash flow.")}
           </p>
         </div>
       </div>

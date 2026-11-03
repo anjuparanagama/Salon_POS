@@ -1,0 +1,56 @@
+{
+  "languages": {
+    "en": "English",
+    "si": "සිංහල",
+    "ta": "தமிழ்"
+  },
+  "nav": {
+    "dashboard": "முகப்பு பலகை",
+    "appointments": "முன்பதிவுகள்",
+    "services": "சேவைகள்",
+    "products": "தயாரிப்புகள்",
+    "ledger": "கணக்குப் பேரேடு",
+    "income": "வருமானம்",
+    "expenses": "செலவுகள்",
+    "transactions": "பரிவர்த்தனைகள்",
+    "salonManagement": "நிலைய மேலாண்மை",
+    "salonInventory": "இருப்பு மேலாண்மை",
+    "financialLedger": "நிதிப் பேரேடு",
+    "home": "முகப்பு"
+  },
+  "actions": {
+    "search": "தேடு",
+    "filter": "வடிகட்டு",
+    "add": "சேர்",
+    "edit": "திருத்து",
+    "delete": "நீக்கு",
+    "save": "சேமி",
+    "cancel": "ரத்து செய்",
+    "close": "மூடு",
+    "export": "ஏற்றுமதி",
+    "confirm": "உறுதி செய்",
+    "reset": "மீட்டமை",
+    "all": "அனைத்தும்",
+    "active": "செயலில்",
+    "inactive": "செயலற்ற",
+    "view": "பார்"
+  },
+  "header": {
+    "searchPlaceholder": "முன்பதிவுகள், சேவைகள், வாடிக்கையாளர்களைத் தேடுங்கள்...",
+    "notifications": "அறிவிப்புகள்",
+    "profile": "சுயவிவரம்",
+    "selectLanguage": "மொழி"
+  },
+  "status": {
+    "confirmed": "உறுதிப்படுத்தப்பட்டது",
+    "in_progress": "நடைபெறுகிறது",
+    "completed": "நிறைவடைந்தது",
+    "cancelled": "ரத்து செய்யப்பட்டது",
+    "paid": "செலுத்தப்பட்டது",
+    "pending": "நிலுவையில்",
+    "in_stock": "இருப்பில் உள்ளது",
+    "low_stock": "குறைந்த இருப்பு",
+    "out_of_stock": "இருப்பு இல்லை"
+  }
+}
+

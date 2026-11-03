@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, CalendarDays } from "lucide-react";
 import type {
   Appointment,
@@ -114,6 +115,7 @@ const initialAppointments: Appointment[] = [
 ];
 
 export function Appointments() {
+  const { t } = useTranslation(["appointments", "common"]);
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -213,10 +215,12 @@ export function Appointments() {
             <span className="flex size-7 items-center justify-center rounded-lg bg-primary-lighter text-primary">
               <CalendarDays className="size-4" />
             </span>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">Appointment Management</h1>
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
+              {t("appointments:title", "Appointments")}
+            </h1>
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            Real-time schedule, client bookings, and specialist allocations.
+            {t("appointments:subtitle", "Manage bookings, schedule clients, and assign salon staff.")}
           </p>
         </div>
 
@@ -226,7 +230,7 @@ export function Appointments() {
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
         >
           <Plus className="size-4" />
-          <span>New Appointment</span>
+          <span>{t("appointments:newAppointment", "New Appointment")}</span>
         </button>
       </div>
 

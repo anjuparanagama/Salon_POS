@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, type ComponentType, type SVGProps } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Bell,
   ChevronDown,
@@ -7,6 +8,7 @@ import {
   Search,
   X,
 } from "lucide-react";
+import LanguageSwitcher from "../language-switcher";
 
 export type BreadcrumbItem = {
   label: string;
@@ -54,7 +56,7 @@ export function TopHeader({
   breadcrumbs = defaultBreadcrumbs,
   user = defaultUser,
   hasNotification = true,
-  searchPlaceholder = "Search appointments, services, customers...",
+  searchPlaceholder,
   onSearchChange,
   onSearchSubmit,
   onSearchClick,
@@ -63,6 +65,8 @@ export function TopHeader({
   onBreadcrumbClick,
   className = "",
 }: TopHeaderProps) {
+  const { t } = useTranslation("common");
+  const resolvedSearchPlaceholder = searchPlaceholder ?? t("header.searchPlaceholder", "Search appointments, services, customers...");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -205,7 +209,7 @@ export function TopHeader({
                 onSearchSubmit?.(searchQuery);
               }
             }}
-            placeholder={searchPlaceholder}
+            placeholder={resolvedSearchPlaceholder}
             className={[
               "min-w-0 flex-1 bg-transparent pr-1 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none transition-opacity duration-200",
               isSearchOpen
@@ -234,6 +238,9 @@ export function TopHeader({
             <X aria-hidden="true" className="size-3.5" />
           </button>
         </div>
+
+        {/* Language Switcher */}
+        <LanguageSwitcher />
 
         {/* Notification button with indicator dot */}
         <button

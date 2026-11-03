@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import {
   ArrowUpRight,
   CalendarDays,
@@ -8,34 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import { ROUTES } from "../../routes/sidebar.routes";
-import type { SummaryCardItem, RecentAppointment } from "../../interface/dashboard.types";
-
-const summaryCards: SummaryCardItem[] = [
-  {
-    label: "Today's appointments",
-    value: "24",
-    change: "+12.5%",
-    icon: CalendarDays,
-  },
-  {
-    label: "Total customers",
-    value: "1,248",
-    change: "+8.2%",
-    icon: Users,
-  },
-  {
-    label: "Today's revenue",
-    value: "$2,840",
-    change: "+14.8%",
-    icon: DollarSign,
-  },
-  {
-    label: "Average service time",
-    value: "42 min",
-    change: "-4.3%",
-    icon: Clock3,
-  },
-];
+import type { RecentAppointment } from "../../interface/dashboard.types";
 
 const appointments: RecentAppointment[] = [
   { time: "09:00 AM", customer: "Emma Wilson", service: "Haircut & Styling", staff: "Amelia" },
@@ -46,6 +20,34 @@ const appointments: RecentAppointment[] = [
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const { t } = useTranslation(["dashboard", "common"]);
+
+  const localizedSummaryCards = [
+    {
+      label: t("dashboard:stats.todayAppointments", "Today's appointments"),
+      value: "24",
+      change: "+12.5%",
+      icon: CalendarDays,
+    },
+    {
+      label: t("dashboard:stats.totalCustomers", "Total customers"),
+      value: "1,248",
+      change: "+8.2%",
+      icon: Users,
+    },
+    {
+      label: t("dashboard:stats.todayRevenue", "Today's revenue"),
+      value: "$2,840",
+      change: "+14.8%",
+      icon: DollarSign,
+    },
+    {
+      label: t("dashboard:stats.avgServiceTime", "Average service time"),
+      value: "42 min",
+      change: "-4.3%",
+      icon: Clock3,
+    },
+  ];
 
   return (
     <section className="flex flex-col gap-5 text-slate-900">
@@ -53,10 +55,10 @@ export function Dashboard() {
         <div>
           <p className="text-sm font-medium text-primary">Wednesday, October 29, 2026</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
-            Good morning, Admin
+            {t("dashboard:greeting", "Good morning, Admin")}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Here&apos;s what&apos;s happening at your salon today.
+            {t("dashboard:subtitle", "Here's what's happening at your salon today.")}
           </p>
         </div>
         <button
@@ -65,12 +67,12 @@ export function Dashboard() {
           type="button"
         >
           <CalendarDays aria-hidden="true" className="size-4" />
-          Add appointment
+          {t("dashboard:addAppointment", "Add appointment")}
         </button>
       </header>
 
       <div className="grid shrink-0 grid-cols-2 gap-3 xl:grid-cols-4">
-        {summaryCards.map((card) => {
+        {localizedSummaryCards.map((card) => {
           const Icon = card.icon;
 
           return (
@@ -95,25 +97,25 @@ export function Dashboard() {
         <section className="overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
             <div>
-              <h2 className="font-semibold">Today&apos;s appointments</h2>
-              <p className="mt-1 text-xs text-slate-500">Your upcoming schedule</p>
+              <h2 className="font-semibold">{t("dashboard:stats.todayAppointments", "Today's appointments")}</h2>
+              <p className="mt-1 text-xs text-slate-500">{t("dashboard:upcomingSchedule", "Your upcoming schedule")}</p>
             </div>
             <button
               onClick={() => navigate(ROUTES.APPOINTMENTS)}
               className="text-sm font-semibold text-primary hover:underline cursor-pointer"
               type="button"
             >
-              View all
+              {t("dashboard:viewAll", "View all")}
             </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 <tr>
-                  <th className="px-5 py-3" scope="col">Time</th>
-                  <th className="px-5 py-3" scope="col">Customer</th>
-                  <th className="hidden px-5 py-3 sm:table-cell" scope="col">Service</th>
-                  <th className="hidden px-5 py-3 md:table-cell" scope="col">Staff</th>
+                  <th className="px-5 py-3" scope="col">{t("dashboard:table.time", "Time")}</th>
+                  <th className="px-5 py-3" scope="col">{t("dashboard:table.customer", "Customer")}</th>
+                  <th className="hidden px-5 py-3 sm:table-cell" scope="col">{t("dashboard:table.service", "Service")}</th>
+                  <th className="hidden px-5 py-3 md:table-cell" scope="col">{t("dashboard:table.staff", "Staff")}</th>
                   <th className="px-5 py-3" scope="col"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>

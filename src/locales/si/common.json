@@ -1,0 +1,56 @@
+{
+  "languages": {
+    "en": "English",
+    "si": "සිංහල",
+    "ta": "தமிழ்"
+  },
+  "nav": {
+    "dashboard": "උපකරණ පුවරුව",
+    "appointments": "හමුවීම්",
+    "services": "සේවා",
+    "products": "නිෂ්පාදන",
+    "ledger": "ගිණුම් ලෙජරය",
+    "income": "ආදායම්",
+    "expenses": "වියදම්",
+    "transactions": "ගනුදෙනු",
+    "salonManagement": "සැලූන් කළමනාකරණය",
+    "salonInventory": "සැලූන් තොග",
+    "financialLedger": "මූල්‍ය ලෙජරය",
+    "home": "මුල් පිටුව"
+  },
+  "actions": {
+    "search": "සොයන්න",
+    "filter": "පෙරහන",
+    "add": "එකතු කරන්න",
+    "edit": "සංස්කරණය",
+    "delete": "මකන්න",
+    "save": "සුරකින්න",
+    "cancel": "අවලංගු කරන්න",
+    "close": "වසන්න",
+    "export": "නිර්යාත කරන්න",
+    "confirm": "තහවුරු කරන්න",
+    "reset": "යළි පිහිටුවන්න",
+    "all": "සියල්ල",
+    "active": "සක්‍රීය",
+    "inactive": "අක්‍රීය",
+    "view": "බලන්න"
+  },
+  "header": {
+    "searchPlaceholder": "හමුවීම්, සේවා, පාරිභෝගිකයින් සොයන්න...",
+    "notifications": "දැනුම්දීම්",
+    "profile": "පැතිකඩ",
+    "selectLanguage": "භාෂාව"
+  },
+  "status": {
+    "confirmed": "තහවුරු කළ",
+    "in_progress": "සිදුවෙමින් පවතී",
+    "completed": "සම්පූර්ණයි",
+    "cancelled": "අවලංගු කළ",
+    "paid": "ගෙවා ඇත",
+    "pending": "අපේක්ෂිත",
+    "in_stock": "තොගයේ ඇත",
+    "low_stock": "අඩු තොග",
+    "out_of_stock": "තොග අවසන්"
+  }
+}
+

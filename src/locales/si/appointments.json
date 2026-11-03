@@ -1,0 +1,45 @@
+{
+  "title": "හමුවීම්",
+  "subtitle": "වෙන්කිරීම් කළමනාකරණය, සේවාදායකයින් සැලසුම් කිරීම සහ කාර්ය මණ්ඩලය පැවරීම.",
+  "newAppointment": "නව හමුවීමක්",
+  "editAppointment": "හමුවීම සංස්කරණය",
+  "stats": {
+    "total": "මුළු හමුවීම්",
+    "confirmed": "තහවුරු කළ",
+    "inProgress": "සිදුවෙමින් පවතී",
+    "completed": "සම්පූර්ණයි",
+    "cancelled": "අවලංගු කළ"
+  },
+  "filters": {
+    "searchPlaceholder": "පාරිභෝගික නම, සේවාව හෝ කාර්ය මණ්ඩලය මගින් සොයන්න...",
+    "allStatuses": "සියලු තත්වයන්",
+    "allStaff": "සියලු කාර්ය මණ්ඩලය",
+    "dateFilter": "දිනය අනුව පෙරහන් කරන්න",
+    "today": "අද",
+    "upcoming": "ඉදිරියට ඇති",
+    "past": "පසුගිය"
+  },
+  "table": {
+    "client": "සේවාදායකයා",
+    "service": "සේවාව",
+    "staff": "කාර්ය මණ්ඩලය",
+    "dateTime": "දිනය සහ වේලාව",
+    "duration": "කාලය",
+    "price": "මිල",
+    "status": "තත්වය",
+    "actions": "ක්‍රියා",
+    "noAppointments": "හමුවීම් කිසිවක් හමු නොවීය"
+  },
+  "form": {
+    "clientName": "සේවාදායකයාගේ නම",
+    "clientPhone": "දුරකථන අංකය",
+    "selectService": "සේවාව තෝරන්න",
+    "selectStaff": "කාර්ය මණ්ඩලය තෝරන්න",
+    "date": "හමුවීම් දිනය",
+    "time": "හමුවීම් වේලාව",
+    "notes": "සටහන් / විශේෂ ඉල්ලීම්",
+    "saveAppointment": "හමුවීම සුරකින්න",
+    "updateAppointment": "හමුවීම යාවත්කාලීන කරන්න"
+  }
+}
+

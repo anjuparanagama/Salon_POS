@@ -1,0 +1,23 @@
+{
+  "greeting": "Good morning, Admin",
+  "subtitle": "Here's what's happening at your salon today.",
+  "addAppointment": "Add appointment",
+  "stats": {
+    "todayAppointments": "Today's appointments",
+    "totalCustomers": "Total customers",
+    "todayRevenue": "Today's revenue",
+    "avgServiceTime": "Average service time"
+  },
+  "upcomingSchedule": "Your upcoming schedule",
+  "recentAppointments": "Recent Appointments",
+  "viewAll": "View all",
+  "quickStats": "Quick Overview",
+  "noAppointments": "No appointments scheduled for today",
+  "table": {
+    "time": "Time",
+    "customer": "Customer",
+    "service": "Service",
+    "staff": "Staff"
+  }
+}
+

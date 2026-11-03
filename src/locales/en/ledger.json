@@ -1,0 +1,42 @@
+{
+  "title": "Financial Ledger",
+  "subtitle": "Track income, operational expenses, transactions, and cash flow.",
+  "tabs": {
+    "income": "Income & Sales",
+    "expenses": "Operating Expenses",
+    "transactions": "Transactions & Refunds"
+  },
+  "stats": {
+    "totalIncome": "Total Revenue / Income",
+    "totalExpenses": "Total Expenses",
+    "netProfit": "Net Profit",
+    "transactionCount": "Total Transactions"
+  },
+  "actions": {
+    "addIncome": "Record Income",
+    "addExpense": "Record Expense",
+    "newTransaction": "New Transaction"
+  },
+  "filters": {
+    "searchPlaceholder": "Search ledger entries...",
+    "allCategories": "All Categories",
+    "dateRange": "Date Range",
+    "paymentMethod": "Payment Method"
+  },
+  "table": {
+    "date": "Date",
+    "reference": "Ref / Invoice #",
+    "description": "Description",
+    "category": "Category",
+    "paymentMethod": "Payment Method",
+    "amount": "Amount",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "methods": {
+    "cash": "Cash",
+    "card": "Credit / Debit Card",
+    "online": "Online Transfer"
+  }
+}
+

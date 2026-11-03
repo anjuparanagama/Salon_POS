@@ -1,0 +1,45 @@
+{
+  "title": "Appointments",
+  "subtitle": "Manage bookings, schedule clients, and assign salon staff.",
+  "newAppointment": "New Appointment",
+  "editAppointment": "Edit Appointment",
+  "stats": {
+    "total": "Total Appointments",
+    "confirmed": "Confirmed",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "filters": {
+    "searchPlaceholder": "Search by client name, service, or staff...",
+    "allStatuses": "All Statuses",
+    "allStaff": "All Staff Members",
+    "dateFilter": "Filter by date",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "past": "Past"
+  },
+  "table": {
+    "client": "Client",
+    "service": "Service",
+    "staff": "Staff",
+    "dateTime": "Date & Time",
+    "duration": "Duration",
+    "price": "Price",
+    "status": "Status",
+    "actions": "Actions",
+    "noAppointments": "No appointments found"
+  },
+  "form": {
+    "clientName": "Client Name",
+    "clientPhone": "Phone Number",
+    "selectService": "Select Service",
+    "selectStaff": "Assign Staff",
+    "date": "Appointment Date",
+    "time": "Appointment Time",
+    "notes": "Notes / Special Requests",
+    "saveAppointment": "Save Appointment",
+    "updateAppointment": "Update Appointment"
+  }
+}
+

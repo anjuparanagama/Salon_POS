@@ -1,0 +1,44 @@
+{
+  "title": "සේවා නාමාවලිය",
+  "subtitle": "ඔබගේ සැලූන් ප්‍රතිකාර, මෝස්තර පැකේජ සහ මිල ගණන් කළමනාකරණය කරන්න.",
+  "addService": "නව සේවාවක් එක් කරන්න",
+  "editService": "සේවාව සංස්කරණය",
+  "categories": {
+    "all": "සියලු කාණ්ඩ",
+    "hair": "කොණ්ඩ මෝස්තර සහ සත්කාර",
+    "skin": "සම සහ ෆේෂල්",
+    "nails": "නිය සහ ස්පා",
+    "makeup": "මනාලියන් සහ මේකප්",
+    "massage": "සම්බාහනය සහ සුවතාවය"
+  },
+  "stats": {
+    "totalServices": "මුළු සේවා",
+    "activeServices": "සක්‍රීය සේවා",
+    "avgPrice": "සාමාන්‍ය සේවා මිල",
+    "popularServices": "ජනප්‍රිය සේවා"
+  },
+  "filters": {
+    "searchPlaceholder": "නම, විස්තරය අනුව සේවා සොයන්න...",
+    "allCategories": "සියලු කාණ්ඩ",
+    "status": "තත්වය අනුව පෙරහන් කරන්න"
+  },
+  "card": {
+    "duration": "කාල සීමාව",
+    "price": "මිල",
+    "minutes": "මිනි.",
+    "popular": "ජනප්‍රියයි",
+    "bookNow": "වෙන්කරවා ගන්න"
+  },
+  "form": {
+    "serviceName": "සේවාවේ නම",
+    "category": "කාණ්ඩය",
+    "durationMinutes": "කාලය (මිනිත්තු)",
+    "price": "මිල ($)",
+    "description": "විස්තරය",
+    "activeStatus": "සක්‍රීය තත්වය",
+    "markPopular": "ජනප්‍රිය සේවාවක් ලෙස සලකුණු කරන්න",
+    "saveService": "සේවාව සුරකින්න",
+    "updateService": "සේවාව යාවත්කාලීන කරන්න"
+  }
+}
+

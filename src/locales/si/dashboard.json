@@ -1,0 +1,23 @@
+{
+  "greeting": "සුබ උදෑසනක්, පරිපාලක",
+  "subtitle": "අද ඔබේ සැලූන් එකේ සිදුවීම් මෙන්න.",
+  "addAppointment": "හමුවීමක් එක් කරන්න",
+  "stats": {
+    "todayAppointments": "අද හමුවීම්",
+    "totalCustomers": "මුළු පාරිභෝගිකයින්",
+    "todayRevenue": "අද ආදායම",
+    "avgServiceTime": "සාමාන්‍ය සේවා කාලය"
+  },
+  "upcomingSchedule": "ඔබගේ ඉදිරි කාලසටහන",
+  "recentAppointments": "මෑත කාලීන හමුවීම්",
+  "viewAll": "සියල්ල බලන්න",
+  "quickStats": "ක්ෂණික සාරාංශය",
+  "noAppointments": "අද සඳහා හමුවීම් සැලසුම් කර නොමැත",
+  "table": {
+    "time": "වේලාව",
+    "customer": "පාරිභෝගිකයා",
+    "service": "සේවාව",
+    "staff": "කාර්ය මණ්ඩලය"
+  }
+}
+

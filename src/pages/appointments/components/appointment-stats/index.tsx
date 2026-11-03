@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Calendar, CheckCircle2, Clock, XCircle } from "lucide-react";
 import type { AppointmentStats as StatsType } from "../../../../interface/appointment.types";
 
@@ -6,9 +7,11 @@ export type AppointmentStatsProps = {
 };
 
 export function AppointmentStats({ stats }: AppointmentStatsProps) {
+  const { t } = useTranslation(["appointments", "common"]);
+
   const cards = [
     {
-      label: "Total Bookings",
+      label: t("appointments:stats.total", "Total Bookings"),
       value: stats.total,
       icon: Calendar,
       color: "text-primary",
@@ -16,7 +19,7 @@ export function AppointmentStats({ stats }: AppointmentStatsProps) {
       subtext: "Today's schedule",
     },
     {
-      label: "Confirmed",
+      label: t("appointments:stats.confirmed", "Confirmed"),
       value: stats.confirmed,
       icon: CheckCircle2,
       color: "text-emerald-600",
@@ -24,7 +27,7 @@ export function AppointmentStats({ stats }: AppointmentStatsProps) {
       subtext: "Ready for service",
     },
     {
-      label: "In Progress",
+      label: t("appointments:stats.inProgress", "In Progress"),
       value: stats.inProgress,
       icon: Clock,
       color: "text-amber-600",
@@ -32,7 +35,7 @@ export function AppointmentStats({ stats }: AppointmentStatsProps) {
       subtext: "Currently serving",
     },
     {
-      label: "Cancelled",
+      label: t("appointments:stats.cancelled", "Cancelled"),
       value: stats.cancelled,
       icon: XCircle,
       color: "text-rose-600",

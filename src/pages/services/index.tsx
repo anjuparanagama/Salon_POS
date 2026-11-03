@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, ClipboardList, Layers } from "lucide-react";
 import type {
   ServiceItem,
@@ -110,6 +111,7 @@ const initialServices: ServiceItem[] = [
 ];
 
 export function Services() {
+  const { t } = useTranslation(["services", "common"]);
   const [services, setServices] = useState<ServiceItem[]>(initialServices);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
@@ -213,10 +215,12 @@ export function Services() {
             <span className="flex size-7 items-center justify-center rounded-lg bg-primary-lighter text-primary">
               <ClipboardList className="size-4" />
             </span>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">Services Catalog</h1>
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
+              {t("services:title", "Services Catalog")}
+            </h1>
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            Manage salon packages, treatment pricing, durations, and category offerings.
+            {t("services:subtitle", "Manage your salon treatments, styling packages, and pricing tiers.")}
           </p>
         </div>
 
@@ -226,7 +230,7 @@ export function Services() {
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
         >
           <Plus className="size-4" />
-          <span>Add New Service</span>
+          <span>{t("services:addService", "Add New Service")}</span>
         </button>
       </div>
 

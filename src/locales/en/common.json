@@ -1,0 +1,56 @@
+{
+  "languages": {
+    "en": "English",
+    "si": "සිංහල",
+    "ta": "தமிழ்"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "services": "Services",
+    "products": "Products",
+    "ledger": "Ledger",
+    "income": "Income",
+    "expenses": "Expenses",
+    "transactions": "Transactions",
+    "salonManagement": "Salon Management",
+    "salonInventory": "Salon Inventory",
+    "financialLedger": "Financial Ledger",
+    "home": "Home"
+  },
+  "actions": {
+    "search": "Search",
+    "filter": "Filter",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "export": "Export",
+    "confirm": "Confirm",
+    "reset": "Reset",
+    "all": "All",
+    "active": "Active",
+    "inactive": "Inactive",
+    "view": "View"
+  },
+  "header": {
+    "searchPlaceholder": "Search appointments, services, customers...",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "selectLanguage": "Language"
+  },
+  "status": {
+    "confirmed": "Confirmed",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "paid": "Paid",
+    "pending": "Pending",
+    "in_stock": "In Stock",
+    "low_stock": "Low Stock",
+    "out_of_stock": "Out of Stock"
+  }
+}
+

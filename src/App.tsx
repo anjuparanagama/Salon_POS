@@ -1,57 +1,119 @@
+import { useMemo } from "react";
 import { BrowserRouter, useNavigate, useLocation } from "react-router";
-import { Home } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import {
+  ArrowLeftRight,
+  BookOpen,
+  CalendarDays,
+  ClipboardList,
+  Home,
+  LayoutDashboard,
+  Package,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 import MainLayout from "./layout/main";
 import { AppRoutes } from "./routes";
 import { ROUTES } from "./routes/sidebar.routes";
 import type { BreadcrumbItem } from "./components/topheader";
+import type { SidebarItem } from "./interface/routes.types";
 
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation("common");
+
+  const translatedSidebarRoutes: SidebarItem[] = useMemo(
+    () => [
+      {
+        label: t("nav.dashboard", "Dashboard"),
+        href: ROUTES.DASHBOARD,
+        icon: LayoutDashboard,
+      },
+      {
+        label: t("nav.appointments", "Appointments"),
+        href: ROUTES.APPOINTMENTS,
+        icon: CalendarDays,
+      },
+      {
+        label: t("nav.services", "Services"),
+        href: ROUTES.SERVICES,
+        icon: ClipboardList,
+      },
+      {
+        label: t("nav.products", "Products"),
+        href: ROUTES.PRODUCTS,
+        icon: Package,
+      },
+      {
+        label: t("nav.ledger", "Ledger"),
+        href: ROUTES.LEDGER_INCOME,
+        icon: BookOpen,
+        subItems: [
+          {
+            label: t("nav.income", "Income"),
+            href: ROUTES.LEDGER_INCOME,
+            icon: TrendingUp,
+          },
+          {
+            label: t("nav.expenses", "Expenses"),
+            href: ROUTES.LEDGER_EXPENSES,
+            icon: TrendingDown,
+          },
+          {
+            label: t("nav.transactions", "Transactions"),
+            href: ROUTES.LEDGER_TRANSACTIONS,
+            icon: ArrowLeftRight,
+          },
+        ],
+      },
+    ],
+    [t]
+  );
 
   const getBreadcrumbs = (): BreadcrumbItem[] => {
     switch (location.pathname) {
       case ROUTES.APPOINTMENTS:
         return [
-          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
-          { label: "Salon Management" },
-          { label: "Appointments", href: ROUTES.APPOINTMENTS, isCurrent: true },
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.salonManagement", "Salon Management") },
+          { label: t("nav.appointments", "Appointments"), href: ROUTES.APPOINTMENTS, isCurrent: true },
         ];
       case ROUTES.SERVICES:
         return [
-          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
-          { label: "Salon Management" },
-          { label: "Services", href: ROUTES.SERVICES, isCurrent: true },
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.salonManagement", "Salon Management") },
+          { label: t("nav.services", "Services"), href: ROUTES.SERVICES, isCurrent: true },
         ];
       case ROUTES.PRODUCTS:
         return [
-          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
-          { label: "Salon Inventory" },
-          { label: "Products", href: ROUTES.PRODUCTS, isCurrent: true },
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.salonInventory", "Salon Inventory") },
+          { label: t("nav.products", "Products"), href: ROUTES.PRODUCTS, isCurrent: true },
         ];
       case ROUTES.LEDGER:
       case ROUTES.LEDGER_INCOME:
         return [
-          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
-          { label: "Financial Ledger" },
-          { label: "Income & Sales", href: ROUTES.LEDGER_INCOME, isCurrent: true },
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.financialLedger", "Financial Ledger") },
+          { label: t("nav.income", "Income & Sales"), href: ROUTES.LEDGER_INCOME, isCurrent: true },
         ];
       case ROUTES.LEDGER_EXPENSES:
         return [
-          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
-          { label: "Financial Ledger" },
-          { label: "Operating Expenses", href: ROUTES.LEDGER_EXPENSES, isCurrent: true },
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.financialLedger", "Financial Ledger") },
+          { label: t("nav.expenses", "Operating Expenses"), href: ROUTES.LEDGER_EXPENSES, isCurrent: true },
         ];
       case ROUTES.LEDGER_TRANSACTIONS:
         return [
-          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
-          { label: "Financial Ledger" },
-          { label: "Transactions & Refunds", href: ROUTES.LEDGER_TRANSACTIONS, isCurrent: true },
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.financialLedger", "Financial Ledger") },
+          { label: t("nav.transactions", "Transactions & Refunds"), href: ROUTES.LEDGER_TRANSACTIONS, isCurrent: true },
         ];
       default:
         return [
-          { label: "Home", href: ROUTES.DASHBOARD, icon: Home },
-          { label: "Dashboard", href: ROUTES.DASHBOARD, isCurrent: true },
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.dashboard", "Dashboard"), href: ROUTES.DASHBOARD, isCurrent: true },
         ];
     }
   };
@@ -59,6 +121,7 @@ function AppContent() {
   return (
     <MainLayout
       activeHref={location.pathname}
+      sidebarItems={translatedSidebarRoutes}
       onNavigate={(item) => navigate(item.href)}
       topHeaderProps={{
         breadcrumbs: getBreadcrumbs(),

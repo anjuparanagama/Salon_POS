@@ -1,0 +1,23 @@
+{
+  "greeting": "காலை வணக்கம், நிர்வாகி",
+  "subtitle": "இன்று உங்கள் சலூனில் நடக்கும் விவரங்கள் இங்கே.",
+  "addAppointment": "புதிய முன்பதிவு",
+  "stats": {
+    "todayAppointments": "இன்றைய முன்பதிவுகள்",
+    "totalCustomers": "மொத்த வாடிக்கையாளர்கள்",
+    "todayRevenue": "இன்றைய வருமானம்",
+    "avgServiceTime": "சராசரி சேவை நேரம்"
+  },
+  "upcomingSchedule": "உங்கள் வரவிருக்கும் அட்டவணை",
+  "recentAppointments": "சமீபத்திய முன்பதிவுகள்",
+  "viewAll": "அனைத்தையும் காட்டு",
+  "quickStats": "விரைவு மேலோட்டம்",
+  "noAppointments": "இன்று எந்த முன்பதிவுகளும் இல்லை",
+  "table": {
+    "time": "நேரம்",
+    "customer": "வாடிக்கையாளர்",
+    "service": "சேவை",
+    "staff": "ஊழியர்"
+  }
+}
+

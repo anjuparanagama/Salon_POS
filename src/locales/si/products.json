@@ -1,0 +1,50 @@
+{
+  "title": "නිෂ්පාදන තොග",
+  "subtitle": "රූපලාවණ්‍ය නිෂ්පාදන, සිල්ලර තොග සහ සැපයුම් මට්ටම් නිරීක්ෂණය කරන්න.",
+  "addProduct": "නිෂ්පාදනයක් එක් කරන්න",
+  "editProduct": "නිෂ්පාදනය සංස්කරණය",
+  "stats": {
+    "totalProducts": "මුළු නිෂ්පාදන",
+    "inStock": "තොගයේ ඇත",
+    "lowStock": "අඩු තොග අනතුරු ඇඟවීම",
+    "outOfStock": "තොග අවසන්"
+  },
+  "categories": {
+    "all": "සියලු කාණ්ඩ",
+    "hair_care": "හිසකෙස් සත්කාර",
+    "skin_care": "සම රැකවරණය",
+    "nail_care": "නියපොතු සත්කාර",
+    "equipment": "මෙවලම් සහ උපකරණ"
+  },
+  "filters": {
+    "searchPlaceholder": "නිෂ්පාදන නම, SKU හෝ වෙළඳ නාමය මගින් සොයන්න...",
+    "allCategories": "සියලු කාණ්ඩ",
+    "allStatuses": "සියලු තොග මට්ටම්"
+  },
+  "table": {
+    "product": "නිෂ්පාදනයේ නම",
+    "sku": "SKU / කේතය",
+    "category": "කාණ්ඩය",
+    "brand": "වෙළඳ නාමය",
+    "stock": "තොග ප්‍රමාණය",
+    "costPrice": "පිරිවැය මිල",
+    "sellingPrice": "විකුණුම් මිල",
+    "status": "තත්වය",
+    "actions": "ක්‍රියා",
+    "noProducts": "නිෂ්පාදන කිසිවක් හමු නොවීය"
+  },
+  "form": {
+    "productName": "නිෂ්පාදනයේ නම",
+    "sku": "SKU / තීරු කේතය",
+    "brand": "වෙළඳ නාමය",
+    "category": "කාණ්ඩය",
+    "stockQuantity": "මූලික තොග ප්‍රමාණය",
+    "minStockLevel": "අවම ඇණවුම් මට්ටම",
+    "costPrice": "පිරිවැය ($)",
+    "sellingPrice": "විකුණුම් මිල ($)",
+    "supplier": "සැපයුම්කරු",
+    "saveProduct": "නිෂ්පාදනය සුරකින්න",
+    "updateProduct": "නිෂ්පාදනය යාවත්කාලීන කරන්න"
+  }
+}
+

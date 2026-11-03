@@ -1,0 +1,50 @@
+{
+  "title": "Product Inventory",
+  "subtitle": "Track beauty products, retail inventory, and supply levels.",
+  "addProduct": "Add Product",
+  "editProduct": "Edit Product",
+  "stats": {
+    "totalProducts": "Total Products",
+    "inStock": "In Stock",
+    "lowStock": "Low Stock Alert",
+    "outOfStock": "Out of Stock"
+  },
+  "categories": {
+    "all": "All Categories",
+    "hair_care": "Hair Care",
+    "skin_care": "Skin Care",
+    "nail_care": "Nail Care",
+    "equipment": "Tools & Equipment"
+  },
+  "filters": {
+    "searchPlaceholder": "Search by product name, SKU, or brand...",
+    "allCategories": "All Categories",
+    "allStatuses": "All Stock Levels"
+  },
+  "table": {
+    "product": "Product Name",
+    "sku": "SKU / Code",
+    "category": "Category",
+    "brand": "Brand",
+    "stock": "Stock Level",
+    "costPrice": "Cost Price",
+    "sellingPrice": "Selling Price",
+    "status": "Status",
+    "actions": "Actions",
+    "noProducts": "No products found"
+  },
+  "form": {
+    "productName": "Product Name",
+    "sku": "SKU / Barcode",
+    "brand": "Brand",
+    "category": "Category",
+    "stockQuantity": "Initial Stock Quantity",
+    "minStockLevel": "Minimum Reorder Level",
+    "costPrice": "Cost Price ($)",
+    "sellingPrice": "Selling Price ($)",
+    "supplier": "Supplier",
+    "saveProduct": "Save Product",
+    "updateProduct": "Update Product"
+  }
+}
+
