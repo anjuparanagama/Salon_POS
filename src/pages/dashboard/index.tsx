@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import {
   ArrowUpRight,
   CalendarDays,
@@ -6,15 +7,10 @@ import {
   MoreHorizontal,
   Users,
 } from "lucide-react";
+import { ROUTES } from "../../routes/sidebar.routes";
+import type { SummaryCardItem, RecentAppointment } from "../../interface/dashboard.types";
 
-type SummaryCard = {
-  label: string;
-  value: string;
-  change: string;
-  icon: typeof CalendarDays;
-};
-
-const summaryCards: SummaryCard[] = [
+const summaryCards: SummaryCardItem[] = [
   {
     label: "Today's appointments",
     value: "24",
@@ -41,7 +37,7 @@ const summaryCards: SummaryCard[] = [
   },
 ];
 
-const appointments = [
+const appointments: RecentAppointment[] = [
   { time: "09:00 AM", customer: "Emma Wilson", service: "Haircut & Styling", staff: "Amelia" },
   { time: "10:30 AM", customer: "Sophia Brown", service: "Manicure", staff: "Olivia" },
   { time: "12:00 PM", customer: "Mia Johnson", service: "Hair Coloring", staff: "Amelia" },
@@ -49,6 +45,8 @@ const appointments = [
 ];
 
 export function Dashboard() {
+  const navigate = useNavigate();
+
   return (
     <section className="flex flex-col gap-5 text-slate-900">
       <header className="flex shrink-0 items-center justify-between gap-4">
@@ -62,7 +60,8 @@ export function Dashboard() {
           </p>
         </div>
         <button
-          className="hidden items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:inline-flex"
+          onClick={() => navigate(ROUTES.APPOINTMENTS)}
+          className="hidden items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:inline-flex cursor-pointer"
           type="button"
         >
           <CalendarDays aria-hidden="true" className="size-4" />
@@ -80,7 +79,7 @@ export function Dashboard() {
               key={card.label}
             >
               <div className="flex items-start justify-between">
-                <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex size-9 items-center justify-center rounded-lg bg-primary-lighter text-primary">
                   <Icon aria-hidden="true" className="size-5" />
                 </span>
                 <span className="text-xs font-semibold text-emerald-600">{card.change}</span>
@@ -100,7 +99,8 @@ export function Dashboard() {
               <p className="mt-1 text-xs text-slate-500">Your upcoming schedule</p>
             </div>
             <button
-              className="text-sm font-semibold text-primary hover:underline"
+              onClick={() => navigate(ROUTES.APPOINTMENTS)}
+              className="text-sm font-semibold text-primary hover:underline cursor-pointer"
               type="button"
             >
               View all
@@ -129,7 +129,7 @@ export function Dashboard() {
                     <td className="px-5 py-4 text-right">
                       <button
                         aria-label={`More options for ${appointment.customer}`}
-                        className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                        className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
                         type="button"
                       >
                         <MoreHorizontal aria-hidden="true" className="size-4" />

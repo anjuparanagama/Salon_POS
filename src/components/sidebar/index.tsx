@@ -1,25 +1,18 @@
-import { useState, useEffect, type ComponentType, type SVGProps } from "react";
+import { useState, useEffect } from "react";
 import {
-  CalendarDays,
   ChevronLeft,
   ChevronRight,
-  ClipboardList,
   CircleHelp,
   Clock,
-  LayoutDashboard,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
 } from "lucide-react";
+import { sidebarRoutes } from "../../routes/sidebar.routes";
+import type { SidebarItem } from "../../interface/routes.types";
 
-type SidebarIcon = ComponentType<SVGProps<SVGSVGElement>>;
-
-export type SidebarItem = {
-  label: string;
-  href: string;
-  icon: SidebarIcon;
-};
+export type { SidebarItem };
 
 export type SidebarProps = {
   items?: SidebarItem[];
@@ -33,15 +26,9 @@ export type SidebarProps = {
   logoutHref?: string;
 };
 
-const defaultItems: SidebarItem[] = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Appointments", href: "/appointments", icon: CalendarDays },
-  { label: "Services", href: "/services", icon: ClipboardList },
-];
-
 export function Sidebar({
   activeHref = "/appointments",
-  items = defaultItems,
+  items = sidebarRoutes,
   onNavigate,
   onSettingsClick,
   onHelpClick,
@@ -286,8 +273,10 @@ export function Sidebar({
             {/* Current Date and Time - Single Line without Year or Seconds */}
             <div
               className={[
-                "flex items-center rounded-lg bg-white/10 px-2.5 py-1.5 text-white transition-all",
-                isCollapsed ? "justify-center px-1" : "justify-between",
+                "flex items-center rounded-lg px-2.5 py-1.5 text-white transition-all",
+                isCollapsed
+                  ? "justify-center px-1"
+                  : "bg-white/10 justify-between",
               ].join(" ")}
               title={`${formattedDate} • ${formattedTime}`}
             >
@@ -296,7 +285,7 @@ export function Sidebar({
                   {formattedDate}
                 </span>
               )}
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-white tabular-nums whitespace-nowrap">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-white  tabular-nums whitespace-nowrap">
                 <Clock
                   aria-hidden="true"
                   className="size-3 text-white/70 shrink-0"
