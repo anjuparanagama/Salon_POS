@@ -50,7 +50,7 @@ const appointments = [
 
 export function Dashboard() {
   return (
-    <section className="flex h-full min-h-0 flex-col gap-5 overflow-hidden text-slate-900">
+    <section className="flex flex-col gap-5 text-slate-900">
       <header className="flex shrink-0 items-center justify-between gap-4">
         <div>
           <p className="text-sm font-medium text-primary">Wednesday, October 29, 2026</p>
@@ -92,8 +92,8 @@ export function Dashboard() {
         })}
       </div>
 
-      <div className="grid min-h-0 flex-1 gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.6fr)]">
-        <section className="min-h-0 overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.6fr)]">
+        <section className="overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
             <div>
               <h2 className="font-semibold">Today&apos;s appointments</h2>
@@ -106,7 +106,7 @@ export function Dashboard() {
               View all
             </button>
           </div>
-          <div className="overflow-hidden">
+          <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 <tr>
