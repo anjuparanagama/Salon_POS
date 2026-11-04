@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, ClipboardList, Layers } from "lucide-react";
+import { Plus, Layers } from "lucide-react";
 import type {
   ServiceItem,
   ServiceFilterState,
@@ -211,7 +211,6 @@ export function Services() {
     <div className="flex flex-col gap-5 text-slate-900">
       {/* Top Header */}
       <Header
-        icon={ClipboardList}
         title={t("services:title", "Services Catalog")}
         description={t("services:subtitle", "Manage your salon treatments, styling packages, and pricing tiers.")}
         actions={

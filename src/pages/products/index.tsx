@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Package } from "lucide-react";
+import { Plus } from "lucide-react";
 import type {
   Product,
   ProductFilterState,
@@ -206,7 +206,6 @@ export function Products() {
     <div className="flex flex-col gap-5 text-slate-900">
       {/* Top Header */}
       <Header
-        icon={Package}
         title={t("products:title", "Product Inventory")}
         description={t("products:subtitle", "Track beauty products, retail inventory, and supply levels.")}
         actions={

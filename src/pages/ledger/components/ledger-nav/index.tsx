@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
-import { TrendingUp, TrendingDown, ArrowLeftRight, BookOpen } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeftRight } from "lucide-react";
 import { ROUTES } from "../../../../routes/sidebar.routes";
 import type { LedgerTab } from "../../../../interface/ledger.types";
 import Header from "../../../../components/header";
@@ -42,7 +42,6 @@ export function LedgerNav({ activeTab }: LedgerNavProps) {
     <div className="flex flex-col gap-3">
       {/* Title block */}
       <Header
-        icon={BookOpen}
         title={t("ledger:title", "Salon Financial Ledger")}
         description={t("ledger:subtitle", "Track income, operational expenses, transactions, and cash flow.")}
       />

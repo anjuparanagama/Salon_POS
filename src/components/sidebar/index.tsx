@@ -215,10 +215,10 @@ export function Sidebar({
             aria-label={isCollapsed ? item.label : undefined}
             title={isCollapsed ? item.label : undefined}
             className={[
-              "flex min-h-9 w-full items-center justify-between font-medium transition-colors cursor-pointer",
+              "flex w-full items-center justify-between font-medium transition-colors cursor-pointer",
               isCollapsed
-                ? "flex-col justify-center text-[9px] gap-1 rounded-xl px-0 py-2 text-sm"
-                : "gap-2 px-3 text-xs",
+                ? "min-h-0 flex-col justify-center gap-0.5 rounded-xl px-0 py-1 text-[9px] leading-tight"
+                : "min-h-9 gap-2 px-3 text-xs",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset",
               isItemEffectivelyActive
                 ? isCollapsed
@@ -235,24 +235,24 @@ export function Sidebar({
               }
             }}
           >
-            <div className={`flex items-center ${isCollapsed ? "flex-col gap-1" : "gap-2"}`}>
+            <div className={`flex items-center ${isCollapsed ? "flex-col gap-0.5" : "gap-2"}`}>
               <span
                 className={[
                   "flex shrink-0 items-center justify-center transition-colors",
                   isCollapsed
                     ? isItemEffectivelyActive
-                      ? "size-8 rounded-full bg-white text-[#D9145A] shadow-sm"
-                      : "size-8 rounded-full bg-[#B31350] text-white"
+                      ? "size-7 rounded-full bg-white text-[#D9145A] shadow-sm"
+                      : "size-7 rounded-full bg-[#B31350] text-white"
                     : "size-4",
                 ].join(" ")}
               >
                 <Icon
                   aria-hidden="true"
-                  className={isCollapsed ? "size-4" : "size-4"}
+                  className={isCollapsed ? "size-3.5" : "size-4"}
                   strokeWidth={isItemEffectivelyActive ? 2.25 : 2}
                 />
               </span>
-              <span>{item.label}</span>
+              <span className={isCollapsed ? "text-[9px] leading-tight" : ""}>{item.label}</span>
             </div>
 
             {!isCollapsed && (
@@ -271,10 +271,10 @@ export function Sidebar({
             aria-label={isCollapsed ? item.label : undefined}
             title={isCollapsed ? item.label : undefined}
             className={[
-              "flex min-h-9 items-center whitespace-nowrap font-medium transition-colors",
+              "flex items-center whitespace-nowrap font-medium transition-colors",
               isCollapsed
-                ? "flex-col justify-center text-[9px] gap-1 rounded-xl px-0 py-2 text-sm"
-                : "gap-2 px-3 text-xs",
+                ? "min-h-0 flex-col justify-center gap-0.5 rounded-xl px-0 py-1 text-[9px] leading-tight"
+                : "min-h-9 gap-2 px-3 text-xs",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] focus-visible:ring-inset",
               active
                 ? isCollapsed
@@ -295,18 +295,18 @@ export function Sidebar({
                 "flex shrink-0 items-center justify-center transition-colors",
                 isCollapsed
                   ? active
-                    ? "size-8 rounded-full bg-white text-[#D9145A] shadow-sm"
-                    : "size-8 rounded-full bg-[#B31350] text-white"
+                    ? "size-7 rounded-full bg-white text-[#D9145A] shadow-sm"
+                    : "size-7 rounded-full bg-[#B31350] text-white"
                   : "size-4",
               ].join(" ")}
             >
               <Icon
                 aria-hidden="true"
-                className={isCollapsed ? "size-4" : "size-4"}
+                className={isCollapsed ? "size-3.5" : "size-4"}
                 strokeWidth={active ? 2.25 : 2}
               />
             </span>
-            <span>{item.label}</span>
+            <span className={isCollapsed ? "text-[9px] leading-tight" : ""}>{item.label}</span>
           </a>
         )}
 
@@ -447,7 +447,12 @@ export function Sidebar({
             !isCollapsed && activeItem ? "rounded-br-xl" : "",
           ].join(" ")}
         >
-          <li className="flex min-h-14 items-center justify-between gap-2 px-2">
+          <li
+            className={[
+              "flex items-center justify-between gap-2 px-2",
+              isCollapsed ? "min-h-12" : "min-h-14",
+            ].join(" ")}
+          >
             <span
               aria-label="Sribees POS"
               className={[
@@ -473,8 +478,8 @@ export function Sidebar({
               )}
             </button>
           </li>
-          <div className="mb-3 border-b border-slate-50/5" />
-          <div className="flex flex-col gap-1">
+          <div className={isCollapsed ? "mb-1.5 border-b border-slate-50/5" : "mb-3 border-b border-slate-50/5"} />
+          <div className={`flex flex-col ${isCollapsed ? "gap-0.5" : "gap-1"}`}>
             {beforeActive.map((item) => (
               <li key={item.href} className="list-none">
                 {renderItem(item)}
@@ -487,7 +492,7 @@ export function Sidebar({
           <div
             className={[
               "relative z-10 bg-[#D9145A]",
-              isCollapsed ? "px-2" : "pl-2",
+              isCollapsed ? "px-2 my-0.5" : "pl-2",
             ].join(" ")}
           >
             {renderItem(activeItem, true)}
@@ -500,7 +505,7 @@ export function Sidebar({
             !isCollapsed && activeItem ? "rounded-tr-xl" : "",
           ].join(" ")}
         >
-          <ul className="flex flex-col gap-1">
+          <ul className={`flex flex-col ${isCollapsed ? "gap-0.5" : "gap-1"}`}>
             {afterActive.map((item) => (
               <li key={item.href}>{renderItem(item)}</li>
             ))}

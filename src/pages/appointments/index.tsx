@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, CalendarDays } from "lucide-react";
+import { Plus } from "lucide-react";
 import type {
   Appointment,
   AppointmentFilterState,
@@ -211,7 +211,6 @@ export function Appointments() {
     <div className="flex flex-col gap-5 text-slate-900">
       {/* Top Header Section */}
       <Header
-        icon={CalendarDays}
         title={t("appointments:title", "Appointments")}
         description={t("appointments:subtitle", "Manage bookings, schedule clients, and assign salon staff.")}
         actions={
