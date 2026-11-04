@@ -40,8 +40,8 @@
     "category": "வகை",
     "stockQuantity": "ஆரம்ப இருப்பு அளவு",
     "minStockLevel": "குறைந்தபட்ச மறுஆர்டர் நிலை",
-    "costPrice": "அடக்க விலை ($)",
-    "sellingPrice": "விற்பனை விலை ($)",
+    "costPrice": "அடக்க விலை (ரூ.)",
+    "sellingPrice": "விற்பனை விலை (ரூ.)",
     "supplier": "விநியோகஸ்தர்",
     "saveProduct": "தயாரிப்பைச் சேமிக்கவும்",
     "updateProduct": "தயாரிப்பைப் புதுப்பிக்கவும்"

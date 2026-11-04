@@ -1,5 +1,6 @@
 import { Package, CheckCircle2, AlertTriangle, DollarSign } from "lucide-react";
 import type { ProductStats as ProductStatsType } from "../../../../interface/product.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type ProductStatsProps = {
   stats: ProductStatsType;
@@ -33,7 +34,7 @@ export function ProductStats({ stats }: ProductStatsProps) {
     },
     {
       label: "Total Inventory Value",
-      value: `$${stats.totalInventoryValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.totalInventoryValue),
       icon: DollarSign,
       color: "text-primary-dark",
       bg: "bg-primary-lighter",

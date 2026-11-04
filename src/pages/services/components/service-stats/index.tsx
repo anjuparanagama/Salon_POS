@@ -1,5 +1,6 @@
 import { Layers, Sparkles, DollarSign, Award } from "lucide-react";
 import type { ServiceStats as ServiceStatsType } from "../../../../interface/service.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type ServiceStatsProps = {
   stats: ServiceStatsType;
@@ -25,7 +26,7 @@ export function ServiceStats({ stats }: ServiceStatsProps) {
     },
     {
       label: "Average Price",
-      value: `$${stats.averagePrice.toFixed(2)}`,
+      value: formatPrice(stats.averagePrice),
       icon: DollarSign,
       color: "text-emerald-600",
       bg: "bg-emerald-50",

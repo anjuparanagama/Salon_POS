@@ -85,7 +85,7 @@ function ServiceForm({ initialValues, isEditing, onCancel, onSubmit }: ServiceFo
         </div>
 
         <div>
-          <label className="block mb-1 font-medium text-slate-700">Price ($)</label>
+          <label className="block mb-1 font-medium text-slate-700">Price (Rs.)</label>
           <input
             type="number"
             min="0"

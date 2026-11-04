@@ -1,5 +1,6 @@
 import { Clock, Phone, User, Check, X, Play, MoreVertical } from "lucide-react";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type AppointmentListProps = {
   appointments: Appointment[];
@@ -116,7 +117,7 @@ export function AppointmentList({
 
                   {/* Price */}
                   <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-900">
-                    ${apt.price.toFixed(2)}
+                    {formatPrice(apt.price)}
                   </td>
 
                   {/* Status Badge */}

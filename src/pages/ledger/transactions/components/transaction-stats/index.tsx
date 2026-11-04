@@ -1,5 +1,6 @@
 import { ArrowLeftRight, CheckCircle2, RotateCcw, DollarSign } from "lucide-react";
 import type { TransactionStats as TransactionStatsType } from "../../../../../interface/ledger.types";
+import { formatPrice } from "../../../../../helpers/price.helper";
 
 export type TransactionStatsProps = {
   stats: TransactionStatsType;
@@ -9,7 +10,7 @@ export function TransactionStats({ stats }: TransactionStatsProps) {
   const cards = [
     {
       label: "Total Processing Volume",
-      value: `$${stats.totalVolume.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.totalVolume),
       icon: ArrowLeftRight,
       color: "text-primary",
       bg: "bg-primary-lighter",
@@ -33,7 +34,7 @@ export function TransactionStats({ stats }: TransactionStatsProps) {
     },
     {
       label: "Net Settled Funds",
-      value: `$${stats.netCollected.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.netCollected),
       icon: DollarSign,
       color: "text-emerald-700",
       bg: "bg-emerald-50",

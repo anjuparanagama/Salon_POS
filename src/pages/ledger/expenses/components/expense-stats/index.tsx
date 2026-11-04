@@ -1,5 +1,6 @@
 import { DollarSign, Users, ShoppingCart, Building } from "lucide-react";
 import type { ExpenseStats as ExpenseStatsType } from "../../../../../interface/ledger.types";
+import { formatPrice } from "../../../../../helpers/price.helper";
 
 export type ExpenseStatsProps = {
   stats: ExpenseStatsType;
@@ -9,7 +10,7 @@ export function ExpenseStats({ stats }: ExpenseStatsProps) {
   const cards = [
     {
       label: "Total Operating Expenses",
-      value: `$${stats.totalExpenses.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.totalExpenses),
       icon: DollarSign,
       color: "text-rose-600",
       bg: "bg-rose-50",
@@ -17,7 +18,7 @@ export function ExpenseStats({ stats }: ExpenseStatsProps) {
     },
     {
       label: "Staff Salaries & Wages",
-      value: `$${stats.salaries.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.salaries),
       icon: Users,
       color: "text-blue-600",
       bg: "bg-blue-50",
@@ -25,7 +26,7 @@ export function ExpenseStats({ stats }: ExpenseStatsProps) {
     },
     {
       label: "Product & Stock Purchases",
-      value: `$${stats.productPurchases.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.productPurchases),
       icon: ShoppingCart,
       color: "text-amber-600",
       bg: "bg-amber-50",
@@ -33,7 +34,7 @@ export function ExpenseStats({ stats }: ExpenseStatsProps) {
     },
     {
       label: "Rent & Utilities",
-      value: `$${stats.utilitiesAndRent.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.utilitiesAndRent),
       icon: Building,
       color: "text-purple-600",
       bg: "bg-purple-50",

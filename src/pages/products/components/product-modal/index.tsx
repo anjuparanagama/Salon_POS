@@ -121,7 +121,7 @@ function ProductForm({ initialValues, isEditing, onCancel, onSubmit }: ProductFo
         </div>
 
         <div>
-          <label className="block mb-1 font-medium text-slate-700">Cost ($)</label>
+          <label className="block mb-1 font-medium text-slate-700">Cost (Rs.)</label>
           <input
             type="number"
             min="0"
@@ -134,7 +134,7 @@ function ProductForm({ initialValues, isEditing, onCancel, onSubmit }: ProductFo
         </div>
 
         <div>
-          <label className="block mb-1 font-medium text-slate-700">Retail ($)</label>
+          <label className="block mb-1 font-medium text-slate-700">Retail (Rs.)</label>
           <input
             type="number"
             min="0"

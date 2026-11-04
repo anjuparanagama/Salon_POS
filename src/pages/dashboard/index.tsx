@@ -11,6 +11,7 @@ import {
 import { ROUTES } from "../../routes/sidebar.routes";
 import Header from "../../components/header";
 import type { RecentAppointment } from "../../interface/dashboard.types";
+import { formatPrice } from "../../helpers/price.helper";
 
 const appointments: RecentAppointment[] = [
   { time: "09:00 AM", customer: "Emma Wilson", service: "Haircut & Styling", staff: "Amelia" },
@@ -38,7 +39,7 @@ export function Dashboard() {
     },
     {
       label: t("dashboard:stats.todayRevenue", "Today's revenue"),
-      value: "$2,840",
+      value: formatPrice(2840),
       change: "+14.8%",
       icon: DollarSign,
     },
@@ -148,7 +149,7 @@ export function Dashboard() {
             </div>
             <ArrowUpRight aria-hidden="true" className="size-5 text-white/80" />
           </div>
-          <p className="mt-8 text-3xl font-semibold">$18,460</p>
+          <p className="mt-8 text-3xl font-semibold">{formatPrice(18460)}</p>
           <div className="mt-6 flex h-24 items-end gap-2">
             {[35, 48, 42, 64, 58, 76, 68, 88, 74, 94, 82, 100].map((height, index) => (
               <span

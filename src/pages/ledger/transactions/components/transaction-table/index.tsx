@@ -1,5 +1,6 @@
 import { ArrowDownLeft, ArrowUpRight, CheckCircle2, Clock, XCircle, CreditCard, Banknote, Smartphone, Receipt } from "lucide-react";
 import type { TransactionRecord } from "../../../../../interface/ledger.types";
+import { formatPrice } from "../../../../../helpers/price.helper";
 
 export type TransactionTableProps = {
   records: TransactionRecord[];
@@ -109,7 +110,7 @@ export function TransactionTable({ records }: TransactionTableProps) {
                       isRefund ? "text-rose-600" : "text-emerald-600"
                     }`}
                   >
-                    {isRefund ? `-$${item.amount.toFixed(2)}` : `+$${item.amount.toFixed(2)}`}
+                    {isRefund ? `-${formatPrice(item.amount)}` : `+${formatPrice(item.amount)}`}
                   </td>
                 </tr>
               );

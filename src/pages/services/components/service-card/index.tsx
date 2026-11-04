@@ -1,5 +1,6 @@
 import { Clock, Edit3, Check, X, Sparkles } from "lucide-react";
 import type { ServiceItem } from "../../../../interface/service.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type ServiceCardProps = {
   service: ServiceItem;
@@ -59,7 +60,7 @@ export function ServiceCard({ service, onToggleStatus, onEdit }: ServiceCardProp
             <span>{service.durationMinutes} mins</span>
           </div>
           <div className="text-base font-bold text-slate-900">
-            ${service.price.toFixed(2)}
+            {formatPrice(service.price)}
           </div>
         </div>
 

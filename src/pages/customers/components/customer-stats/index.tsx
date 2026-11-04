@@ -1,5 +1,6 @@
 import { Users, UserCheck, Crown, DollarSign } from "lucide-react";
 import type { CustomerStats as CustomerStatsType } from "../../../../interface/customer.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type CustomerStatsProps = {
   stats: CustomerStatsType;
@@ -33,11 +34,11 @@ export function CustomerStats({ stats }: CustomerStatsProps) {
     },
     {
       label: "Total Customer Spend",
-      value: `$${stats.totalRevenue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.totalRevenue),
       icon: DollarSign,
       color: "text-primary-dark",
       bg: "bg-primary-lighter",
-      subtext: `Avg. $${stats.avgSpendPerCustomer.toFixed(2)} / client`,
+      subtext: `Avg. ${formatPrice(stats.avgSpendPerCustomer)} / client`,
     },
   ];
 

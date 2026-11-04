@@ -40,8 +40,8 @@
     "category": "කාණ්ඩය",
     "stockQuantity": "මූලික තොග ප්‍රමාණය",
     "minStockLevel": "අවම ඇණවුම් මට්ටම",
-    "costPrice": "පිරිවැය ($)",
-    "sellingPrice": "විකුණුම් මිල ($)",
+    "costPrice": "පිරිවැය (රු.)",
+    "sellingPrice": "විකුණුම් මිල (රු.)",
     "supplier": "සැපයුම්කරු",
     "saveProduct": "නිෂ්පාදනය සුරකින්න",
     "updateProduct": "නිෂ්පාදනය යාවත්කාලීන කරන්න"

@@ -1,5 +1,6 @@
 import { DollarSign, Scissors, Package, Sparkles } from "lucide-react";
 import type { IncomeStats as IncomeStatsType } from "../../../../../interface/ledger.types";
+import { formatPrice } from "../../../../../helpers/price.helper";
 
 export type IncomeStatsProps = {
   stats: IncomeStatsType;
@@ -9,7 +10,7 @@ export function IncomeStats({ stats }: IncomeStatsProps) {
   const cards = [
     {
       label: "Total Gross Income",
-      value: `$${stats.totalIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.totalIncome),
       icon: DollarSign,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
@@ -17,7 +18,7 @@ export function IncomeStats({ stats }: IncomeStatsProps) {
     },
     {
       label: "Service Sales Revenue",
-      value: `$${stats.serviceIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.serviceIncome),
       icon: Scissors,
       color: "text-primary",
       bg: "bg-primary-lighter",
@@ -25,7 +26,7 @@ export function IncomeStats({ stats }: IncomeStatsProps) {
     },
     {
       label: "Product Sales Revenue",
-      value: `$${stats.productIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.productIncome),
       icon: Package,
       color: "text-purple-600",
       bg: "bg-purple-50",
@@ -33,7 +34,7 @@ export function IncomeStats({ stats }: IncomeStatsProps) {
     },
     {
       label: "Today's Intake",
-      value: `$${stats.todayIncome.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatPrice(stats.todayIncome),
       icon: Sparkles,
       color: "text-amber-600",
       bg: "bg-amber-50",

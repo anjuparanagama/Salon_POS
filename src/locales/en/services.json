@@ -33,7 +33,7 @@
     "serviceName": "Service Name",
     "category": "Category",
     "durationMinutes": "Duration (minutes)",
-    "price": "Price ($)",
+    "price": "Price (Rs.)",
     "description": "Description",
     "activeStatus": "Active Status",
     "markPopular": "Mark as Popular Service",

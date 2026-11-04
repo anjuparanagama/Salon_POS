@@ -1,5 +1,6 @@
 import { Edit3, Trash2, Phone, Mail, Star, AlertCircle, Percent } from "lucide-react";
 import type { StaffMember, StaffRole, StaffStatus } from "../../../../interface/staff.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type StaffListProps = {
   staffList: StaffMember[];
@@ -159,7 +160,7 @@ export function StaffList({ staffList, onEdit, onDelete, onToggleStatus }: Staff
                       </span>
                     </div>
                     <div className="mt-0.5 text-[11px] text-slate-500">
-                      {staff.completedAppointments} appts • ${staff.revenueGenerated.toLocaleString()} rev
+                      {staff.completedAppointments} appts • {formatPrice(staff.revenueGenerated)} rev
                     </div>
                   </td>
 

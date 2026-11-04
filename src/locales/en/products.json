@@ -40,8 +40,8 @@
     "category": "Category",
     "stockQuantity": "Initial Stock Quantity",
     "minStockLevel": "Minimum Reorder Level",
-    "costPrice": "Cost Price ($)",
-    "sellingPrice": "Selling Price ($)",
+    "costPrice": "Cost Price (Rs.)",
+    "sellingPrice": "Selling Price (Rs.)",
     "supplier": "Supplier",
     "saveProduct": "Save Product",
     "updateProduct": "Update Product"

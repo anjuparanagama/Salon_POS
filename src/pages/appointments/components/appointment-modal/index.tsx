@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import Modal from "../../../../components/modal";
 import type { AppointmentFormData } from "../../../../interface/appointment.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type AppointmentModalProps = {
   isOpen: boolean;
@@ -107,7 +108,7 @@ export function AppointmentModal({
             >
               {servicesList.map((svc) => (
                 <option key={svc.name} value={svc.name}>
-                  {svc.name} (${svc.price})
+                  {svc.name} ({formatPrice(svc.price)})
                 </option>
               ))}
             </select>
@@ -153,7 +154,7 @@ export function AppointmentModal({
           </div>
 
           <div>
-            <label className="block mb-1 font-medium text-slate-700">Price ($)</label>
+            <label className="block mb-1 font-medium text-slate-700">Price (Rs.)</label>
             <input
               type="number"
               min="0"

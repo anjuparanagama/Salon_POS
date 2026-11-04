@@ -1,5 +1,6 @@
 import { Edit3, Trash2, Phone, Mail, Crown, AlertCircle, Calendar, UserCheck } from "lucide-react";
 import type { Customer, MembershipTier, CustomerStatus } from "../../../../interface/customer.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type CustomerListProps = {
   customers: Customer[];
@@ -154,7 +155,7 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
                   {/* Visits & Spend */}
                   <td className="whitespace-nowrap px-5 py-4">
                     <div className="font-bold text-slate-900">
-                      ${customer.totalSpent.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {formatPrice(customer.totalSpent)}
                     </div>
                     <div className="text-[11px] text-slate-500">
                       {customer.totalVisits} {customer.totalVisits === 1 ? "visit" : "visits"}

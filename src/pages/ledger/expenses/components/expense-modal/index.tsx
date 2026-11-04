@@ -115,7 +115,7 @@ export function ExpenseModal({ isOpen, onClose, onSubmit }: ExpenseModalProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block mb-1 font-medium text-slate-700">Amount Paid ($) *</label>
+            <label className="block mb-1 font-medium text-slate-700">Amount Paid (Rs.) *</label>
             <input
               type="number"
               min="1"

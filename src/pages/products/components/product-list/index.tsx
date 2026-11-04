@@ -1,5 +1,6 @@
 import { Edit3, AlertCircle, CheckCircle, XCircle, Plus } from "lucide-react";
 import type { Product } from "../../../../interface/product.types";
+import { formatPrice } from "../../../../helpers/price.helper";
 
 export type ProductListProps = {
   products: Product[];
@@ -77,8 +78,8 @@ export function ProductList({ products, onEdit, onQuickRestock }: ProductListPro
 
                   {/* Cost & Retail */}
                   <td className="whitespace-nowrap px-5 py-4">
-                    <div className="font-semibold text-slate-900">${item.sellingPrice.toFixed(2)}</div>
-                    <div className="text-[11px] text-slate-400">Cost: ${item.costPrice.toFixed(2)}</div>
+                    <div className="font-semibold text-slate-900">{formatPrice(item.sellingPrice)}</div>
+                    <div className="text-[11px] text-slate-400">Cost: {formatPrice(item.costPrice)}</div>
                   </td>
 
                   {/* Supplier */}

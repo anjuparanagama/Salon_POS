@@ -1,5 +1,6 @@
 import { Building, Zap, Users, ShoppingCart, Wrench, MoreHorizontal, Receipt } from "lucide-react";
 import type { ExpenseRecord } from "../../../../../interface/ledger.types";
+import { formatPrice } from "../../../../../helpers/price.helper";
 
 export type ExpenseTableProps = {
   records: ExpenseRecord[];
@@ -89,7 +90,7 @@ export function ExpenseTable({ records }: ExpenseTableProps) {
 
                   {/* Amount */}
                   <td className="whitespace-nowrap px-5 py-4 text-right font-bold text-rose-600 text-sm">
-                    -${item.amount.toFixed(2)}
+                    -{formatPrice(item.amount)}
                   </td>
                 </tr>
               );

@@ -33,7 +33,7 @@
     "serviceName": "சேவை பெயர்",
     "category": "வகை",
     "durationMinutes": "கால அளவு (நிமிடங்கள்)",
-    "price": "விலை ($)",
+    "price": "விலை (ரூ.)",
     "description": "விவரம்",
     "activeStatus": "செயல் நிலை",
     "markPopular": "பிரபலமான சேவையாகக் குறிக்கவும்",

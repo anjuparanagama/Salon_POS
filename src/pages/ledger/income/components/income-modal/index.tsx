@@ -107,7 +107,7 @@ export function IncomeModal({ isOpen, onClose, onSubmit }: IncomeModalProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block mb-1 font-medium text-slate-700">Amount Received ($) *</label>
+            <label className="block mb-1 font-medium text-slate-700">Amount Received (Rs.) *</label>
             <input
               type="number"
               min="0.5"

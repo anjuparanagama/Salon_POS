@@ -1,5 +1,6 @@
 import { Scissors, Package, CreditCard, Banknote, Smartphone, Receipt } from "lucide-react";
 import type { IncomeRecord } from "../../../../../interface/ledger.types";
+import { formatPrice } from "../../../../../helpers/price.helper";
 
 export type IncomeTableProps = {
   records: IncomeRecord[];
@@ -84,7 +85,7 @@ export function IncomeTable({ records }: IncomeTableProps) {
 
                 {/* Amount */}
                 <td className="whitespace-nowrap px-5 py-4 text-right font-bold text-emerald-600 text-sm">
-                  +${item.amount.toFixed(2)}
+                  +{formatPrice(item.amount)}
                 </td>
               </tr>
             ))}
