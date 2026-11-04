@@ -11,6 +11,8 @@ import {
   Package,
   TrendingDown,
   TrendingUp,
+  Users,
+  UserCheck,
 } from "lucide-react";
 import MainLayout from "./layout/main";
 import { AppRoutes } from "./routes";
@@ -39,6 +41,16 @@ function AppContent() {
         label: t("nav.services", "Services"),
         href: ROUTES.SERVICES,
         icon: ClipboardList,
+      },
+      {
+        label: t("nav.customers", "Customers"),
+        href: ROUTES.CUSTOMERS,
+        icon: Users,
+      },
+      {
+        label: t("nav.staff", "Staff"),
+        href: ROUTES.STAFF,
+        icon: UserCheck,
       },
       {
         label: t("nav.products", "Products"),
@@ -84,6 +96,18 @@ function AppContent() {
           { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
           { label: t("nav.salonManagement", "Salon Management") },
           { label: t("nav.services", "Services"), href: ROUTES.SERVICES, isCurrent: true },
+        ];
+      case ROUTES.CUSTOMERS:
+        return [
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.salonManagement", "Salon Management") },
+          { label: t("nav.customers", "Customers"), href: ROUTES.CUSTOMERS, isCurrent: true },
+        ];
+      case ROUTES.STAFF:
+        return [
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.salonManagement", "Salon Management") },
+          { label: t("nav.staff", "Staff & Stylists"), href: ROUTES.STAFF, isCurrent: true },
         ];
       case ROUTES.PRODUCTS:
         return [
