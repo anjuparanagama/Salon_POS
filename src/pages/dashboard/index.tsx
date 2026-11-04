@@ -9,6 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import { ROUTES } from "../../routes/sidebar.routes";
+import Header from "../../components/header";
 import type { RecentAppointment } from "../../interface/dashboard.types";
 
 const appointments: RecentAppointment[] = [
@@ -51,25 +52,20 @@ export function Dashboard() {
 
   return (
     <section className="flex flex-col gap-5 text-slate-900">
-      <header className="flex shrink-0 items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-medium text-primary">Wednesday, October 29, 2026</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
-            {t("dashboard:greeting", "Good morning, Admin")}
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {t("dashboard:subtitle", "Here's what's happening at your salon today.")}
-          </p>
-        </div>
-        <button
-          onClick={() => navigate(ROUTES.APPOINTMENTS)}
-          className="hidden items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:inline-flex cursor-pointer"
-          type="button"
-        >
-          <CalendarDays aria-hidden="true" className="size-4" />
-          {t("dashboard:addAppointment", "Add appointment")}
-        </button>
-      </header>
+      <Header
+        title={t("dashboard:greeting", "Good morning, Admin")}
+        description={t("dashboard:subtitle", "Here's what's happening at your salon today.")}
+        actions={
+          <button
+            type="button"
+            onClick={() => navigate(ROUTES.APPOINTMENTS)}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
+          >
+            <CalendarDays aria-hidden="true" className="size-4" />
+            <span>{t("dashboard:addAppointment", "Add appointment")}</span>
+          </button>
+        }
+      />
 
       <div className="grid shrink-0 grid-cols-2 gap-3 xl:grid-cols-4">
         {localizedSummaryCards.map((card) => {
