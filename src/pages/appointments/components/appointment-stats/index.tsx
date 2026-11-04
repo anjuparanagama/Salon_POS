@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Calendar, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { CalendarDays, Calendar, CalendarX, CalendarClock } from "lucide-react";
 import type { AppointmentStats as StatsType } from "../../../../interface/appointment.types";
 
 export type AppointmentStatsProps = {
@@ -11,36 +11,36 @@ export function AppointmentStats({ stats }: AppointmentStatsProps) {
 
   const cards = [
     {
-      label: t("appointments:stats.total", "Total Bookings"),
+      label: t("appointments:stats.today", "Today Appointments"),
+      value: stats.today,
+      icon: CalendarDays,
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+      subtext: "Today's bookings",
+    },
+    {
+      label: t("appointments:stats.total", "Total Appointments"),
       value: stats.total,
       icon: Calendar,
       color: "text-primary",
       bg: "bg-primary-lighter",
-      subtext: "Today's schedule",
+      subtext: "All time bookings",
     },
     {
-      label: t("appointments:stats.confirmed", "Confirmed"),
-      value: stats.confirmed,
-      icon: CheckCircle2,
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
-      subtext: "Ready for service",
-    },
-    {
-      label: t("appointments:stats.inProgress", "In Progress"),
-      value: stats.inProgress,
-      icon: Clock,
-      color: "text-amber-600",
-      bg: "bg-amber-50",
-      subtext: "Currently serving",
-    },
-    {
-      label: t("appointments:stats.cancelled", "Cancelled"),
+      label: t("appointments:stats.cancelled", "Cancel Appointments"),
       value: stats.cancelled,
-      icon: XCircle,
+      icon: CalendarX,
       color: "text-rose-600",
       bg: "bg-rose-50",
-      subtext: "Slot opened",
+      subtext: "Cancelled bookings",
+    },
+    {
+      label: t("appointments:stats.upcoming", "Upcoming Appointments"),
+      value: stats.upcoming,
+      icon: CalendarClock,
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      subtext: "Upcoming schedule",
     },
   ];
 

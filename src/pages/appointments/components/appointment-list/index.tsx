@@ -1,11 +1,14 @@
-import { Clock, Phone, User, Check, X, Play, MoreVertical } from "lucide-react";
+import { Clock, Phone, User, Check, Eye, Pencil, Printer } from "lucide-react";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 
 export type AppointmentListProps = {
   appointments: Appointment[];
   onStatusChange: (id: string, newStatus: AppointmentStatus) => void;
+  onApprove?: (id: string) => void;
+  onView?: (appointment: Appointment) => void;
   onEdit?: (appointment: Appointment) => void;
+  onPrintInvoice?: (appointment: Appointment) => void;
 };
 
 const statusBadgeStyles: Record<AppointmentStatus, { text: string; bg: string; label: string }> = {
@@ -39,6 +42,10 @@ const statusBadgeStyles: Record<AppointmentStatus, { text: string; bg: string; l
 export function AppointmentList({
   appointments,
   onStatusChange,
+  onApprove,
+  onView,
+  onEdit,
+  onPrintInvoice,
 }: AppointmentListProps) {
   if (appointments.length === 0) {
     return (
@@ -48,7 +55,7 @@ export function AppointmentList({
         </div>
         <h3 className="mt-3 text-sm font-semibold text-slate-800">No appointments found</h3>
         <p className="mt-1 text-xs text-slate-500">
-          Try adjusting your search criteria or date filter.
+          Try adjusting your search criteria or status filter.
         </p>
       </div>
     );
@@ -60,13 +67,13 @@ export function AppointmentList({
         <table className="w-full text-left text-xs">
           <thead className="border-b border-slate-100 bg-slate-50 font-semibold text-slate-600 uppercase tracking-wider">
             <tr>
-              <th scope="col" className="px-5 py-3.5">Time</th>
+              <th scope="col" className="px-5 py-3.5">Date & Time</th>
               <th scope="col" className="px-5 py-3.5">Client</th>
               <th scope="col" className="px-5 py-3.5">Service</th>
               <th scope="col" className="px-5 py-3.5">Specialist</th>
               <th scope="col" className="px-5 py-3.5">Price</th>
               <th scope="col" className="px-5 py-3.5">Status</th>
-              <th scope="col" className="px-5 py-3.5 text-right">Quick Actions</th>
+              <th scope="col" className="px-5 py-3.5 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -74,12 +81,14 @@ export function AppointmentList({
               const badge = statusBadgeStyles[apt.status];
               return (
                 <tr key={apt.id} className="hover:bg-slate-50/70 transition-colors">
-                  {/* Time & Duration */}
+                  {/* Date & Time */}
                   <td className="whitespace-nowrap px-5 py-4">
-                    <div className="font-semibold text-slate-900">{apt.time}</div>
+                    <div className="font-semibold text-slate-900">{apt.date}</div>
                     <div className="flex items-center gap-1 text-[11px] text-slate-500">
-                      <Clock className="size-3" />
-                      <span>{apt.durationMinutes} mins</span>
+                      <Clock className="size-3 text-slate-400" />
+                      <span>
+                        {apt.time} ({apt.durationMinutes} mins)
+                      </span>
                     </div>
                   </td>
 
@@ -92,7 +101,7 @@ export function AppointmentList({
                       <div>
                         <div className="font-semibold text-slate-900">{apt.clientName}</div>
                         <div className="flex items-center gap-1 text-[11px] text-slate-500">
-                          <Phone className="size-3" />
+                          <Phone className="size-3 text-slate-400" />
                           <span>{apt.clientPhone}</span>
                         </div>
                       </div>
@@ -129,51 +138,74 @@ export function AppointmentList({
                     </span>
                   </td>
 
-                  {/* Quick Actions */}
+                  {/* Actions Column */}
                   <td className="whitespace-nowrap px-5 py-4 text-right">
-                    <div className="inline-flex items-center gap-1">
-                      {apt.status === "confirmed" && (
+                    <div className="inline-flex items-center justify-end gap-1.5">
+                      {/* 1. New / Pending Appointments -> Approve button */}
+                      {apt.status === "pending" && (
                         <button
                           type="button"
-                          onClick={() => onStatusChange(apt.id, "in_progress")}
-                          title="Start Service"
-                          className="flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-700 hover:bg-amber-100 transition cursor-pointer"
+                          onClick={() =>
+                            onApprove ? onApprove(apt.id) : onStatusChange(apt.id, "confirmed")
+                          }
+                          title="Approve Appointment"
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 transition cursor-pointer"
                         >
-                          <Play className="size-3 fill-amber-700" />
-                          <span>Start</span>
+                          <Check className="size-3.5" />
+                          <span>Approve</span>
                         </button>
                       )}
 
-                      {apt.status === "in_progress" && (
+                      {/* 2. Approved Appointments (Confirmed & In Progress) -> View & Edit buttons */}
+                      {(apt.status === "confirmed" || apt.status === "in_progress") && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => onView?.(apt)}
+                            title="View Appointment"
+                            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-50 hover:text-slate-900 transition cursor-pointer"
+                          >
+                            <Eye className="size-3.5 text-slate-500" />
+                            <span>View</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => onEdit?.(apt)}
+                            title="Edit Appointment"
+                            className="inline-flex items-center gap-1 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-xs font-semibold text-primary shadow-xs hover:bg-primary/10 transition cursor-pointer"
+                          >
+                            <Pencil className="size-3.5" />
+                            <span>Edit</span>
+                          </button>
+                        </>
+                      )}
+
+                      {/* 3. Completed Appointments -> Print Invoice button */}
+                      {apt.status === "completed" && (
                         <button
                           type="button"
-                          onClick={() => onStatusChange(apt.id, "completed")}
-                          title="Mark as Completed"
-                          className="flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-700 hover:bg-emerald-100 transition cursor-pointer"
+                          onClick={() => onPrintInvoice?.(apt)}
+                          title="Print Invoice"
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition cursor-pointer"
                         >
-                          <Check className="size-3" />
-                          <span>Complete</span>
+                          <Printer className="size-3.5" />
+                          <span>Print Invoice</span>
                         </button>
                       )}
 
-                      {apt.status !== "completed" && apt.status !== "cancelled" && (
+                      {/* 4. Cancelled Appointments -> View details */}
+                      {apt.status === "cancelled" && (
                         <button
                           type="button"
-                          onClick={() => onStatusChange(apt.id, "cancelled")}
-                          title="Cancel Booking"
-                          className="rounded-md p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer"
+                          onClick={() => onView?.(apt)}
+                          title="View Details"
+                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 shadow-xs hover:bg-slate-50 transition cursor-pointer"
                         >
-                          <X className="size-3.5" />
+                          <Eye className="size-3.5 text-slate-400" />
+                          <span>View</span>
                         </button>
                       )}
-
-                      <button
-                        type="button"
-                        className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
-                        title="Options"
-                      >
-                        <MoreVertical className="size-3.5" />
-                      </button>
                     </div>
                   </td>
                 </tr>
@@ -187,4 +219,3 @@ export function AppointmentList({
 }
 
 export default AppointmentList;
-

@@ -24,18 +24,20 @@ export type Appointment = {
 };
 
 export type AppointmentStats = {
+  today: number;
   total: number;
-  confirmed: number;
-  inProgress: number;
-  completed: number;
   cancelled: number;
+  upcoming: number;
+  confirmed?: number;
+  inProgress?: number;
+  completed?: number;
 };
 
 export type AppointmentFilterState = {
   search: string;
   status: "all" | AppointmentStatus;
   staff: string;
-  date: string;
+  date?: string;
 };
 
 export type AppointmentFormData = {

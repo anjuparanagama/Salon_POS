@@ -4,11 +4,14 @@
   "newAppointment": "නව හමුවීමක්",
   "editAppointment": "හමුවීම සංස්කරණය",
   "stats": {
+    "today": "අද හමුවීම්",
     "total": "මුළු හමුවීම්",
+    "cancelled": "අවලංගු කළ හමුවීම්",
+    "upcoming": "ඉදිරි හමුවීම්",
     "confirmed": "තහවුරු කළ",
     "inProgress": "සිදුවෙමින් පවතී",
     "completed": "සම්පූර්ණයි",
-    "cancelled": "අවලංගු කළ"
+    "pending": "පොරොත්තුවෙන් පවතී"
   },
   "filters": {
     "searchPlaceholder": "පාරිභෝගික නම, සේවාව හෝ කාර්ය මණ්ඩලය මගින් සොයන්න...",
