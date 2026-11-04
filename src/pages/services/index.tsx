@@ -11,6 +11,7 @@ import ServiceStats from "./components/service-stats";
 import ServiceFilters from "./components/service-filters";
 import ServiceCard from "./components/service-card";
 import ServiceModal from "./components/service-modal";
+import Header from "../../components/header";
 
 const initialServices: ServiceItem[] = [
   {
@@ -209,30 +210,21 @@ export function Services() {
   return (
     <div className="flex flex-col gap-5 text-slate-900">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-primary-lighter text-primary">
-              <ClipboardList className="size-4" />
-            </span>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">
-              {t("services:title", "Services Catalog")}
-            </h1>
-          </div>
-          <p className="mt-1 text-xs text-slate-500">
-            {t("services:subtitle", "Manage your salon treatments, styling packages, and pricing tiers.")}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleOpenAddModal}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
-        >
-          <Plus className="size-4" />
-          <span>{t("services:addService", "Add New Service")}</span>
-        </button>
-      </div>
+      <Header
+        icon={ClipboardList}
+        title={t("services:title", "Services Catalog")}
+        description={t("services:subtitle", "Manage your salon treatments, styling packages, and pricing tiers.")}
+        actions={
+          <button
+            type="button"
+            onClick={handleOpenAddModal}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
+          >
+            <Plus className="size-4" />
+            <span>{t("services:addService", "Add New Service")}</span>
+          </button>
+        }
+      />
 
       {/* KPI Stats */}
       <ServiceStats stats={stats} />

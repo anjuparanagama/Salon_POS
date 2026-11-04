@@ -45,13 +45,13 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
         aria-label="Change Language"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex h-9 sm:h-10 items-center gap-1.5 rounded-full bg-[#FDF2F7] px-2.5 sm:px-3 text-xs sm:text-sm font-medium text-[#D9145A] hover:bg-[#FCE8F0] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] cursor-pointer"
+        className="flex h-8 sm:h-8.5 items-center gap-1.5 rounded-full bg-[#FDF2F7] px-2.5 sm:px-3 text-xs font-medium text-[#D9145A] hover:bg-[#FCE8F0] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] cursor-pointer"
       >
-        <Languages aria-hidden="true" className="size-4 shrink-0" strokeWidth={2.25} />
+        <Languages aria-hidden="true" className="size-3.5 sm:size-4 shrink-0" strokeWidth={2.25} />
         <span className="hidden md:inline font-semibold">{currentOption.nativeLabel}</span>
         <ChevronDown
           aria-hidden="true"
-          className={`size-3.5 text-[#D9145A] transition-transform duration-200 ${
+          className={`size-3 text-[#D9145A] transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
         />

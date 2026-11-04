@@ -12,6 +12,7 @@ import AppointmentStats from "./components/appointment-stats";
 import AppointmentFilters from "./components/appointment-filters";
 import AppointmentList from "./components/appointment-list";
 import AppointmentModal from "./components/appointment-modal";
+import Header from "../../components/header";
 
 const initialStaffList = ["Amelia Vance", "Olivia Wilde", "Isabella Gomez", "Noah Sterling", "Sophia Chen"];
 
@@ -209,30 +210,21 @@ export function Appointments() {
   return (
     <div className="flex flex-col gap-5 text-slate-900">
       {/* Top Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-primary-lighter text-primary">
-              <CalendarDays className="size-4" />
-            </span>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">
-              {t("appointments:title", "Appointments")}
-            </h1>
-          </div>
-          <p className="mt-1 text-xs text-slate-500">
-            {t("appointments:subtitle", "Manage bookings, schedule clients, and assign salon staff.")}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
-        >
-          <Plus className="size-4" />
-          <span>{t("appointments:newAppointment", "New Appointment")}</span>
-        </button>
-      </div>
+      <Header
+        icon={CalendarDays}
+        title={t("appointments:title", "Appointments")}
+        description={t("appointments:subtitle", "Manage bookings, schedule clients, and assign salon staff.")}
+        actions={
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
+          >
+            <Plus className="size-4" />
+            <span>{t("appointments:newAppointment", "New Appointment")}</span>
+          </button>
+        }
+      />
 
       {/* KPI Stats row */}
       <AppointmentStats stats={stats} />

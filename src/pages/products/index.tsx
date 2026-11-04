@@ -11,6 +11,7 @@ import ProductStats from "./components/product-stats";
 import ProductFilters from "./components/product-filters";
 import ProductList from "./components/product-list";
 import ProductModal from "./components/product-modal";
+import Header from "../../components/header";
 
 const initialProducts: Product[] = [
   {
@@ -204,30 +205,21 @@ export function Products() {
   return (
     <div className="flex flex-col gap-5 text-slate-900">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-primary-lighter text-primary">
-              <Package className="size-4" />
-            </span>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">
-              {t("products:title", "Product Inventory")}
-            </h1>
-          </div>
-          <p className="mt-1 text-xs text-slate-500">
-            {t("products:subtitle", "Track beauty products, retail inventory, and supply levels.")}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleOpenAdd}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
-        >
-          <Plus className="size-4" />
-          <span>{t("products:addProduct", "Add Product")}</span>
-        </button>
-      </div>
+      <Header
+        icon={Package}
+        title={t("products:title", "Product Inventory")}
+        description={t("products:subtitle", "Track beauty products, retail inventory, and supply levels.")}
+        actions={
+          <button
+            type="button"
+            onClick={handleOpenAdd}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
+          >
+            <Plus className="size-4" />
+            <span>{t("products:addProduct", "Add Product")}</span>
+          </button>
+        }
+      />
 
       {/* KPI Stats */}
       <ProductStats stats={stats} />

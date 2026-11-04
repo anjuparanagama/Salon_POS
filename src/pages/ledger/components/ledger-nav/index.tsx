@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { TrendingUp, TrendingDown, ArrowLeftRight, BookOpen } from "lucide-react";
 import { ROUTES } from "../../../../routes/sidebar.routes";
 import type { LedgerTab } from "../../../../interface/ledger.types";
+import Header from "../../../../components/header";
 
 export type LedgerNavProps = {
   activeTab: LedgerTab;
@@ -40,19 +41,11 @@ export function LedgerNav({ activeTab }: LedgerNavProps) {
   return (
     <div className="flex flex-col gap-3">
       {/* Title block */}
-      <div className="flex items-center gap-2">
-        <span className="flex size-7 items-center justify-center rounded-lg bg-primary-lighter text-primary">
-          <BookOpen className="size-4" />
-        </span>
-        <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">
-            {t("ledger:title", "Salon Financial Ledger")}
-          </h1>
-          <p className="text-xs text-slate-500">
-            {t("ledger:subtitle", "Track income, operational expenses, transactions, and cash flow.")}
-          </p>
-        </div>
-      </div>
+      <Header
+        icon={BookOpen}
+        title={t("ledger:title", "Salon Financial Ledger")}
+        description={t("ledger:subtitle", "Track income, operational expenses, transactions, and cash flow.")}
+      />
 
       {/* Tabs list */}
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
