@@ -60,42 +60,22 @@ export function BrandHero() {
         />
       </svg>
 
-      {/* Centered Brand Emblem & Typography */}
+      {/* Centered Brand Logo & Typography */}
       <div className="relative z-10 flex flex-col items-center justify-center px-8 text-center select-none pr-8 lg:pr-16">
-        {/* Brand Name with stylized ribbon loops mirroring the reference mark */}
-        <div className="flex items-center gap-1.5 text-4xl sm:text-5xl xl:text-6xl font-black text-white tracking-tight">
-          <span>Sri</span>
-
-          {/* Stylized Modern Salon Wave / Ribbon Symbol */}
-          <span className="inline-flex items-center justify-center px-0.5">
-            <svg
-              className="h-9 w-11 sm:h-11 sm:w-14 text-white"
-              viewBox="0 0 64 48"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                d="M12 36 C6 36 2 31.5 2 24 C2 16.5 6 12 12 12 C18 12 24 17 28 24 C32 31 38 36 44 36 C52 36 58 29.5 58 24 C58 18.5 52 12 44 12 C38 12 32 17 28 24 C24 31 18 36 12 36 Z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="28" cy="24" r="3.5" fill="currentColor" />
-            </svg>
-          </span>
-
-          <span>bees</span>
-        </div>
+        {/* Logo image from public/logo.png */}
+        <img
+          src="/logo.png"
+          alt="Logo"
+          className="h-auto w-64 sm:w-72 md:w-80 lg:w-96 max-w-full object-contain drop-shadow-sm"
+        />
 
         {/* Subtitle matching "Order Management" in our Salon POS theme */}
-        <p className="mt-3 text-base sm:text-lg font-medium tracking-wide text-primary-lighter/95">
+        <p className="mt-4 text-base sm:text-lg font-medium tracking-wide text-primary-lighter/95">
           Salon Management
         </p>
 
         {/* Point of Sale badge */}
-        <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1 text-[11px] font-medium text-white/80 backdrop-blur-xs border border-white/15">
+        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1 text-[11px] font-medium text-white/80 backdrop-blur-xs border border-white/15">
           <span>Point of Sale Edition</span>
         </div>
       </div>

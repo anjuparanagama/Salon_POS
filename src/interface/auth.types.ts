@@ -2,6 +2,22 @@ export type AuthMethod = "password" | "otp";
 
 export type AuthSubmitStatus = "idle" | "loading" | "success" | "error";
 
+export type AuthUser = {
+  name: string;
+  role?: string;
+  email?: string;
+  avatarUrl?: string;
+  initials?: string;
+  isOnline?: boolean;
+};
+
+export type AuthContextType = {
+  user: AuthUser | null;
+  isAuthenticated: boolean;
+  login: (user: AuthUser, rememberMe?: boolean) => void;
+  logout: () => void;
+};
+
 export type LoginFormData = {
   email: string;
   password: string;

@@ -8,7 +8,6 @@ export type LoginFormProps = {
   onSubmit: (e: React.FormEvent) => void;
   status: AuthSubmitStatus;
   errors: AuthErrorState;
-  onSwitchToOtp: () => void;
   onRegisterClick: () => void;
 };
 
@@ -18,7 +17,6 @@ export function LoginForm({
   onSubmit,
   status,
   errors,
-  onSwitchToOtp,
   onRegisterClick,
 }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -138,24 +136,6 @@ export function LoginForm({
           )}
         </button>
       </form>
-
-      {/* OR Divider */}
-      <div className="relative my-4.5 flex items-center justify-center">
-        <div className="w-full border-t border-slate-200" />
-        <span className="absolute bg-white px-2.5 text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-          OR
-        </span>
-      </div>
-
-      {/* Login with OTP Button */}
-      <button
-        type="button"
-        onClick={onSwitchToOtp}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2 px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs active:scale-[0.99] cursor-pointer"
-      >
-        <span className="text-sm">🔐</span>
-        <span>Login with OTP</span>
-      </button>
 
       {/* Don't Have an Account? Register Here */}
       <p className="mt-6 text-center text-xs text-slate-600">

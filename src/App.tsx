@@ -17,6 +17,8 @@ import {
 import MainLayout from "./layout/main";
 import { AppRoutes } from "./routes";
 import { ROUTES } from "./routes/sidebar.routes";
+import { AuthProvider } from "./context/auth-provider";
+import { useAuth } from "./context/use-auth";
 import type { BreadcrumbItem } from "./components/topheader";
 import type { SidebarItem } from "./interface/routes.types";
 
@@ -24,6 +26,7 @@ function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation("common");
+  const { user, isAuthenticated, logout } = useAuth();
 
   const translatedSidebarRoutes: SidebarItem[] = useMemo(
     () => [
@@ -142,19 +145,13 @@ function AppContent() {
     }
   };
 
-  let currentUser = undefined;
-  try {
-    const stored = localStorage.getItem("salon_pos_user");
-    if (stored) {
-      currentUser = JSON.parse(stored);
-    }
-  } catch {
-    // ignore parse error
-  }
+  const handleLogout = () => {
+    logout();
+    navigate(ROUTES.LOGIN, { replace: true });
+  };
 
-  const isLoginPage = location.pathname === ROUTES.LOGIN;
-
-  if (isLoginPage) {
+  // If user is not authenticated or currently on the login page, render AppRoutes directly
+  if (!isAuthenticated || location.pathname === ROUTES.LOGIN) {
     return <AppRoutes />;
   }
 
@@ -163,15 +160,15 @@ function AppContent() {
       activeHref={location.pathname}
       sidebarItems={translatedSidebarRoutes}
       onNavigate={(item) => navigate(item.href)}
-      onLogoutClick={() => navigate(ROUTES.LOGIN)}
+      onLogoutClick={handleLogout}
       logoutHref={ROUTES.LOGIN}
       topHeaderProps={{
         breadcrumbs: getBreadcrumbs(),
-        user: currentUser,
+        user: user || undefined,
         onBreadcrumbClick: (item) => {
           if (item.href) navigate(item.href);
         },
-        onLogoutClick: () => navigate(ROUTES.LOGIN),
+        onLogoutClick: handleLogout,
       }}
     >
       <AppRoutes />
@@ -182,7 +179,9 @@ function AppContent() {
 export function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </BrowserRouter>
   );
 }
