@@ -1,6 +1,5 @@
-import { Package, CheckCircle2, AlertTriangle, DollarSign } from "lucide-react";
+import { Package, CheckCircle2, AlertTriangle, AlertOctagon } from "lucide-react";
 import type { ProductStats as ProductStatsType } from "../../../../interface/product.types";
-import { formatPrice } from "../../../../helpers/price.helper";
 
 export type ProductStatsProps = {
   stats: ProductStatsType;
@@ -9,36 +8,36 @@ export type ProductStatsProps = {
 export function ProductStats({ stats }: ProductStatsProps) {
   const cards = [
     {
-      label: "Total Inventory Items",
+      label: "Total Products",
       value: stats.totalProducts,
       icon: Package,
       color: "text-primary",
       bg: "bg-primary-lighter",
-      subtext: "Across all categories",
+      subtext: "All salon items",
     },
     {
-      label: "In Stock & Ready",
-      value: stats.inStockCount,
+      label: "Active Products",
+      value: stats.activeProducts,
       icon: CheckCircle2,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
-      subtext: "Healthy stock levels",
+      subtext: "Available for sale",
     },
     {
-      label: "Low / Out of Stock",
-      value: stats.lowStockCount + stats.outOfStockCount,
+      label: "Low Stock",
+      value: stats.lowStockCount,
       icon: AlertTriangle,
       color: "text-amber-600",
       bg: "bg-amber-50",
-      subtext: `${stats.outOfStockCount} zero stock items`,
+      subtext: "Needs reordering soon",
     },
     {
-      label: "Total Inventory Value",
-      value: formatPrice(stats.totalInventoryValue),
-      icon: DollarSign,
-      color: "text-primary-dark",
-      bg: "bg-primary-lighter",
-      subtext: "Retail inventory worth",
+      label: "Out of Stock",
+      value: stats.outOfStockCount,
+      icon: AlertOctagon,
+      color: "text-rose-600",
+      bg: "bg-rose-50",
+      subtext: "Zero quantity available",
     },
   ];
 
@@ -49,18 +48,18 @@ export function ProductStats({ stats }: ProductStatsProps) {
         return (
           <article
             key={card.label}
-            className="flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-xs transition hover:shadow-sm"
+            className="flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-xs transition hover:shadow-md"
           >
             <div className="flex items-center justify-between">
-              <span className={`flex size-9 items-center justify-center rounded-lg ${card.bg} ${card.color}`}>
-                <Icon aria-hidden="true" className="size-5" />
-              </span>
+              <span className="text-xs font-medium text-slate-500">{card.label}</span>
+              <div
+                className={`flex size-9 items-center justify-center rounded-lg ${card.bg} ${card.color}`}
+              >
+                <Icon className="size-4.5" />
+              </div>
             </div>
             <div className="mt-3">
-              <p className="text-xs font-medium text-slate-500">{card.label}</p>
-              <p className="mt-0.5 truncate text-lg sm:text-xl font-bold tracking-tight text-slate-900">
-                {card.value}
-              </p>
+              <p className="text-2xl font-bold tracking-tight text-slate-900">{card.value}</p>
               <p className="mt-1 text-[11px] text-slate-400">{card.subtext}</p>
             </div>
           </article>
@@ -71,4 +70,3 @@ export function ProductStats({ stats }: ProductStatsProps) {
 }
 
 export default ProductStats;
-

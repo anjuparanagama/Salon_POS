@@ -11,6 +11,7 @@ export type SidePanelProps = {
   footer?: ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  backdropClassName?: string;
   side?: "left" | "right";
 };
 
@@ -30,6 +31,7 @@ export function SidePanel({
   footer,
   size = "md",
   className,
+  backdropClassName,
   side = "right",
 }: SidePanelProps) {
   useEffect(() => {
@@ -58,7 +60,10 @@ export function SidePanel({
       {/* Backdrop */}
       <div
         aria-hidden="true"
-        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+        className={cn(
+          "fixed inset-0 bg-black/50 transition-opacity animate-in fade-in duration-200",
+          backdropClassName
+        )}
         onClick={onClose}
       />
 
