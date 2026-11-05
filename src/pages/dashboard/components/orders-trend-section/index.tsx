@@ -115,6 +115,7 @@ export function OrdersTrendSection() {
                 width={36}
               />
               <Tooltip
+                cursor={false}
                 content={<ChartCustomTooltip metricLabel="Service Bookings" />}
               />
               <Bar
@@ -122,6 +123,8 @@ export function OrdersTrendSection() {
                 fill="#D9145A"
                 radius={[5, 5, 0, 0]}
                 maxBarSize={32}
+                className="cursor-pointer"
+                activeBar={{ fill: "#800b55", cursor: "pointer" }}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -180,6 +183,7 @@ export function OrdersTrendSection() {
                 width={36}
               />
               <Tooltip
+                cursor={false}
                 content={<ChartCustomTooltip metricLabel="Product Sales" />}
               />
               <Bar
@@ -187,6 +191,8 @@ export function OrdersTrendSection() {
                 fill="#0284c7"
                 radius={[5, 5, 0, 0]}
                 maxBarSize={32}
+                className="cursor-pointer"
+                activeBar={{ fill: "#0369a1", cursor: "pointer" }}
               />
             </BarChart>
           </ResponsiveContainer>
