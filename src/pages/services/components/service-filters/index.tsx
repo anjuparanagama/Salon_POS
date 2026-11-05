@@ -1,26 +1,54 @@
-import { Search, ArrowUpDown, Scissors, Sparkles, Hand, Heart, Palette, Layers } from "lucide-react";
-import type { ServiceCategory, ServiceFilterState } from "../../../../interface/service.types";
+import {
+  Search,
+  ArrowUpDown,
+  Scissors,
+  Sparkles,
+  Hand,
+  Heart,
+  Palette,
+  Layers,
+  Tag,
+  type LucideIcon,
+} from "lucide-react";
+import type {
+  ServiceCategoryItem,
+  ServiceFilterState,
+} from "../../../../interface/service.types";
 
 export type ServiceFiltersProps = {
   filters: ServiceFilterState;
+  categories: ServiceCategoryItem[];
   onFilterChange: (filters: Partial<ServiceFilterState>) => void;
 };
 
-const categoryTabs: { label: string; value: ServiceCategory; icon: typeof Scissors }[] = [
-  { label: "All Services", value: "all", icon: Layers },
-  { label: "Hair Care", value: "hair", icon: Scissors },
-  { label: "Skin & Facial", value: "skin", icon: Sparkles },
-  { label: "Nail Care", value: "nails", icon: Hand },
-  { label: "Spa & Massage", value: "spa", icon: Heart },
-  { label: "Makeup & Bridal", value: "makeup", icon: Palette },
-];
+const categoryIcons: Record<string, LucideIcon> = {
+  all: Layers,
+  hair: Scissors,
+  skin: Sparkles,
+  nails: Hand,
+  spa: Heart,
+  makeup: Palette,
+};
 
-export function ServiceFilters({ filters, onFilterChange }: ServiceFiltersProps) {
+export function ServiceFilters({
+  filters,
+  categories,
+  onFilterChange,
+}: ServiceFiltersProps) {
+  const tabs = [
+    { label: "All Services", value: "all", icon: Layers },
+    ...categories.map((cat) => ({
+      label: cat.label,
+      value: cat.value,
+      icon: categoryIcons[cat.value] || Tag,
+    })),
+  ];
+
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-slate-100 bg-white p-3.5 shadow-xs">
       {/* Category Pills */}
       <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-100 pb-3">
-        {categoryTabs.map((tab) => {
+        {tabs.map((tab) => {
           const isSelected = filters.category === tab.value;
           const Icon = tab.icon;
           return (
@@ -61,7 +89,11 @@ export function ServiceFilters({ filters, onFilterChange }: ServiceFiltersProps)
           </div>
           <select
             value={filters.sortBy}
-            onChange={(e) => onFilterChange({ sortBy: e.target.value as ServiceFilterState["sortBy"] })}
+            onChange={(e) =>
+              onFilterChange({
+                sortBy: e.target.value as ServiceFilterState["sortBy"],
+              })
+            }
             className="w-full sm:w-auto rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-800 outline-none transition focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20 cursor-pointer"
           >
             <option value="name">Alphabetical (A - Z)</option>
@@ -76,4 +108,3 @@ export function ServiceFilters({ filters, onFilterChange }: ServiceFiltersProps)
 }
 
 export default ServiceFilters;
-

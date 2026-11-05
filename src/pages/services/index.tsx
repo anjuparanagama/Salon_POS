@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Plus, Layers } from "lucide-react";
 import type {
   ServiceItem,
+  ServiceCategoryItem,
   ServiceFilterState,
   ServiceFormData,
 } from "../../interface/service.types";
@@ -12,6 +13,14 @@ import ServiceFilters from "./components/service-filters";
 import ServiceCard from "./components/service-card";
 import ServiceModal from "./components/service-modal";
 import Header from "../../components/header";
+
+const initialCategories: ServiceCategoryItem[] = [
+  { id: "cat-1", label: "Hair Care", value: "hair" },
+  { id: "cat-2", label: "Skin & Facial", value: "skin" },
+  { id: "cat-3", label: "Nail Care", value: "nails" },
+  { id: "cat-4", label: "Spa & Massage", value: "spa" },
+  { id: "cat-5", label: "Makeup & Bridal", value: "makeup" },
+];
 
 const initialServices: ServiceItem[] = [
   {
@@ -23,6 +32,9 @@ const initialServices: ServiceItem[] = [
     description: "Custom precision cut tailored to hair texture and face shape, followed by signature blowdry styling.",
     isActive: true,
     popular: true,
+    images: [
+      "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "svc-2",
@@ -33,6 +45,9 @@ const initialServices: ServiceItem[] = [
     description: "Hand-painted sun-kissed dimension highlights with custom tone blending and moisturizing gloss finish.",
     isActive: true,
     popular: true,
+    images: [
+      "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=800&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "svc-3",
@@ -43,6 +58,9 @@ const initialServices: ServiceItem[] = [
     description: "Multi-step treatment that cleanses, exfoliates, extracts impurities, and infuses restorative antioxidants.",
     isActive: true,
     popular: true,
+    images: [
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "svc-4",
@@ -62,6 +80,9 @@ const initialServices: ServiceItem[] = [
     description: "Organic citrus scrub, cuticle care, tension-relief massage, and long-lasting high-shine gel polish.",
     isActive: true,
     popular: true,
+    images: [
+      "https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=800&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "svc-6",
@@ -99,6 +120,9 @@ const initialServices: ServiceItem[] = [
     description: "Long-wear HD airbrush bridal makeup, mink lash extensions, and complimentary touch-up kit.",
     isActive: true,
     popular: true,
+    images: [
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&auto=format&fit=crop&q=80",
+    ],
   },
   {
     id: "svc-10",
@@ -113,6 +137,7 @@ const initialServices: ServiceItem[] = [
 
 export function Services() {
   const { t } = useTranslation(["services", "common"]);
+  const [categories, setCategories] = useState<ServiceCategoryItem[]>(initialCategories);
   const [services, setServices] = useState<ServiceItem[]>(initialServices);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
@@ -125,6 +150,13 @@ export function Services() {
 
   const handleFilterChange = (updated: Partial<ServiceFilterState>) => {
     setFilters((prev) => ({ ...prev, ...updated }));
+  };
+
+  const handleAddCategory = (newCat: ServiceCategoryItem) => {
+    setCategories((prev) => {
+      if (prev.some((c) => c.value === newCat.value)) return prev;
+      return [...prev, newCat];
+    });
   };
 
   const handleToggleStatus = (id: string) => {
@@ -169,14 +201,14 @@ export function Services() {
   const stats = useMemo(() => {
     const total = services.length;
     const active = services.filter((s) => s.isActive).length;
-    const categories = new Set(services.map((s) => s.category)).size;
+    const categoriesCount = new Set(services.map((s) => s.category)).size;
     const avgPrice = total > 0 ? services.reduce((acc, s) => acc + s.price, 0) / total : 0;
     const top = services.find((s) => s.popular)?.name ?? (services[0]?.name || "N/A");
 
     return {
       totalServices: total,
       activeServices: active,
-      categoriesCount: categories,
+      categoriesCount,
       averagePrice: avgPrice,
       topService: top,
     };
@@ -188,15 +220,17 @@ export function Services() {
       .filter((service) => {
         // Search
         if (filters.search.trim()) {
-          const query = filters.search.toLowerCase();
-          const matchesName = service.name.toLowerCase().includes(query);
-          const matchesDesc = service.description.toLowerCase().includes(query);
-          if (!matchesName && !matchesDesc) return false;
+          const q = filters.search.toLowerCase();
+          const matchName = service.name.toLowerCase().includes(q);
+          const matchDesc = service.description.toLowerCase().includes(q);
+          if (!matchName && !matchDesc) return false;
         }
-        // Category
+
+        // Category filter
         if (filters.category !== "all" && service.category !== filters.category) {
           return false;
         }
+
         return true;
       })
       .sort((a, b) => {
@@ -229,7 +263,11 @@ export function Services() {
       <ServiceStats stats={stats} />
 
       {/* Filter and Search controls */}
-      <ServiceFilters filters={filters} onFilterChange={handleFilterChange} />
+      <ServiceFilters
+        filters={filters}
+        categories={categories}
+        onFilterChange={handleFilterChange}
+      />
 
       {/* Service Cards Grid */}
       {filteredServices.length === 0 ? (
@@ -248,6 +286,7 @@ export function Services() {
             <ServiceCard
               key={service.id}
               service={service}
+              categories={categories}
               onToggleStatus={handleToggleStatus}
               onEdit={handleEditClick}
             />
@@ -261,10 +300,11 @@ export function Services() {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSaveService}
         editingService={editingService}
+        categories={categories}
+        onAddCategory={handleAddCategory}
       />
     </div>
   );
 }
 
 export default Services;
-

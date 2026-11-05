@@ -1,20 +1,21 @@
-export type ServiceCategory =
-  | "all"
-  | "hair"
-  | "skin"
-  | "nails"
-  | "spa"
-  | "makeup";
+export type ServiceCategory = string;
+
+export type ServiceCategoryItem = {
+  id: string;
+  label: string;
+  value: string;
+};
 
 export type ServiceItem = {
   id: string;
   name: string;
-  category: "hair" | "skin" | "nails" | "spa" | "makeup";
+  category: string;
   durationMinutes: number;
   price: number;
   description: string;
   isActive: boolean;
   popular?: boolean;
+  images?: string[];
 };
 
 export type ServiceStats = {
@@ -33,10 +34,10 @@ export type ServiceFilterState = {
 
 export type ServiceFormData = {
   name: string;
-  category: "hair" | "skin" | "nails" | "spa" | "makeup";
+  category: string;
   durationMinutes: number;
   price: number;
   description: string;
   isActive: boolean;
+  images?: string[];
 };
-

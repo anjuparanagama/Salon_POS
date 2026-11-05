@@ -1,14 +1,15 @@
-import { Clock, Edit3, Check, X, Sparkles } from "lucide-react";
-import type { ServiceItem } from "../../../../interface/service.types";
+import { Clock, Edit3, Check, X, Sparkles, Image as ImageIcon } from "lucide-react";
+import type { ServiceItem, ServiceCategoryItem } from "../../../../interface/service.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 
 export type ServiceCardProps = {
   service: ServiceItem;
+  categories?: ServiceCategoryItem[];
   onToggleStatus: (id: string) => void;
   onEdit: (service: ServiceItem) => void;
 };
 
-const categoryBadges: Record<ServiceItem["category"], { label: string; style: string }> = {
+const categoryBadges: Record<string, { label: string; style: string }> = {
   hair: { label: "Hair Care", style: "bg-rose-50 text-rose-700 border-rose-200" },
   skin: { label: "Skin & Facial", style: "bg-blue-50 text-blue-700 border-blue-200" },
   nails: { label: "Nails", style: "bg-purple-50 text-purple-700 border-purple-200" },
@@ -16,15 +17,47 @@ const categoryBadges: Record<ServiceItem["category"], { label: string; style: st
   makeup: { label: "Bridal & Glam", style: "bg-amber-50 text-amber-700 border-amber-200" },
 };
 
-export function ServiceCard({ service, onToggleStatus, onEdit }: ServiceCardProps) {
-  const badge = categoryBadges[service.category];
+export function ServiceCard({
+  service,
+  categories,
+  onToggleStatus,
+  onEdit,
+}: ServiceCardProps) {
+  const predefinedBadge = categoryBadges[service.category];
+  const matchedCategory = categories?.find((c) => c.value === service.category);
+  const badge = predefinedBadge || {
+    label: matchedCategory ? matchedCategory.label : service.category,
+    style: "bg-slate-50 text-slate-700 border-slate-200",
+  };
+
+  const images = service.images || [];
+  const coverImage = images[0];
 
   return (
-    <article className="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-xs transition hover:border-primary-lighter hover:shadow-md">
+    <article className="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-xs transition hover:border-primary-lighter hover:shadow-md overflow-hidden">
       <div>
+        {/* Cover Image if present */}
+        {coverImage && (
+          <div className="relative mb-3 aspect-[16/10] w-full overflow-hidden rounded-lg bg-slate-100">
+            <img
+              src={coverImage}
+              alt={service.name}
+              className="size-full object-cover transition duration-300 group-hover:scale-105"
+            />
+            {images.length > 1 && (
+              <span className="absolute bottom-2 right-2 flex items-center gap-1 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-xs">
+                <ImageIcon className="size-3" />
+                <span>+{images.length - 1}</span>
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Top badges */}
         <div className="flex items-center justify-between gap-2">
-          <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${badge.style}`}>
+          <span
+            className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${badge.style}`}
+          >
             {badge.label}
           </span>
           <div className="flex items-center gap-1.5">
@@ -102,4 +135,3 @@ export function ServiceCard({ service, onToggleStatus, onEdit }: ServiceCardProp
 }
 
 export default ServiceCard;
-

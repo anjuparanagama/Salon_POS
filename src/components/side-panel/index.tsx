@@ -11,6 +11,7 @@ export type SidePanelProps = {
   footer?: ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  side?: "left" | "right";
 };
 
 const sizeClasses = {
@@ -29,6 +30,7 @@ export function SidePanel({
   footer,
   size = "md",
   className,
+  side = "right",
 }: SidePanelProps) {
   useEffect(() => {
     if (!isOpen) return;
@@ -45,10 +47,12 @@ export function SidePanel({
 
   if (!isOpen) return null;
 
+  const isLeft = side === "left";
+
   return (
     <div
       aria-modal="true"
-      className="fixed inset-0 z-50 flex justify-end"
+      className={cn("fixed inset-0 z-50 flex", isLeft ? "justify-start" : "justify-end")}
       role="dialog"
     >
       {/* Backdrop */}
@@ -61,7 +65,10 @@ export function SidePanel({
       {/* Side Panel Drawer */}
       <div
         className={cn(
-          "relative z-10 flex h-full w-full flex-col bg-white shadow-2xl border-l border-slate-100 animate-in slide-in-from-right duration-300",
+          "relative z-10 flex h-full w-full flex-col bg-white shadow-2xl duration-300",
+          isLeft
+            ? "border-r border-slate-100 animate-in slide-in-from-left"
+            : "border-l border-slate-100 animate-in slide-in-from-right",
           sizeClasses[size],
           className
         )}
