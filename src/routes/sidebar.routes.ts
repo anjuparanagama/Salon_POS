@@ -14,6 +14,7 @@ import type { SidebarItem } from "../interface/routes.types";
 
 export const ROUTES = {
   DASHBOARD: "/",
+  LOGIN: "/login",
   APPOINTMENTS: "/appointments",
   SERVICES: "/services",
   PRODUCTS: "/products",

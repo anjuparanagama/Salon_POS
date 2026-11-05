@@ -6,6 +6,9 @@
   --color-primary: #D9145A;
   --color-primary-dark: #800b55;
   --color-primary-lighter: #fce7f3;
+  --color-primary-subtle: #fff4f7;
+  --color-primary-deep: #59083c;
+  --color-whatsapp: #25D366;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 

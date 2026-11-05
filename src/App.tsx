@@ -142,16 +142,36 @@ function AppContent() {
     }
   };
 
+  let currentUser = undefined;
+  try {
+    const stored = localStorage.getItem("salon_pos_user");
+    if (stored) {
+      currentUser = JSON.parse(stored);
+    }
+  } catch {
+    // ignore parse error
+  }
+
+  const isLoginPage = location.pathname === ROUTES.LOGIN;
+
+  if (isLoginPage) {
+    return <AppRoutes />;
+  }
+
   return (
     <MainLayout
       activeHref={location.pathname}
       sidebarItems={translatedSidebarRoutes}
       onNavigate={(item) => navigate(item.href)}
+      onLogoutClick={() => navigate(ROUTES.LOGIN)}
+      logoutHref={ROUTES.LOGIN}
       topHeaderProps={{
         breadcrumbs: getBreadcrumbs(),
+        user: currentUser,
         onBreadcrumbClick: (item) => {
           if (item.href) navigate(item.href);
         },
+        onLogoutClick: () => navigate(ROUTES.LOGIN),
       }}
     >
       <AppRoutes />
