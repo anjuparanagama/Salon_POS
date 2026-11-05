@@ -9,6 +9,7 @@ export type HeaderProps = {
   infoTooltip?: string;
   tooltipPlacement?: TooltipPlacement;
   onInfoClick?: () => void;
+  titleSuffix?: ReactNode;
   actions?: ReactNode;
   children?: ReactNode;
   className?: string;
@@ -21,6 +22,7 @@ export function Header({
   infoTooltip,
   tooltipPlacement = "right",
   onInfoClick,
+  titleSuffix,
   actions,
   children,
   className = "",
@@ -55,6 +57,8 @@ export function Header({
             </button>
           </Tooltip>
         )}
+
+        {titleSuffix}
       </div>
 
       {/* Right side optional action buttons / children */}

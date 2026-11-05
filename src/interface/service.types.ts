@@ -20,10 +20,11 @@ export type ServiceItem = {
 
 export type ServiceStats = {
   totalServices: number;
-  activeServices: number;
   categoriesCount: number;
-  averagePrice: number;
-  topService: string;
+  activeServices: number;
+  inactiveServices: number;
+  averagePrice?: number;
+  topService?: string;
 };
 
 export type ServiceFilterState = {
@@ -40,4 +41,10 @@ export type ServiceFormData = {
   description: string;
   isActive: boolean;
   images?: string[];
+};
+
+export type ShareServicesModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  shareUrl?: string;
 };

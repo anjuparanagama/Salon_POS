@@ -1,6 +1,5 @@
-import { Layers, Sparkles, DollarSign, Award } from "lucide-react";
+import { Layers, Sparkles, CheckCircle2, XCircle } from "lucide-react";
 import type { ServiceStats as ServiceStatsType } from "../../../../interface/service.types";
-import { formatPrice } from "../../../../helpers/price.helper";
 
 export type ServiceStatsProps = {
   stats: ServiceStatsType;
@@ -14,7 +13,7 @@ export function ServiceStats({ stats }: ServiceStatsProps) {
       icon: Layers,
       color: "text-primary",
       bg: "bg-primary-lighter",
-      subtext: `${stats.activeServices} currently active`,
+      subtext: "All catalog treatments",
     },
     {
       label: "Categories",
@@ -22,23 +21,23 @@ export function ServiceStats({ stats }: ServiceStatsProps) {
       icon: Sparkles,
       color: "text-purple-600",
       bg: "bg-purple-50",
-      subtext: "Hair, Nails, Skin & Spa",
+      subtext: "Service classifications",
     },
     {
-      label: "Average Price",
-      value: formatPrice(stats.averagePrice),
-      icon: DollarSign,
+      label: "Active Services",
+      value: stats.activeServices,
+      icon: CheckCircle2,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
-      subtext: "Across all packages",
+      subtext: "Available for booking",
     },
     {
-      label: "Top Performer",
-      value: stats.topService,
-      icon: Award,
-      color: "text-amber-600",
-      bg: "bg-amber-50",
-      subtext: "Most requested this month",
+      label: "Inactive Services",
+      value: stats.inactiveServices,
+      icon: XCircle,
+      color: "text-rose-600",
+      bg: "bg-rose-50",
+      subtext: "Hidden from catalog",
     },
   ];
 
@@ -71,4 +70,3 @@ export function ServiceStats({ stats }: ServiceStatsProps) {
 }
 
 export default ServiceStats;
-

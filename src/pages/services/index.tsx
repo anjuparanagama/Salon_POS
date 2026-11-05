@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Layers } from "lucide-react";
+import { Plus, Layers, Share2 } from "lucide-react";
 import type {
   ServiceItem,
   ServiceCategoryItem,
@@ -12,7 +12,9 @@ import ServiceStats from "./components/service-stats";
 import ServiceFilters from "./components/service-filters";
 import ServiceCard from "./components/service-card";
 import ServiceModal from "./components/service-modal";
+import ShareServicesModal from "./components/share-services-modal";
 import Header from "../../components/header";
+import Tooltip from "../../components/tooltip";
 
 const initialCategories: ServiceCategoryItem[] = [
   { id: "cat-1", label: "Hair Care", value: "hair" },
@@ -140,6 +142,7 @@ export function Services() {
   const [categories, setCategories] = useState<ServiceCategoryItem[]>(initialCategories);
   const [services, setServices] = useState<ServiceItem[]>(initialServices);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
 
   const [filters, setFilters] = useState<ServiceFilterState>({
@@ -201,16 +204,14 @@ export function Services() {
   const stats = useMemo(() => {
     const total = services.length;
     const active = services.filter((s) => s.isActive).length;
+    const inactive = total - active;
     const categoriesCount = new Set(services.map((s) => s.category)).size;
-    const avgPrice = total > 0 ? services.reduce((acc, s) => acc + s.price, 0) / total : 0;
-    const top = services.find((s) => s.popular)?.name ?? (services[0]?.name || "N/A");
 
     return {
       totalServices: total,
-      activeServices: active,
       categoriesCount,
-      averagePrice: avgPrice,
-      topService: top,
+      activeServices: active,
+      inactiveServices: inactive,
     };
   }, [services]);
 
@@ -247,6 +248,18 @@ export function Services() {
       <Header
         title={t("services:title", "Services Catalog")}
         description={t("services:subtitle", "Manage your salon treatments, styling packages, and pricing tiers.")}
+        titleSuffix={
+          <Tooltip content="Share Service Catalog" placement="right">
+            <button
+              type="button"
+              aria-label="Share Service Catalog"
+              onClick={() => setIsShareModalOpen(true)}
+              className="inline-flex size-6 sm:size-7 items-center justify-center rounded-lg text-slate-400 hover:text-primary hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
+            >
+              <Share2 aria-hidden="true" className="size-3.5 sm:size-4" strokeWidth={2} />
+            </button>
+          </Tooltip>
+        }
         actions={
           <button
             type="button"
@@ -302,6 +315,12 @@ export function Services() {
         editingService={editingService}
         categories={categories}
         onAddCategory={handleAddCategory}
+      />
+
+      {/* Share Services Modal */}
+      <ShareServicesModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
       />
     </div>
   );
