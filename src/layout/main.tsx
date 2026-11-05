@@ -44,9 +44,9 @@ export function MainLayout({
         helpHref={helpHref}
         logoutHref={logoutHref}
       />
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-tl-[1.125rem] rounded-tr-[1.125rem] bg-white mt-2 mr-2">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-tl-[1.125rem] rounded-tr-[1.125rem] bg-[#FFF4F7] mt-2 mr-2">
         {showTopHeader && <TopHeader {...topHeaderProps} />}
-        <main className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+        <main className="min-h-0 flex-1 overflow-y-auto px-4 pt-2 pb-4 sm:px-6 sm:pt-2.5 sm:pb-6">
           {children}
         </main>
       </div>

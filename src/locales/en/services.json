@@ -1,0 +1,44 @@
+{
+  "title": "Services Catalog",
+  "subtitle": "Manage your salon treatments, styling packages, and pricing tiers.",
+  "addService": "Add New Service",
+  "editService": "Edit Service",
+  "categories": {
+    "all": "All Categories",
+    "hair": "Hair Styling & Care",
+    "skin": "Skin & Facials",
+    "nails": "Nails & Spa",
+    "makeup": "Bridal & Makeup",
+    "massage": "Massage & Wellness"
+  },
+  "stats": {
+    "totalServices": "Total Services",
+    "activeServices": "Active Services",
+    "avgPrice": "Average Service Price",
+    "popularServices": "Popular Services"
+  },
+  "filters": {
+    "searchPlaceholder": "Search services by name, description...",
+    "allCategories": "All Categories",
+    "status": "Filter by status"
+  },
+  "card": {
+    "duration": "Duration",
+    "price": "Price",
+    "minutes": "min",
+    "popular": "Popular",
+    "bookNow": "Book Now"
+  },
+  "form": {
+    "serviceName": "Service Name",
+    "category": "Category",
+    "durationMinutes": "Duration (minutes)",
+    "price": "Price (Rs.)",
+    "description": "Description",
+    "activeStatus": "Active Status",
+    "markPopular": "Mark as Popular Service",
+    "saveService": "Save Service",
+    "updateService": "Update Service"
+  }
+}
+

@@ -1,0 +1,42 @@
+{
+  "title": "මූල්‍ය ලෙජරය",
+  "subtitle": "ආදායම්, මෙහෙයුම් වියදම්, ගනුදෙනු සහ මුදල් ප්‍රවාහය නිරීක්ෂණය කරන්න.",
+  "tabs": {
+    "income": "ආදායම් සහ විකුණුම්",
+    "expenses": "මෙහෙයුම් වියදම්",
+    "transactions": "ගනුදෙනු සහ ආපසු ගෙවීම්"
+  },
+  "stats": {
+    "totalIncome": "මුළු ආදායම",
+    "totalExpenses": "මුළු වියදම්",
+    "netProfit": "ශුද්ධ ලාභය",
+    "transactionCount": "මුළු ගනුදෙනු ගණන"
+  },
+  "actions": {
+    "addIncome": "ආදායම් ඇතුළත් කරන්න",
+    "addExpense": "වියදම් ඇතුළත් කරන්න",
+    "newTransaction": "නව ගනුදෙනුවක්"
+  },
+  "filters": {
+    "searchPlaceholder": "ලෙජර් සටහන් සොයන්න...",
+    "allCategories": "සියලු කාණ්ඩ",
+    "dateRange": "දින පරාසය",
+    "paymentMethod": "ගෙවීම් ක්‍රමය"
+  },
+  "table": {
+    "date": "දිනය",
+    "reference": "යොමු / ඉන්වොයිස් අංකය",
+    "description": "විස්තරය",
+    "category": "කාණ්ඩය",
+    "paymentMethod": "ගෙවීම් ක්‍රමය",
+    "amount": "මුදල",
+    "status": "තත්වය",
+    "actions": "ක්‍රියා"
+  },
+  "methods": {
+    "cash": "මුදල්",
+    "card": "කාඩ්පත් ගෙවීම්",
+    "online": "මාර්ගගත මාරු කිරීම්"
+  }
+}
+

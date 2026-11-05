@@ -1,25 +1,21 @@
-import { useState, useEffect, type ComponentType, type SVGProps } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
-  CalendarDays,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ClipboardList,
+  ChevronUp,
   CircleHelp,
   Clock,
-  LayoutDashboard,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
+  X,
 } from "lucide-react";
+import { sidebarRoutes } from "../../routes/sidebar.routes";
+import type { SidebarItem } from "../../interface/routes.types";
 
-type SidebarIcon = ComponentType<SVGProps<SVGSVGElement>>;
-
-export type SidebarItem = {
-  label: string;
-  href: string;
-  icon: SidebarIcon;
-};
+export type { SidebarItem };
 
 export type SidebarProps = {
   items?: SidebarItem[];
@@ -33,15 +29,9 @@ export type SidebarProps = {
   logoutHref?: string;
 };
 
-const defaultItems: SidebarItem[] = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Appointments", href: "/appointments", icon: CalendarDays },
-  { label: "Services", href: "/services", icon: ClipboardList },
-];
-
 export function Sidebar({
   activeHref = "/appointments",
-  items = defaultItems,
+  items = sidebarRoutes,
   onNavigate,
   onSettingsClick,
   onHelpClick,
@@ -74,7 +64,50 @@ export function Sidebar({
     day: "numeric",
   });
 
-  const activeIndex = items.findIndex((item) => item.href === activeHref);
+  const [collapsedFlyout, setCollapsedFlyout] = useState<string | null>(null);
+  const flyoutRef = useRef<HTMLDivElement>(null);
+
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    items.forEach((item) => {
+      if (item.subItems?.some((sub) => sub.href === activeHref)) {
+        initial[item.label] = true;
+      }
+    });
+    return initial;
+  });
+
+  useEffect(() => {
+    items.forEach((item) => {
+      if (item.subItems?.some((sub) => sub.href === activeHref)) {
+        setOpenMenus((prev) => ({ ...prev, [item.label]: true }));
+      }
+    });
+  }, [activeHref, items]);
+
+  useEffect(() => {
+    if (!collapsedFlyout) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (flyoutRef.current && !flyoutRef.current.contains(e.target as Node)) {
+        setCollapsedFlyout(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [collapsedFlyout]);
+
+  const toggleMenu = (label: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpenMenus((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
+
+  const isItemActive = (item: SidebarItem) => item.href === activeHref && !item.subItems;
+
+  const activeIndex = items.findIndex(isItemActive);
   const hasActiveItem = activeIndex !== -1;
   const activeItem = hasActiveItem ? items[activeIndex] : null;
   const beforeActive = hasActiveItem ? items.slice(0, activeIndex) : items;
@@ -168,46 +201,235 @@ export function Sidebar({
 
   const renderItem = (item: SidebarItem, active = false) => {
     const Icon = item.icon;
+    const hasSub = Boolean(item.subItems && item.subItems.length > 0);
+    const isOpen = Boolean(openMenus[item.label]);
+    const isSubChildActive = Boolean(item.subItems?.some((sub) => sub.href === activeHref));
+    const isItemEffectivelyActive = active || isSubChildActive;
 
     return (
-      <a
-        aria-current={active ? "page" : undefined}
-        aria-label={isCollapsed ? item.label : undefined}
-        title={isCollapsed ? item.label : undefined}
-        className={[
-          "flex min-h-9 items-center whitespace-nowrap font-medium transition-colors",
-          isCollapsed
-            ? "flex-col justify-center text-[9px] gap-1 rounded-xl px-0 py-2 text-sm"
-            : "gap-2 px-3 text-xs",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] focus-visible:ring-inset",
-          active
-            ? isCollapsed
-              ? "text-white"
-              : "min-h w-[calc(100%+0.5rem)] rounded-l-full rounded-r-none bg-white text-[#D9145A]"
-            : "rounded-xl text-white hover:bg-white/10",
-        ].join(" ")}
-        href={item.href}
-        onClick={(e) => {
-          if (onNavigate) {
-            e.preventDefault();
-            onNavigate(item);
-          }
-        }}
-      >
-        <span
-          className={[
-            "flex shrink-0 items-center justify-center",
-            isCollapsed ? "size-8 rounded-full bg-[#B31350]" : "size-4",
-          ].join(" ")}
-        >
-          <Icon
-            aria-hidden="true"
-            className={isCollapsed ? "size-4" : "size-4"}
-            strokeWidth={active ? 2.25 : 2}
-          />
-        </span>
-        <span>{item.label}</span>
-      </a>
+      <div className="relative flex flex-col gap-0.5">
+        {hasSub ? (
+          <button
+            type="button"
+            aria-expanded={isOpen}
+            aria-label={isCollapsed ? item.label : undefined}
+            title={isCollapsed ? item.label : undefined}
+            className={[
+              "flex w-full items-center justify-between font-medium transition-colors cursor-pointer",
+              isCollapsed
+                ? "min-h-0 flex-col justify-center gap-0.5 rounded-xl px-0 py-1 text-[9px] leading-tight"
+                : "min-h-9 gap-2 px-3 text-xs",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset",
+              isItemEffectivelyActive
+                ? isCollapsed
+                  ? "text-white"
+                  : "rounded-xl bg-white/20 text-white font-semibold shadow-xs"
+                : "rounded-xl text-white hover:bg-white/10",
+            ].join(" ")}
+            onClick={(e) => {
+              if (isCollapsed) {
+                e.preventDefault();
+                setCollapsedFlyout((prev) => (prev === item.label ? null : item.label));
+              } else {
+                toggleMenu(item.label, e);
+              }
+            }}
+          >
+            <div className={`flex items-center ${isCollapsed ? "flex-col gap-0.5" : "gap-2"}`}>
+              <span
+                className={[
+                  "flex shrink-0 items-center justify-center transition-colors",
+                  isCollapsed
+                    ? isItemEffectivelyActive
+                      ? "size-7 rounded-full bg-white text-[#D9145A] shadow-sm"
+                      : "size-7 rounded-full bg-[#B31350] text-white"
+                    : "size-4",
+                ].join(" ")}
+              >
+                <Icon
+                  aria-hidden="true"
+                  className={isCollapsed ? "size-3.5" : "size-4"}
+                  strokeWidth={isItemEffectivelyActive ? 2.25 : 2}
+                />
+              </span>
+              <span className={isCollapsed ? "text-[9px] leading-tight" : ""}>{item.label}</span>
+            </div>
+
+            {!isCollapsed && (
+              <span className={`shrink-0 p-0.5 ${isItemEffectivelyActive ? "text-white" : "text-white/80"}`}>
+                {isOpen ? (
+                  <ChevronUp aria-hidden="true" className="size-3.5" />
+                ) : (
+                  <ChevronDown aria-hidden="true" className="size-3.5" />
+                )}
+              </span>
+            )}
+          </button>
+        ) : (
+          <a
+            aria-current={active ? "page" : undefined}
+            aria-label={isCollapsed ? item.label : undefined}
+            title={isCollapsed ? item.label : undefined}
+            className={[
+              "flex items-center whitespace-nowrap font-medium transition-colors",
+              isCollapsed
+                ? "min-h-0 flex-col justify-center gap-0.5 rounded-xl px-0 py-1 text-[9px] leading-tight"
+                : "min-h-9 gap-2 px-3 text-xs",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] focus-visible:ring-inset",
+              active
+                ? isCollapsed
+                  ? "text-white"
+                  : "min-h w-[calc(100%+0.5rem)] rounded-l-full rounded-r-none bg-white text-[#D9145A]"
+                : "rounded-xl text-white hover:bg-white/10",
+            ].join(" ")}
+            href={item.href}
+            onClick={(e) => {
+              if (onNavigate) {
+                e.preventDefault();
+                onNavigate(item);
+              }
+            }}
+          >
+            <span
+              className={[
+                "flex shrink-0 items-center justify-center transition-colors",
+                isCollapsed
+                  ? active
+                    ? "size-7 rounded-full bg-white text-[#D9145A] shadow-sm"
+                    : "size-7 rounded-full bg-[#B31350] text-white"
+                  : "size-4",
+              ].join(" ")}
+            >
+              <Icon
+                aria-hidden="true"
+                className={isCollapsed ? "size-3.5" : "size-4"}
+                strokeWidth={active ? 2.25 : 2}
+              />
+            </span>
+            <span className={isCollapsed ? "text-[9px] leading-tight" : ""}>{item.label}</span>
+          </a>
+        )}
+
+        {/* Sub-items dropdown: Only active sub-item gets white background! */}
+        {hasSub && !isCollapsed && isOpen && item.subItems && (
+          <div className="flex flex-col gap-1 py-1 pl-6 pr-1">
+            {item.subItems.map((sub) => {
+              const isSubActive = activeHref === sub.href;
+              const SubIcon = sub.icon;
+
+              return (
+                <a
+                  key={sub.href}
+                  href={sub.href}
+                  aria-current={isSubActive ? "page" : undefined}
+                  onClick={(e) => {
+                    if (onNavigate) {
+                      e.preventDefault();
+                      onNavigate({
+                        label: sub.label,
+                        href: sub.href,
+                        icon: sub.icon || item.icon,
+                      });
+                    }
+                  }}
+                  className={[
+                    "flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium transition cursor-pointer",
+                    isSubActive
+                      ? "bg-white text-[#D9145A] font-semibold shadow-xs"
+                      : "text-white/80 hover:bg-white/10 hover:text-white",
+                  ].join(" ")}
+                >
+                  {SubIcon ? (
+                    <SubIcon
+                      aria-hidden="true"
+                      className={`size-3.5 ${isSubActive ? "text-[#D9145A]" : "text-white/70"}`}
+                    />
+                  ) : (
+                    <span
+                      className={`size-1.5 rounded-full ${
+                        isSubActive ? "bg-[#D9145A]" : "bg-white/50"
+                      } shrink-0`}
+                    />
+                  )}
+                  <span>{sub.label}</span>
+                </a>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Collapsed flyout popover modal when sidebar is collapsed */}
+        {hasSub && isCollapsed && collapsedFlyout === item.label && item.subItems && (
+          <div
+            ref={flyoutRef}
+            className="absolute left-[calc(100%+0.5rem)] top-0 z-50 w-52 rounded-2xl bg-white p-2.5 text-slate-900 shadow-2xl border border-slate-100"
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 px-2 pb-2">
+              <div className="flex items-center gap-1.5 font-semibold text-xs text-slate-900">
+                <Icon className="size-4 text-[#D9145A]" />
+                <span>{item.label}</span>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCollapsedFlyout(null);
+                }}
+                className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="size-3.5" />
+              </button>
+            </div>
+
+            <div className="mt-1.5 flex flex-col gap-1">
+              {item.subItems.map((sub) => {
+                const isSubActive = activeHref === sub.href;
+                const SubIcon = sub.icon;
+
+                return (
+                  <a
+                    key={sub.href}
+                    href={sub.href}
+                    aria-current={isSubActive ? "page" : undefined}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCollapsedFlyout(null);
+                      if (onNavigate) {
+                        e.preventDefault();
+                        onNavigate({
+                          label: sub.label,
+                          href: sub.href,
+                          icon: sub.icon || item.icon,
+                        });
+                      }
+                    }}
+                    className={[
+                      "flex items-center gap-2 rounded-xl px-2.5 py-2 text-xs font-medium transition cursor-pointer",
+                      isSubActive
+                        ? "bg-[#D9145A] text-white font-semibold shadow-xs"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
+                    ].join(" ")}
+                  >
+                    {SubIcon ? (
+                      <SubIcon
+                        aria-hidden="true"
+                        className={`size-3.5 ${isSubActive ? "text-white" : "text-slate-400"}`}
+                      />
+                    ) : (
+                      <span
+                        className={`size-1.5 rounded-full ${
+                          isSubActive ? "bg-white" : "bg-slate-400"
+                        } shrink-0`}
+                      />
+                    )}
+                    <span>{sub.label}</span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -225,7 +447,12 @@ export function Sidebar({
             !isCollapsed && activeItem ? "rounded-br-xl" : "",
           ].join(" ")}
         >
-          <li className="flex min-h-14 items-center justify-between gap-2 px-2">
+          <li
+            className={[
+              "flex items-center justify-between gap-2 px-2",
+              isCollapsed ? "min-h-12" : "min-h-14",
+            ].join(" ")}
+          >
             <span
               aria-label="Sribees POS"
               className={[
@@ -238,7 +465,10 @@ export function Sidebar({
             <button
               aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               className="shrink-0 rounded-xl p-2 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              onClick={() => setIsCollapsed((collapsed) => !collapsed)}
+              onClick={() => {
+                setIsCollapsed((collapsed) => !collapsed);
+                setCollapsedFlyout(null);
+              }}
               type="button"
             >
               {isCollapsed ? (
@@ -248,8 +478,8 @@ export function Sidebar({
               )}
             </button>
           </li>
-          <div className="mb-3 border-b border-slate-50/5" />
-          <div className="flex flex-col gap-1">
+          <div className={isCollapsed ? "mb-1.5 border-b border-slate-50/5" : "mb-3 border-b border-slate-50/5"} />
+          <div className={`flex flex-col ${isCollapsed ? "gap-0.5" : "gap-1"}`}>
             {beforeActive.map((item) => (
               <li key={item.href} className="list-none">
                 {renderItem(item)}
@@ -262,7 +492,7 @@ export function Sidebar({
           <div
             className={[
               "relative z-10 bg-[#D9145A]",
-              isCollapsed ? "px-2" : "pl-2",
+              isCollapsed ? "px-2 my-0.5" : "pl-2",
             ].join(" ")}
           >
             {renderItem(activeItem, true)}
@@ -275,7 +505,7 @@ export function Sidebar({
             !isCollapsed && activeItem ? "rounded-tr-xl" : "",
           ].join(" ")}
         >
-          <ul className="flex flex-col gap-1">
+          <ul className={`flex flex-col ${isCollapsed ? "gap-0.5" : "gap-1"}`}>
             {afterActive.map((item) => (
               <li key={item.href}>{renderItem(item)}</li>
             ))}
@@ -286,8 +516,10 @@ export function Sidebar({
             {/* Current Date and Time - Single Line without Year or Seconds */}
             <div
               className={[
-                "flex items-center rounded-lg bg-white/10 px-2.5 py-1.5 text-white transition-all",
-                isCollapsed ? "justify-center px-1" : "justify-between",
+                "flex items-center rounded-lg px-2.5 py-1.5 text-white transition-all",
+                isCollapsed
+                  ? "justify-center px-1"
+                  : "bg-white/10 justify-between",
               ].join(" ")}
               title={`${formattedDate} • ${formattedTime}`}
             >
@@ -296,7 +528,7 @@ export function Sidebar({
                   {formattedDate}
                 </span>
               )}
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-white tabular-nums whitespace-nowrap">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-white  tabular-nums whitespace-nowrap">
                 <Clock
                   aria-hidden="true"
                   className="size-3 text-white/70 shrink-0"
