@@ -1,4 +1,4 @@
-import { Scissors, Package, CreditCard, Banknote, Smartphone, Receipt } from "lucide-react";
+import { Scissors, Package, CreditCard, Banknote, Building2, Receipt } from "lucide-react";
 import type { IncomeRecord } from "../../../../../interface/ledger.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
 
@@ -15,7 +15,7 @@ export function IncomeTable({ records }: IncomeTableProps) {
         </div>
         <h3 className="mt-3 text-sm font-semibold text-slate-800">No income records found</h3>
         <p className="mt-1 text-xs text-slate-500">
-          Try adjusting category tabs or your search terms.
+          No sales matches your current filter criteria or date range.
         </p>
       </div>
     );
@@ -27,65 +27,63 @@ export function IncomeTable({ records }: IncomeTableProps) {
         <table className="w-full text-left text-xs">
           <thead className="border-b border-slate-100 bg-slate-50 font-semibold text-slate-600 uppercase tracking-wider">
             <tr>
-              <th scope="col" className="px-5 py-3.5">Invoice & Date</th>
-              <th scope="col" className="px-5 py-3.5">Income Stream</th>
-              <th scope="col" className="px-5 py-3.5">Item / Service Details</th>
+              <th scope="col" className="px-5 py-3.5">Sale ID</th>
               <th scope="col" className="px-5 py-3.5">Customer</th>
-              <th scope="col" className="px-5 py-3.5">Payment Method</th>
+              <th scope="col" className="px-5 py-3.5">Income Type</th>
               <th scope="col" className="px-5 py-3.5 text-right">Amount</th>
+              <th scope="col" className="px-5 py-3.5">Payment Method</th>
+              <th scope="col" className="px-5 py-3.5">Date</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {records.map((item) => (
               <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                {/* Invoice & Date */}
-                <td className="whitespace-nowrap px-5 py-4">
-                  <div className="font-semibold text-slate-900 font-mono">{item.invoiceNo}</div>
-                  <div className="text-[11px] text-slate-400">{item.date}</div>
+                {/* Sale ID */}
+                <td className="whitespace-nowrap px-5 py-4 font-mono font-semibold text-slate-900">
+                  {item.saleId}
                 </td>
 
-                {/* Category Badge */}
+                {/* Customer */}
                 <td className="whitespace-nowrap px-5 py-4">
-                  {item.category === "service_sale" ? (
+                  <div className="font-medium text-slate-800">{item.customerName}</div>
+                  {item.description && (
+                    <div className="text-[11px] text-slate-400">{item.description}</div>
+                  )}
+                </td>
+
+                {/* Income Type */}
+                <td className="whitespace-nowrap px-5 py-4">
+                  {item.incomeType === "service" ? (
                     <span className="inline-flex items-center gap-1 rounded-full border border-primary-lighter bg-primary-lighter px-2.5 py-0.5 text-[11px] font-semibold text-primary">
                       <Scissors className="size-3" />
-                      Service Sale
+                      Service
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2.5 py-0.5 text-[11px] font-semibold text-purple-700">
                       <Package className="size-3" />
-                      Product Sale
+                      Product
                     </span>
                   )}
                 </td>
 
-                {/* Source Title */}
-                <td className="px-5 py-4">
-                  <div className="font-medium text-slate-900">{item.sourceTitle}</div>
-                </td>
-
-                {/* Customer */}
-                <td className="whitespace-nowrap px-5 py-4 text-slate-700">
-                  {item.customerName}
+                {/* Amount */}
+                <td className="whitespace-nowrap px-5 py-4 text-right font-bold text-emerald-600 text-sm">
+                  {formatPrice(item.amount, { space: true })}
                 </td>
 
                 {/* Payment Method */}
                 <td className="whitespace-nowrap px-5 py-4">
-                  <div className="flex items-center gap-1.5 text-slate-600 capitalize">
-                    {item.paymentMethod === "cash" ? (
-                      <Banknote className="size-3.5 text-emerald-600" />
-                    ) : item.paymentMethod === "card" ? (
-                      <CreditCard className="size-3.5 text-blue-600" />
-                    ) : (
-                      <Smartphone className="size-3.5 text-purple-600" />
-                    )}
-                    <span>{item.paymentMethod}</span>
+                  <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 px-2 py-1 text-slate-700 font-medium capitalize border border-slate-200">
+                    {item.paymentMethod === "cash" && <Banknote className="size-3.5 text-emerald-600" />}
+                    {item.paymentMethod === "card" && <CreditCard className="size-3.5 text-blue-600" />}
+                    {item.paymentMethod === "bank" && <Building2 className="size-3.5 text-purple-600" />}
+                    <span>{item.paymentMethod === "bank" ? "Bank" : item.paymentMethod === "card" ? "Card" : "Cash"}</span>
                   </div>
                 </td>
 
-                {/* Amount */}
-                <td className="whitespace-nowrap px-5 py-4 text-right font-bold text-emerald-600 text-sm">
-                  +{formatPrice(item.amount)}
+                {/* Date */}
+                <td className="whitespace-nowrap px-5 py-4 text-slate-600 font-mono">
+                  {item.date}
                 </td>
               </tr>
             ))}
@@ -97,4 +95,3 @@ export function IncomeTable({ records }: IncomeTableProps) {
 }
 
 export default IncomeTable;
-

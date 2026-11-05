@@ -1,175 +1,178 @@
 import { useState, useMemo } from "react";
-import { Plus } from "lucide-react";
-import type { IncomeRecord, IncomeFilterState, IncomeFormData } from "../../../interface/ledger.types";
-
-import LedgerNav from "../components/ledger-nav";
+import type { IncomeRecord, IncomeFilterState } from "../../../interface/ledger.types";
+import Header from "../../../components/header";
 import IncomeStats from "./components/income-stats";
 import IncomeFilters from "./components/income-filters";
 import IncomeTable from "./components/income-table";
-import IncomeModal from "./components/income-modal";
 
-const initialIncomeRecords: IncomeRecord[] = [
+// Initial mock sales data representing automated sales receipts from POS checkout
+const initialSalesIncomeRecords: IncomeRecord[] = [
   {
     id: "inc-1",
-    date: new Date().toISOString().split("T")[0],
-    category: "service_sale",
-    sourceTitle: "Balayage Color & Gloss Toner",
-    customerName: "Mia Johnson",
-    amount: 135.0,
+    saleId: "SAL-1001",
+    customerName: "Kasun Perera",
+    incomeType: "service",
+    amount: 14500,
     paymentMethod: "card",
-    invoiceNo: "INV-80211",
+    date: "2026-11-05",
+    description: "Keratin Hair Treatment & Styling",
   },
   {
     id: "inc-2",
-    date: new Date().toISOString().split("T")[0],
-    category: "product_sale",
-    sourceTitle: "Moroccan Argan Repair Shampoo (500ml)",
-    customerName: "Emma Wilson",
-    amount: 34.0,
-    paymentMethod: "card",
-    invoiceNo: "INV-80212",
+    saleId: "SAL-1002",
+    customerName: "Dilani Fernando",
+    incomeType: "product",
+    amount: 6800,
+    paymentMethod: "cash",
+    date: "2026-11-05",
+    description: "L'Oreal Professional Hair Serum (100ml)",
   },
   {
     id: "inc-3",
-    date: new Date().toISOString().split("T")[0],
-    category: "service_sale",
-    sourceTitle: "Classic Haircut & Blowdry",
-    customerName: "Sophia Brown",
-    amount: 45.0,
+    saleId: "SAL-1003",
+    customerName: "Sachini Jayawardena",
+    incomeType: "service",
+    amount: 4500,
     paymentMethod: "cash",
-    invoiceNo: "INV-80213",
+    date: "2026-11-04",
+    description: "Layered Haircut & Blowdry",
   },
   {
     id: "inc-4",
-    date: "2026-11-02",
-    category: "service_sale",
-    sourceTitle: "Hydra Deep Cleaning Facial",
-    customerName: "Ava Smith",
-    amount: 85.0,
-    paymentMethod: "card",
-    invoiceNo: "INV-80198",
+    saleId: "SAL-1004",
+    customerName: "Nimasha Silva",
+    incomeType: "service",
+    amount: 8500,
+    paymentMethod: "bank",
+    date: "2026-11-03",
+    description: "Gold Facial & Cleanup",
   },
   {
     id: "inc-5",
+    saleId: "SAL-1005",
+    customerName: "Amara Wickramasinghe",
+    incomeType: "product",
+    amount: 5200,
+    paymentMethod: "card",
     date: "2026-11-02",
-    category: "product_sale",
-    sourceTitle: "Olaplex No. 3 Hair Perfector",
-    customerName: "Charlotte Davis",
-    amount: 38.0,
-    paymentMethod: "online",
-    invoiceNo: "INV-80199",
+    description: "Moroccan Argan Shampoo & Conditioner",
   },
   {
     id: "inc-6",
+    saleId: "SAL-1006",
+    customerName: "Ruwanthi De Silva",
+    incomeType: "service",
+    amount: 25000,
+    paymentMethod: "bank",
     date: "2026-11-01",
-    category: "service_sale",
-    sourceTitle: "Bridal Full Glam & Lashes",
-    customerName: "Harper Lee",
-    amount: 165.0,
+    description: "Bridal Full Dressing & Makeup",
+  },
+  {
+    id: "inc-7",
+    saleId: "SAL-1007",
+    customerName: "Sanduni Gunasekara",
+    incomeType: "product",
+    amount: 3200,
+    paymentMethod: "cash",
+    date: "2026-10-30",
+    description: "Matte Finish Hair Clay Wax",
+  },
+  {
+    id: "inc-8",
+    saleId: "SAL-1008",
+    customerName: "Chathurika Senanayake",
+    incomeType: "service",
+    amount: 6000,
     paymentMethod: "card",
-    invoiceNo: "INV-80170",
+    date: "2026-10-28",
+    description: "Pedicure & Manicure Deluxe",
   },
 ];
 
-export function LedgerIncome() {
-  const [records, setRecords] = useState<IncomeRecord[]>(initialIncomeRecords);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const initialFilters: IncomeFilterState = {
+  search: "",
+  startDate: "",
+  endDate: "",
+  incomeType: "all",
+};
 
-  const [filters, setFilters] = useState<IncomeFilterState>({
-    search: "",
-    category: "all",
-    paymentMethod: "all",
-  });
+export function LedgerIncome() {
+  const [records] = useState<IncomeRecord[]>(initialSalesIncomeRecords);
+  const [filters, setFilters] = useState<IncomeFilterState>(initialFilters);
 
   const handleFilterChange = (updated: Partial<IncomeFilterState>) => {
-    setFilters((prev: IncomeFilterState) => ({ ...prev, ...updated }));
+    setFilters((prev) => ({ ...prev, ...updated }));
   };
 
-  const handleAddIncome = (data: IncomeFormData) => {
-    const newRecord: IncomeRecord = {
-      id: `inc-${Date.now()}`,
-      ...data,
-    };
-    setRecords((prev) => [newRecord, ...prev]);
+  const handleResetFilters = () => {
+    setFilters(initialFilters);
   };
 
-  const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
-
+  // Summary statistics calculated directly from sales records
   const stats = useMemo(() => {
     const total = records.reduce((acc, r) => acc + r.amount, 0);
     const serviceInc = records
-      .filter((r) => r.category === "service_sale")
+      .filter((r) => r.incomeType === "service")
       .reduce((acc, r) => acc + r.amount, 0);
     const productInc = records
-      .filter((r) => r.category === "product_sale")
-      .reduce((acc, r) => acc + r.amount, 0);
-    const todayInc = records
-      .filter((r) => r.date === todayStr)
+      .filter((r) => r.incomeType === "product")
       .reduce((acc, r) => acc + r.amount, 0);
 
     return {
       totalIncome: total,
       serviceIncome: serviceInc,
       productIncome: productInc,
-      todayIncome: todayInc,
     };
-  }, [records, todayStr]);
+  }, [records]);
 
+  // Filtered list based on Search, Date Range, and Income Type
   const filteredRecords = useMemo(() => {
     return records.filter((r) => {
+      // Search by Sale ID or Customer name
       if (filters.search.trim()) {
         const query = filters.search.toLowerCase();
-        const matchesInv = r.invoiceNo.toLowerCase().includes(query);
-        const matchesCust = r.customerName.toLowerCase().includes(query);
-        const matchesTitle = r.sourceTitle.toLowerCase().includes(query);
-        if (!matchesInv && !matchesCust && !matchesTitle) return false;
+        const matchesSaleId = r.saleId.toLowerCase().includes(query);
+        const matchesCustomer = r.customerName.toLowerCase().includes(query);
+        if (!matchesSaleId && !matchesCustomer) return false;
       }
-      if (filters.category !== "all" && r.category !== filters.category) {
+
+      // Income Type filter
+      if (filters.incomeType !== "all" && r.incomeType !== filters.incomeType) {
         return false;
       }
-      if (filters.paymentMethod !== "all" && r.paymentMethod !== filters.paymentMethod) {
+
+      // Date Range filter
+      if (filters.startDate && r.date < filters.startDate) {
         return false;
       }
+      if (filters.endDate && r.date > filters.endDate) {
+        return false;
+      }
+
       return true;
     });
   }, [records, filters]);
 
   return (
     <div className="flex flex-col gap-5 text-slate-900">
-      {/* Shared Ledger Navigation Tabs */}
-      <LedgerNav activeTab="income" />
+      {/* Page Header */}
+      <Header
+        title="Income Ledger"
+        description="Track incoming salon revenue automatically recorded from service treatments and product sales."
+      />
 
-      {/* Action Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-base font-semibold text-slate-800">Sales & Revenue Breakdown</h2>
-          <p className="text-xs text-slate-500">Service treatments and retail product sales records.</p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
-        >
-          <Plus className="size-4" />
-          <span>Record Income</span>
-        </button>
-      </div>
-
-      {/* KPI Stats */}
+      {/* 3 Summary Cards */}
       <IncomeStats stats={stats} />
 
-      {/* Filters */}
-      <IncomeFilters filters={filters} onFilterChange={handleFilterChange} />
-
-      {/* Table */}
-      <IncomeTable records={filteredRecords} />
-
-      {/* Record Income Modal */}
-      <IncomeModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddIncome}
+      {/* Filters (Date Range, Income Type, Search) */}
+      <IncomeFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onResetFilters={handleResetFilters}
       />
+
+      {/* Income Table */}
+      <IncomeTable records={filteredRecords} />
     </div>
   );
 }

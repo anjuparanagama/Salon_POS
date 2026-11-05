@@ -1,7 +1,9 @@
 import { useState, useMemo } from "react";
-import type { TransactionRecord, TransactionFilterState } from "../../../interface/ledger.types";
-
-import LedgerNav from "../components/ledger-nav";
+import type {
+  TransactionRecord,
+  TransactionFilterState,
+} from "../../../interface/ledger.types";
+import Header from "../../../components/header";
 import TransactionStats from "./components/transaction-stats";
 import TransactionFilters from "./components/transaction-filters";
 import TransactionTable from "./components/transaction-table";
@@ -9,150 +11,185 @@ import TransactionTable from "./components/transaction-table";
 const initialTransactions: TransactionRecord[] = [
   {
     id: "tx-1",
-    txnId: "TXN-90214",
-    date: new Date().toISOString().split("T")[0],
-    time: "10:45 AM",
+    transactionId: "TXN-001",
+    customerName: "Kasun Perera",
     type: "payment",
-    amount: 135.0,
-    paymentMethod: "credit_card",
-    customerName: "Mia Johnson",
-    status: "completed",
-    reference: "Terminal #01 Auth: 49102",
+    paymentMethod: "cash",
+    amount: 2500,
+    date: "2026-11-05",
+    status: "successful",
+    notes: "Hair Styling & Wash checkout settlement",
   },
   {
     id: "tx-2",
-    txnId: "TXN-90215",
-    date: new Date().toISOString().split("T")[0],
-    time: "11:20 AM",
+    transactionId: "TXN-002",
+    customerName: "Dilani Fernando",
     type: "payment",
-    amount: 34.0,
-    paymentMethod: "debit_card",
-    customerName: "Emma Wilson",
-    status: "completed",
-    reference: "POS Retail Register",
+    paymentMethod: "card",
+    amount: 14500,
+    date: "2026-11-05",
+    status: "successful",
+    notes: "Keratin Treatment terminal payment",
   },
   {
     id: "tx-3",
-    txnId: "TXN-90216",
-    date: new Date().toISOString().split("T")[0],
-    time: "01:15 PM",
+    transactionId: "TXN-003",
+    customerName: "Sachini Jayawardena",
     type: "refund",
-    amount: 45.0,
-    paymentMethod: "credit_card",
-    customerName: "Lucas Vance",
-    status: "completed",
-    reference: "Returned unopened styling paste #RN-88",
+    paymentMethod: "card",
+    amount: 3500,
+    date: "2026-11-04",
+    status: "successful",
+    notes: "Return of unopened serum product #RT-102",
   },
   {
     id: "tx-4",
-    txnId: "TXN-90180",
-    date: "2026-11-02",
-    time: "03:10 PM",
+    transactionId: "TXN-004",
+    customerName: "Nimasha Silva",
     type: "payment",
-    amount: 85.0,
-    paymentMethod: "credit_card",
-    customerName: "Ava Smith",
-    status: "completed",
-    reference: "Terminal #02 Auth: 99401",
+    paymentMethod: "bank",
+    amount: 8500,
+    date: "2026-11-03",
+    status: "successful",
+    notes: "Gold Facial & Cleanup direct bank transfer",
   },
   {
     id: "tx-5",
-    txnId: "TXN-90172",
-    date: "2026-11-02",
-    time: "04:50 PM",
+    transactionId: "TXN-005",
+    customerName: "Amara Wickramasinghe",
     type: "payment",
-    amount: 150.0,
-    paymentMethod: "online",
-    customerName: "Harper Lee",
-    status: "completed",
-    reference: "Stripe Online Deposit",
+    paymentMethod: "cash",
+    amount: 5200,
+    date: "2026-11-02",
+    status: "successful",
+    notes: "Hair treatment package intake",
   },
   {
     id: "tx-6",
-    txnId: "TXN-90165",
-    date: "2026-11-01",
-    time: "02:00 PM",
+    transactionId: "TXN-006",
+    customerName: "Ruwanthi De Silva",
     type: "refund",
-    amount: 25.0,
-    paymentMethod: "credit_card",
-    customerName: "Chloe Martin",
-    status: "completed",
-    reference: "Partial service discount adjustment",
+    paymentMethod: "cash",
+    amount: 1500,
+    date: "2026-11-01",
+    status: "successful",
+    notes: "Service cancellation partial advance refund",
+  },
+  {
+    id: "tx-7",
+    transactionId: "TXN-007",
+    customerName: "Sanduni Gunasekara",
+    type: "payment",
+    paymentMethod: "card",
+    amount: 6000,
+    date: "2026-10-31",
+    status: "failed",
+    notes: "Card declined by issuing bank",
+  },
+  {
+    id: "tx-8",
+    transactionId: "TXN-008",
+    customerName: "Chathurika Senanayake",
+    type: "payment",
+    paymentMethod: "card",
+    amount: 9500,
+    date: "2026-10-30",
+    status: "successful",
+    notes: "Deluxe Spa & Manicure settlement",
   },
 ];
 
+const initialFilters: TransactionFilterState = {
+  search: "",
+  startDate: "",
+  endDate: "",
+  type: "all",
+  paymentMethod: "all",
+};
+
 export function LedgerTransactions() {
   const [transactions] = useState<TransactionRecord[]>(initialTransactions);
-
-  const [filters, setFilters] = useState<TransactionFilterState>({
-    search: "",
-    type: "all",
-    status: "all",
-    paymentMethod: "all",
-  });
+  const [filters, setFilters] = useState<TransactionFilterState>(initialFilters);
 
   const handleFilterChange = (updated: Partial<TransactionFilterState>) => {
-    setFilters((prev: TransactionFilterState) => ({ ...prev, ...updated }));
+    setFilters((prev) => ({ ...prev, ...updated }));
   };
 
-  const stats = useMemo(() => {
-    const totalVol = transactions.reduce((acc, t) => acc + t.amount, 0);
-    const payments = transactions.filter((t) => t.type === "payment");
-    const refunds = transactions.filter((t) => t.type === "refund");
+  const handleResetFilters = () => {
+    setFilters(initialFilters);
+  };
 
-    const paymentSum = payments.reduce((acc, t) => acc + t.amount, 0);
-    const refundSum = refunds.reduce((acc, t) => acc + t.amount, 0);
+  // Summary statistics for Total Transactions, Total Received, Total Refunded
+  const stats = useMemo(() => {
+    const totalCount = transactions.length;
+
+    const totalRec = transactions
+      .filter((t) => t.type === "payment" && t.status === "successful")
+      .reduce((acc, t) => acc + t.amount, 0);
+
+    const totalRef = transactions
+      .filter((t) => t.type === "refund" && t.status === "successful")
+      .reduce((acc, t) => acc + t.amount, 0);
 
     return {
-      totalVolume: totalVol,
-      paymentsCount: payments.length,
-      refundsCount: refunds.length,
-      netCollected: paymentSum - refundSum,
+      totalTransactions: totalCount,
+      totalReceived: totalRec,
+      totalRefunded: totalRef,
     };
   }, [transactions]);
 
+  // Filtered transactions based on search, date range, type, and payment method
   const filteredTransactions = useMemo(() => {
     return transactions.filter((t) => {
+      // Search by Transaction ID or Customer name
       if (filters.search.trim()) {
         const query = filters.search.toLowerCase();
-        const matchesTxn = t.txnId.toLowerCase().includes(query);
-        const matchesCust = t.customerName.toLowerCase().includes(query);
-        const matchesRef = t.reference.toLowerCase().includes(query);
-        if (!matchesTxn && !matchesCust && !matchesRef) return false;
+        const matchesTxnId = t.transactionId.toLowerCase().includes(query);
+        const matchesCustomer = t.customerName.toLowerCase().includes(query);
+        if (!matchesTxnId && !matchesCustomer) return false;
       }
+
+      // Transaction Type filter (payment / refund)
       if (filters.type !== "all" && t.type !== filters.type) {
         return false;
       }
-      if (filters.status !== "all" && t.status !== filters.status) {
-        return false;
-      }
+
+      // Payment Method filter
       if (filters.paymentMethod !== "all" && t.paymentMethod !== filters.paymentMethod) {
         return false;
       }
+
+      // Date Range filter
+      if (filters.startDate && t.date < filters.startDate) {
+        return false;
+      }
+      if (filters.endDate && t.date > filters.endDate) {
+        return false;
+      }
+
       return true;
     });
   }, [transactions, filters]);
 
   return (
     <div className="flex flex-col gap-5 text-slate-900">
-      {/* Shared Ledger Navigation Tabs */}
-      <LedgerNav activeTab="transactions" />
+      {/* Page Header */}
+      <Header
+        title="Transaction Ledger"
+        description="View all salon financial transactions, customer settlements, and refund reversals."
+      />
 
-      {/* Action Header */}
-      <div>
-        <h2 className="text-base font-semibold text-slate-800">Payments & Refund Reversals</h2>
-        <p className="text-xs text-slate-500">
-          Complete settlement trail of terminal charges, cash intake, and customer refunds.
-        </p>
-      </div>
-
-      {/* KPI Stats */}
+      {/* 3 Summary Cards: Total Transactions, Total Received, Total Refunded */}
       <TransactionStats stats={stats} />
 
-      {/* Filters */}
-      <TransactionFilters filters={filters} onFilterChange={handleFilterChange} />
+      {/* Filters (Search, Date Range, Type, Payment Method) */}
+      <TransactionFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onResetFilters={handleResetFilters}
+      />
 
-      {/* Table */}
+      {/* Transactions Table */}
       <TransactionTable records={filteredTransactions} />
     </div>
   );
