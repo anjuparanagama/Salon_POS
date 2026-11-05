@@ -1,4 +1,4 @@
-import { Clock, Phone, User, Check, Eye, Pencil, Printer } from "lucide-react";
+import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown } from "lucide-react";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 
@@ -11,32 +11,45 @@ export type AppointmentListProps = {
   onPrintInvoice?: (appointment: Appointment) => void;
 };
 
-const statusBadgeStyles: Record<AppointmentStatus, { text: string; bg: string; label: string }> = {
+const statusBadgeStyles: Record<AppointmentStatus, { text: string; bg: string; border: string; label: string }> = {
   confirmed: {
     text: "text-emerald-700",
-    bg: "bg-emerald-50 border-emerald-200",
+    bg: "bg-emerald-50",
+    border: "border-emerald-200",
     label: "Confirmed",
   },
   in_progress: {
     text: "text-amber-700",
-    bg: "bg-amber-50 border-amber-200",
+    bg: "bg-amber-50",
+    border: "border-amber-200",
     label: "In Progress",
   },
   completed: {
     text: "text-blue-700",
-    bg: "bg-blue-50 border-blue-200",
+    bg: "bg-blue-50",
+    border: "border-blue-200",
     label: "Completed",
   },
   pending: {
     text: "text-purple-700",
-    bg: "bg-purple-50 border-purple-200",
+    bg: "bg-purple-50",
+    border: "border-purple-200",
     label: "Pending",
   },
   cancelled: {
     text: "text-rose-700",
-    bg: "bg-rose-50 border-rose-200",
+    bg: "bg-rose-50",
+    border: "border-rose-200",
     label: "Cancelled",
   },
+};
+
+const getAppointmentNumber = (id: string) => {
+  const raw = id.replace("apt-", "");
+  if (/^\d+$/.test(raw)) {
+    return raw.length > 5 ? `#APT-${raw.slice(-4)}` : `#APT-${raw.padStart(3, "0")}`;
+  }
+  return `#APT-${raw.toUpperCase()}`;
 };
 
 export function AppointmentList({
@@ -64,23 +77,36 @@ export function AppointmentList({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-100 bg-white shadow-xs">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="w-full min-w-[1100px] text-left text-xs border-collapse">
           <thead className="border-b border-slate-100 bg-slate-50 font-semibold text-slate-600 uppercase tracking-wider">
             <tr>
-              <th scope="col" className="px-5 py-3.5">Date & Time</th>
-              <th scope="col" className="px-5 py-3.5">Client</th>
-              <th scope="col" className="px-5 py-3.5">Service</th>
-              <th scope="col" className="px-5 py-3.5">Specialist</th>
-              <th scope="col" className="px-5 py-3.5">Price</th>
-              <th scope="col" className="px-5 py-3.5">Status</th>
-              <th scope="col" className="px-5 py-3.5 text-right">Actions</th>
+              <th scope="col" className="px-5 py-3.5 min-w-[110px]">Apt #</th>
+              <th scope="col" className="px-5 py-3.5 min-w-[160px]">Date & Time</th>
+              <th scope="col" className="px-5 py-3.5 min-w-[210px]">Client</th>
+              <th scope="col" className="px-5 py-3.5 min-w-[220px]">Service</th>
+              <th scope="col" className="px-5 py-3.5 min-w-[160px]">Specialist</th>
+              <th scope="col" className="px-5 py-3.5 min-w-[110px]">Price</th>
+              <th scope="col" className="px-5 py-3.5 min-w-[130px]">Status</th>
+              <th
+                scope="col"
+                className="sticky right-0 z-20 bg-slate-50 px-5 py-3.5 text-right w-[130px] min-w-[130px] shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)] border-l border-slate-100"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {appointments.map((apt) => {
               const badge = statusBadgeStyles[apt.status];
               return (
-                <tr key={apt.id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={apt.id} className="group hover:bg-slate-50/70 transition-colors">
+                  {/* Appointment Number */}
+                  <td className="whitespace-nowrap px-5 py-4 font-mono font-semibold text-slate-800">
+                    <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs border border-slate-200/80">
+                      {getAppointmentNumber(apt.id)}
+                    </span>
+                  </td>
+
                   {/* Date & Time */}
                   <td className="whitespace-nowrap px-5 py-4">
                     <div className="font-semibold text-slate-900">{apt.date}</div>
@@ -93,16 +119,16 @@ export function AppointmentList({
                   </td>
 
                   {/* Client Info */}
-                  <td className="px-5 py-4">
+                  <td className="whitespace-nowrap px-5 py-4">
                     <div className="flex items-center gap-2.5">
                       <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-[11px] font-bold text-primary">
                         {apt.clientName.charAt(0)}
                       </div>
                       <div>
                         <div className="font-semibold text-slate-900">{apt.clientName}</div>
-                        <div className="flex items-center gap-1 text-[11px] text-slate-500">
-                          <Phone className="size-3 text-slate-400" />
-                          <span>{apt.clientPhone}</span>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 whitespace-nowrap">
+                          <Phone className="size-3 text-slate-400 shrink-0" />
+                          <span className="whitespace-nowrap">{apt.clientPhone}</span>
                         </div>
                       </div>
                     </div>
@@ -129,19 +155,43 @@ export function AppointmentList({
                     {formatPrice(apt.price)}
                   </td>
 
-                  {/* Status Badge */}
+                  {/* Status Dropdown */}
                   <td className="whitespace-nowrap px-5 py-4">
-                    <span
-                      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${badge.bg} ${badge.text}`}
-                    >
-                      {badge.label}
-                    </span>
+                    <div className="relative inline-block">
+                      <select
+                        value={apt.status}
+                        onChange={(e) =>
+                          onStatusChange(apt.id, e.target.value as AppointmentStatus)
+                        }
+                        className={`appearance-none rounded-full border px-3 py-1 pr-6 text-[11px] font-semibold outline-none transition cursor-pointer ${badge.bg} ${badge.text} ${badge.border} hover:opacity-90 focus:ring-2 focus:ring-primary/20`}
+                        title="Change Appointment Status"
+                      >
+                        <option value="pending" className="bg-white text-purple-700 font-semibold py-1">
+                          Pending
+                        </option>
+                        <option value="confirmed" className="bg-white text-emerald-700 font-semibold py-1">
+                          Confirmed
+                        </option>
+                        <option value="in_progress" className="bg-white text-amber-700 font-semibold py-1">
+                          In Progress
+                        </option>
+                        <option value="completed" className="bg-white text-blue-700 font-semibold py-1">
+                          Completed
+                        </option>
+                        <option value="cancelled" className="bg-white text-rose-700 font-semibold py-1">
+                          Cancelled
+                        </option>
+                      </select>
+                      <ChevronDown
+                        className={`pointer-events-none absolute right-2 top-1/2 size-3 -translate-y-1/2 ${badge.text} opacity-70`}
+                      />
+                    </div>
                   </td>
 
-                  {/* Actions Column */}
-                  <td className="whitespace-nowrap px-5 py-4 text-right">
+                  {/* Actions Column - Sticky Right */}
+                  <td className="sticky right-0 z-10 bg-white group-hover:bg-slate-50 whitespace-nowrap px-5 py-4 text-right shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)] border-l border-slate-100 transition-colors w-[130px] min-w-[130px]">
                     <div className="inline-flex items-center justify-end gap-1.5">
-                      {/* 1. New / Pending Appointments -> Approve button */}
+                      {/* 1. New / Pending Appointments -> Approve Button (Icon + Text) */}
                       {apt.status === "pending" && (
                         <button
                           type="button"
@@ -149,6 +199,7 @@ export function AppointmentList({
                             onApprove ? onApprove(apt.id) : onStatusChange(apt.id, "confirmed")
                           }
                           title="Approve Appointment"
+                          aria-label="Approve Appointment"
                           className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 transition cursor-pointer"
                         >
                           <Check className="size-3.5" />
@@ -156,54 +207,55 @@ export function AppointmentList({
                         </button>
                       )}
 
-                      {/* 2. Approved Appointments (Confirmed & In Progress) -> View & Edit buttons */}
+                      {/* 2. Approved Appointments (Confirmed & In Progress) -> View & Edit (Icons Only, No Border) */}
                       {(apt.status === "confirmed" || apt.status === "in_progress") && (
                         <>
                           <button
                             type="button"
                             onClick={() => onView?.(apt)}
                             title="View Appointment"
-                            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-50 hover:text-slate-900 transition cursor-pointer"
+                            aria-label="View Appointment"
+                            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
                           >
-                            <Eye className="size-3.5 text-slate-500" />
-                            <span>View</span>
+                            <Eye className="size-4" />
                           </button>
 
                           <button
                             type="button"
                             onClick={() => onEdit?.(apt)}
                             title="Edit Appointment"
-                            className="inline-flex items-center gap-1 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-xs font-semibold text-primary shadow-xs hover:bg-primary/10 transition cursor-pointer"
+                            aria-label="Edit Appointment"
+                            className="rounded-md p-1.5 text-primary hover:bg-primary-lighter/60 hover:text-primary-dark transition cursor-pointer"
                           >
-                            <Pencil className="size-3.5" />
-                            <span>Edit</span>
+                            <Pencil className="size-4" />
                           </button>
                         </>
                       )}
 
-                      {/* 3. Completed Appointments -> Print Invoice button */}
+                      {/* 3. Completed Appointments -> Print Bill Button (Icon + Text, No Background or Border) */}
                       {apt.status === "completed" && (
                         <button
                           type="button"
                           onClick={() => onPrintInvoice?.(apt)}
-                          title="Print Invoice"
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition cursor-pointer"
+                          title="Print Bill"
+                          aria-label="Print Bill"
+                          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
                         >
-                          <Printer className="size-3.5" />
-                          <span>Print Invoice</span>
+                          <Printer className="size-3.5 text-slate-500" />
+                          <span>Print Bill</span>
                         </button>
                       )}
 
-                      {/* 4. Cancelled Appointments -> View details */}
+                      {/* 4. Cancelled Appointments -> View Details (Icon Only, No Border) */}
                       {apt.status === "cancelled" && (
                         <button
                           type="button"
                           onClick={() => onView?.(apt)}
                           title="View Details"
-                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 shadow-xs hover:bg-slate-50 transition cursor-pointer"
+                          aria-label="View Details"
+                          className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
                         >
-                          <Eye className="size-3.5 text-slate-400" />
-                          <span>View</span>
+                          <Eye className="size-4" />
                         </button>
                       )}
                     </div>

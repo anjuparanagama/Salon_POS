@@ -23,6 +23,7 @@
     "past": "Past"
   },
   "table": {
+    "aptNo": "Apt #",
     "client": "Client",
     "service": "Service",
     "staff": "Staff",

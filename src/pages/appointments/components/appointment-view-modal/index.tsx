@@ -59,13 +59,20 @@ export function AppointmentViewModal({
   const statusInfo = statusDetails[appointment.status];
   const StatusIcon = statusInfo.icon;
 
+  const raw = appointment.id.replace("apt-", "");
+  const aptNumber = /^\d+$/.test(raw)
+    ? raw.length > 5
+      ? `#APT-${raw.slice(-4)}`
+      : `#APT-${raw.padStart(3, "0")}`
+    : `#APT-${raw.toUpperCase()}`;
+
   return (
     <SidePanel
       isOpen={isOpen}
       onClose={onClose}
       title="Appointment Details"
-      description={`Booking reference #${appointment.id}`}
-      size="md"
+      description={`Booking reference ${aptNumber}`}
+      size="lg"
       footer={
         <div className="flex items-center justify-end gap-2">
           <button
@@ -104,78 +111,103 @@ export function AppointmentViewModal({
         </div>
       }
     >
-      <div className="flex flex-col gap-4 text-xs">
-        {/* Status banner */}
+      <div className="flex flex-col gap-3.5 text-xs">
+        {/* Status & Price Hero Banner */}
         <div
-          className={`flex items-center justify-between rounded-xl border p-3.5 ${statusInfo.bg}`}
+          className={`flex items-center justify-between rounded-xl border px-4 py-3 ${statusInfo.bg}`}
         >
           <div className="flex items-center gap-2">
             <StatusIcon className={`size-4 ${statusInfo.text}`} />
-            <span className={`font-semibold ${statusInfo.text}`}>{statusInfo.label}</span>
+            <span className={`text-xs font-semibold ${statusInfo.text}`}>{statusInfo.label}</span>
           </div>
-          <span className="font-bold text-slate-900 text-sm">{formatPrice(appointment.price)}</span>
+          <div className="text-right">
+            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider block">
+              Total Price
+            </span>
+            <span className="font-bold text-slate-900 text-sm">{formatPrice(appointment.price)}</span>
+          </div>
         </div>
 
-        {/* Client Card */}
-        <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3.5">
-          <div className="text-[11px] font-medium text-slate-400">Client Information</div>
-          <div className="mt-2.5 flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-sm font-bold text-primary">
-              {appointment.clientName.charAt(0)}
+        {/* Row 1: Client Information & Assigned Specialist in the SAME row */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* Client Box */}
+          <div className="flex flex-col justify-between rounded-xl border border-slate-100 bg-slate-50/60 p-3.5 transition-colors">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Client Information
+            </span>
+            <div className="mt-2.5 flex items-center gap-2.5">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-xs font-bold text-primary shadow-2xs">
+                {appointment.clientName.charAt(0)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold text-slate-900 text-xs">{appointment.clientName}</p>
+                <div className="mt-0.5 flex items-center gap-1 text-[11px] text-slate-500">
+                  <Phone className="size-3 shrink-0 text-slate-400" />
+                  <span className="truncate">{appointment.clientPhone}</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="font-semibold text-slate-900 text-sm">{appointment.clientName}</p>
-              <div className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500">
-                <Phone className="size-3.5 text-slate-400" />
-                <span>{appointment.clientPhone}</span>
+          </div>
+
+          {/* Assigned Specialist Box */}
+          <div className="flex flex-col justify-between rounded-xl border border-slate-100 bg-slate-50/60 p-3.5 transition-colors">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Assigned Specialist
+            </span>
+            <div className="mt-2.5 flex items-center gap-2.5">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700 shadow-2xs">
+                <User className="size-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold text-slate-900 text-xs">{appointment.staffName}</p>
+                <p className="mt-0.5 text-[11px] text-slate-500 truncate">Salon Specialist</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Assigned Specialist Card */}
-        <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3.5">
-          <div className="text-[11px] font-medium text-slate-400">Assigned Specialist</div>
-          <div className="mt-2.5 flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-600">
-              <User className="size-5" />
+        {/* Row 2: Service Information & Schedule in the SAME row */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* Service Box */}
+          <div className="flex flex-col justify-between rounded-xl border border-slate-100 p-3.5 bg-white">
+            <div className="flex items-center gap-1.5 text-slate-400">
+              <Scissors className="size-3.5 text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                Service
+              </span>
             </div>
-            <div>
-              <p className="font-semibold text-slate-900 text-sm">{appointment.staffName}</p>
-              <p className="text-xs text-slate-500">Salon Specialist</p>
+            <div className="mt-2">
+              <p className="font-semibold text-slate-900 text-xs line-clamp-1">
+                {appointment.serviceName}
+              </p>
+              <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-500">
+                <Clock className="size-3 text-slate-400" />
+                <span>{appointment.durationMinutes} mins session</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Schedule Box */}
+          <div className="flex flex-col justify-between rounded-xl border border-slate-100 p-3.5 bg-white">
+            <div className="flex items-center gap-1.5 text-slate-400">
+              <Calendar className="size-3.5 text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                Date & Time
+              </span>
+            </div>
+            <div className="mt-2">
+              <p className="font-semibold text-slate-900 text-xs">{appointment.date}</p>
+              <p className="mt-1 text-[11px] text-slate-500">Time: {appointment.time}</p>
             </div>
           </div>
         </div>
 
-        {/* Service Details Card */}
-        <div className="rounded-xl border border-slate-100 p-3.5">
-          <div className="flex items-center gap-1.5 text-slate-400">
-            <Scissors className="size-3.5" />
-            <span className="text-[11px] font-medium">Service Information</span>
-          </div>
-          <p className="mt-1.5 font-semibold text-slate-900 text-sm">{appointment.serviceName}</p>
-          <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-            <Clock className="size-3.5 text-slate-400" />
-            <span>{appointment.durationMinutes} minutes session</span>
-          </div>
-        </div>
-
-        {/* Schedule Card */}
-        <div className="rounded-xl border border-slate-100 p-3.5">
-          <div className="flex items-center gap-1.5 text-slate-400">
-            <Calendar className="size-3.5" />
-            <span className="text-[11px] font-medium">Date & Time</span>
-          </div>
-          <p className="mt-1.5 font-semibold text-slate-900 text-sm">{appointment.date}</p>
-          <p className="mt-0.5 text-xs text-slate-500">Scheduled Time: {appointment.time}</p>
-        </div>
-
-        {/* Special Notes */}
+        {/* Special Notes (if available) */}
         {appointment.notes && (
-          <div className="rounded-xl border border-slate-100 bg-amber-50/40 p-3.5">
-            <div className="flex items-center gap-1.5 text-amber-700">
+          <div className="rounded-xl border border-amber-200/60 bg-amber-50/50 p-3.5">
+            <div className="flex items-center gap-1.5 text-amber-800">
               <FileText className="size-3.5" />
-              <span className="text-[11px] font-medium">Special Notes</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">Special Notes</span>
             </div>
             <p className="mt-1.5 text-xs text-slate-700 leading-relaxed">{appointment.notes}</p>
           </div>

@@ -58,7 +58,7 @@ export function TopHeader({
   return (
     <header
       className={[
-        "flex w-full shrink-0 items-center justify-between border-b border-slate-100 bg-white py-2 px-4 sm:px-6 transition-all",
+        "flex w-full shrink-0 items-center justify-between border-b border-slate-100 bg-[#FFF4F7] py-2 px-4 sm:px-6 transition-all",
         className,
       ].join(" ")}
     >
