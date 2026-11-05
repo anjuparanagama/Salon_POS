@@ -72,8 +72,6 @@ export function StaffFilters({ filters, onFilterChange }: StaffFiltersProps) {
           >
             <option value="all">All Statuses</option>
             <option value="active">Active</option>
-            <option value="on_leave">On Leave</option>
-            <option value="break">On Break</option>
             <option value="inactive">Inactive</option>
           </select>
 

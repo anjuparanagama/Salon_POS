@@ -8,7 +8,7 @@ export type StaffRole =
   | "receptionist"
   | "salon_manager";
 
-export type StaffStatus = "active" | "on_leave" | "break" | "inactive";
+export type StaffStatus = "active" | "inactive" | "on_leave" | "break";
 
 export type StaffMember = {
   id: string;
@@ -23,10 +23,11 @@ export type StaffMember = {
   reviewsCount: number;
   completedAppointments: number;
   revenueGenerated: number;
-  scheduleDays: string[]; // ["Mon", "Tue", "Wed", "Thu", "Fri"]
   status: StaffStatus;
   joinedDate: string; // YYYY-MM-DD
   bio?: string;
+  canAccessPos?: boolean;
+  password?: string;
 };
 
 export type StaffStats = {
@@ -51,8 +52,10 @@ export type StaffFormData = {
   phone: string;
   specialties: string[];
   commissionRate: number;
-  scheduleDays: string[];
   status: StaffStatus;
   bio?: string;
+  canAccessPos?: boolean;
+  password?: string;
 };
+
 

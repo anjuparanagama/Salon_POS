@@ -5,13 +5,12 @@ import type {
   StaffMember,
   StaffFilterState,
   StaffFormData,
-  StaffStats as StaffStatsType,
 } from "../../interface/staff.types";
 
-import StaffStats from "./components/staff-stats";
 import StaffFilters from "./components/staff-filters";
 import StaffList from "./components/staff-list";
-import StaffModal from "./components/staff-modal";
+import StaffPanel from "./components/staff-panel";
+import StaffViewPanel from "./components/staff-view-panel";
 import Header from "../../components/header";
 
 const initialStaff: StaffMember[] = [
@@ -27,10 +26,10 @@ const initialStaff: StaffMember[] = [
     reviewsCount: 142,
     completedAppointments: 320,
     revenueGenerated: 24800,
-    scheduleDays: ["Tue", "Wed", "Thu", "Fri", "Sat"],
     status: "active",
     joinedDate: "2023-03-15",
     bio: "Master colorist and senior stylist with 8 years of luxury salon experience.",
+    canAccessPos: true,
   },
   {
     id: "st-2",
@@ -44,10 +43,10 @@ const initialStaff: StaffMember[] = [
     reviewsCount: 98,
     completedAppointments: 245,
     revenueGenerated: 14500,
-    scheduleDays: ["Mon", "Wed", "Thu", "Fri", "Sat"],
     status: "active",
     joinedDate: "2023-07-20",
     bio: "Certified nail artist specializing in organic nail wellness and modern artistic sets.",
+    canAccessPos: true,
   },
   {
     id: "st-3",
@@ -61,10 +60,10 @@ const initialStaff: StaffMember[] = [
     reviewsCount: 115,
     completedAppointments: 210,
     revenueGenerated: 21200,
-    scheduleDays: ["Mon", "Tue", "Thu", "Fri", "Sun"],
     status: "active",
     joinedDate: "2024-01-10",
     bio: "Passionate about bold color transformations and hair repair chemistry.",
+    canAccessPos: true,
   },
   {
     id: "st-4",
@@ -78,10 +77,10 @@ const initialStaff: StaffMember[] = [
     reviewsCount: 84,
     completedAppointments: 195,
     revenueGenerated: 11800,
-    scheduleDays: ["Mon", "Tue", "Wed", "Fri", "Sat"],
     status: "active",
     joinedDate: "2024-05-18",
     bio: "Traditional barber craftsmanship mixed with cutting-edge men's grooming techniques.",
+    canAccessPos: true,
   },
   {
     id: "st-5",
@@ -95,10 +94,10 @@ const initialStaff: StaffMember[] = [
     reviewsCount: 160,
     completedAppointments: 280,
     revenueGenerated: 26400,
-    scheduleDays: ["Wed", "Thu", "Fri", "Sat", "Sun"],
     status: "active",
     joinedDate: "2023-11-01",
     bio: "Licensed medical esthetician dedicated to customized skincare routines.",
+    canAccessPos: true,
   },
   {
     id: "st-6",
@@ -112,18 +111,20 @@ const initialStaff: StaffMember[] = [
     reviewsCount: 45,
     completedAppointments: 90,
     revenueGenerated: 8500,
-    scheduleDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-    status: "on_leave",
+    status: "inactive",
     joinedDate: "2022-09-15",
     bio: "General manager overseeing everyday boutique salon flow and excellence.",
+    canAccessPos: false,
   },
 ];
 
 export function Staff() {
   const { t } = useTranslation(["common"]);
   const [staffList, setStaffList] = useState<StaffMember[]>(initialStaff);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [viewingStaff, setViewingStaff] = useState<StaffMember | null>(null);
 
   const [filters, setFilters] = useState<StaffFilterState>({
     search: "",
@@ -138,23 +139,30 @@ export function Staff() {
 
   const handleOpenAdd = () => {
     setEditingStaff(null);
-    setIsModalOpen(true);
+    setIsPanelOpen(true);
   };
 
   const handleOpenEdit = (staff: StaffMember) => {
     setEditingStaff(staff);
-    setIsModalOpen(true);
+    setIsPanelOpen(true);
+  };
+
+  const handleOpenView = (staff: StaffMember) => {
+    setViewingStaff(staff);
+    setIsViewOpen(true);
   };
 
   const handleDelete = (staffId: string) => {
-    setStaffList((prev) => prev.filter((s) => s.id !== staffId));
+    if (window.confirm("Are you sure you want to delete this staff member?")) {
+      setStaffList((prev) => prev.filter((s) => s.id !== staffId));
+    }
   };
 
   const handleToggleStatus = (staffId: string) => {
     setStaffList((prev) =>
       prev.map((s) => {
         if (s.id === staffId) {
-          const nextStatus = s.status === "active" ? "on_leave" : "active";
+          const nextStatus = s.status === "active" ? "inactive" : "active";
           return { ...s, status: nextStatus };
         }
         return s;
@@ -170,13 +178,14 @@ export function Staff() {
             ? {
                 ...s,
                 ...data,
+                password: data.password ? data.password : s.password,
               }
             : s
         )
       );
     } else {
       const newStaff: StaffMember = {
-        id: `st-${Date.now()}`,
+        id: `st-${Date.now().toString().slice(-4)}`,
         ...data,
         rating: 5.0,
         reviewsCount: 0,
@@ -187,26 +196,6 @@ export function Staff() {
       setStaffList((prev) => [newStaff, ...prev]);
     }
   };
-
-  // KPI Calculations
-  const stats: StaffStatsType = useMemo(() => {
-    const total = staffList.length;
-    const active = staffList.filter((s) => s.status === "active").length;
-    const onLeave = staffList.filter((s) => s.status === "on_leave").length;
-    const totalAppointments = staffList.reduce((acc, s) => acc + s.completedAppointments, 0);
-    const avgRating =
-      total > 0
-        ? staffList.reduce((acc, s) => acc + s.rating, 0) / total
-        : 0;
-
-    return {
-      totalStaff: total,
-      activeStaff: active,
-      onLeaveCount: onLeave,
-      totalAppointments,
-      avgRating,
-    };
-  }, [staffList]);
 
   // Filtered & sorted staff list
   const filteredStaff = useMemo(() => {
@@ -252,7 +241,7 @@ export function Staff() {
         title={t("staff.title", "Staff & Stylists")}
         description={t(
           "staff.subtitle",
-          "Manage salon team members, working schedules, performance, and commission rates."
+          "Manage salon team members, performance, and commission rates."
         )}
         actions={
           <button
@@ -266,30 +255,41 @@ export function Staff() {
         }
       />
 
-      {/* KPI Stats */}
-      <StaffStats stats={stats} />
-
       {/* Filter and Search Controls */}
       <StaffFilters filters={filters} onFilterChange={handleFilterChange} />
 
-      {/* Staff List Table */}
+      {/* Staff Table */}
       <StaffList
         staffList={filteredStaff}
+        onView={handleOpenView}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}
         onToggleStatus={handleToggleStatus}
       />
 
-      {/* Staff Modal */}
-      <StaffModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+      {/* Slide-over Side Panel for Add & Edit */}
+      <StaffPanel
+        isOpen={isPanelOpen}
+        onClose={() => {
+          setIsPanelOpen(false);
+          setEditingStaff(null);
+        }}
         onSubmit={handleSaveStaff}
         editingStaff={editingStaff}
+      />
+
+      {/* Slide-over Side Panel for View */}
+      <StaffViewPanel
+        isOpen={isViewOpen}
+        onClose={() => {
+          setIsViewOpen(false);
+          setViewingStaff(null);
+        }}
+        staff={viewingStaff}
+        onEdit={handleOpenEdit}
       />
     </div>
   );
 }
 
 export default Staff;
-
