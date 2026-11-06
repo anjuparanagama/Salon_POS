@@ -2,6 +2,7 @@ import { Printer, Sparkles, CheckCircle2 } from "lucide-react";
 import Modal from "../../../../components/modal";
 import type { Appointment } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { formatAppointmentId } from "../../../../helpers/format-id.helper";
 
 export type AppointmentInvoiceModalProps = {
   isOpen: boolean;
@@ -20,7 +21,12 @@ export function AppointmentInvoiceModal({
     window.print();
   };
 
-  const invoiceNumber = `INV-${appointment.id.replace("apt-", "2026-")}`;
+  const cleanAptNum = formatAppointmentId(appointment).replace(/^#APT-/, "");
+  const invoiceNumber = `INV-2026-${cleanAptNum}`;
+  const clientDisplayName = appointment.clientName || "Client";
+  const clientDisplayPhone = appointment.clientPhone || "N/A";
+  const staffDisplayName = appointment.staffName || "Specialist";
+  const serviceDisplayName = appointment.serviceName || "Salon Service";
 
   return (
     <Modal
@@ -58,8 +64,8 @@ export function AppointmentInvoiceModal({
                 <span>PAID</span>
               </span>
               <p className="mt-2 font-mono text-sm font-bold text-slate-900">{invoiceNumber}</p>
-              <p className="text-[11px] text-slate-500">Date: {appointment.date}</p>
-              <p className="text-[11px] text-slate-500">Time: {appointment.time}</p>
+              <p className="text-[11px] text-slate-500">Date: {appointment.date || "N/A"}</p>
+              <p className="text-[11px] text-slate-500">Time: {appointment.time || "09:00 AM"}</p>
             </div>
           </div>
 
@@ -69,15 +75,15 @@ export function AppointmentInvoiceModal({
               <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Billed To
               </p>
-              <p className="mt-1 font-bold text-slate-900 text-sm">{appointment.clientName}</p>
-              <p className="text-[11px] text-slate-600">{appointment.clientPhone}</p>
+              <p className="mt-1 font-bold text-slate-900 text-sm">{clientDisplayName}</p>
+              <p className="text-[11px] text-slate-600">{clientDisplayPhone}</p>
             </div>
 
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Specialist / Staff
               </p>
-              <p className="mt-1 font-semibold text-slate-900">{appointment.staffName}</p>
+              <p className="mt-1 font-semibold text-slate-900">{staffDisplayName}</p>
               <p className="text-[11px] text-slate-500">Hair & Beauty Specialist</p>
             </div>
           </div>
@@ -95,14 +101,14 @@ export function AppointmentInvoiceModal({
               <tbody className="divide-y divide-slate-100">
                 <tr>
                   <td className="py-3">
-                    <p className="font-semibold text-slate-900">{appointment.serviceName}</p>
+                    <p className="font-semibold text-slate-900">{serviceDisplayName}</p>
                     {appointment.notes && (
                       <p className="text-[11px] text-slate-400 mt-0.5">{appointment.notes}</p>
                     )}
                   </td>
-                  <td className="py-3 text-center text-slate-600">{appointment.durationMinutes} mins</td>
+                  <td className="py-3 text-center text-slate-600">{appointment.durationMinutes ?? 45} mins</td>
                   <td className="py-3 text-right font-semibold text-slate-900">
-                    {formatPrice(appointment.price)}
+                    {formatPrice(appointment.price ?? 0)}
                   </td>
                 </tr>
               </tbody>
@@ -114,7 +120,7 @@ export function AppointmentInvoiceModal({
             <div className="w-60 space-y-1.5 text-right">
               <div className="flex justify-between text-slate-600">
                 <span>Subtotal:</span>
-                <span className="font-semibold text-slate-900">{formatPrice(appointment.price)}</span>
+                <span className="font-semibold text-slate-900">{formatPrice(appointment.price ?? 0)}</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Tax / VAT (0%):</span>
@@ -122,7 +128,7 @@ export function AppointmentInvoiceModal({
               </div>
               <div className="flex justify-between border-t border-slate-200 pt-2 text-sm font-bold text-slate-900">
                 <span>Total Amount:</span>
-                <span className="text-primary">{formatPrice(appointment.price)}</span>
+                <span className="text-primary">{formatPrice(appointment.price ?? 0)}</span>
               </div>
             </div>
           </div>

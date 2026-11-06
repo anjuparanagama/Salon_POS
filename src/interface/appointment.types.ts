@@ -7,6 +7,7 @@ export type AppointmentStatus =
 
 export type Appointment = {
   id: string;
+  appointmentNumber?: string;
   clientName: string;
   clientPhone: string;
   clientAvatar?: string;

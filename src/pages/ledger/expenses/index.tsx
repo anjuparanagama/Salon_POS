@@ -5,6 +5,7 @@ import type {
   ExpenseFilterState,
   ExpenseFormData,
 } from "../../../interface/ledger.types";
+import { useExpensesLedger } from "../../../hooks/ledger";
 import Header from "../../../components/header";
 import ExpenseStats from "./components/expense-stats";
 import ExpenseFilters from "./components/expense-filters";
@@ -12,81 +13,6 @@ import ExpenseTable from "./components/expense-table";
 import ExpenseModal from "./components/expense-modal";
 import ExpenseViewModal from "./components/expense-view-modal";
 import ExpenseDeleteModal from "./components/expense-delete-modal";
-
-const initialExpenses: ExpenseRecord[] = [
-  {
-    id: "exp-1",
-    title: "Electricity Bill",
-    category: "electricity",
-    amount: 5000,
-    paymentMethod: "cash",
-    date: "2026-11-04",
-    description: "CEB Commercial Electricity power bill for hair dryers and AC units",
-  },
-  {
-    id: "exp-2",
-    title: "Salon Premises Monthly Rent",
-    category: "rent",
-    amount: 75000,
-    paymentMethod: "bank",
-    date: "2026-11-01",
-    description: "Suite lease payment for November 2026",
-  },
-  {
-    id: "exp-3",
-    title: "Stylist Bi-weekly Salaries",
-    category: "salaries",
-    amount: 65000,
-    paymentMethod: "bank",
-    date: "2026-11-02",
-    description: "Wages disbursed to salon senior stylists and assistants",
-  },
-  {
-    id: "exp-4",
-    title: "Municipal Water Board Bill",
-    category: "water",
-    amount: 3200,
-    paymentMethod: "cash",
-    date: "2026-11-03",
-    description: "Hair wash sinks and salon sanitation water tariff",
-  },
-  {
-    id: "exp-5",
-    title: "Hair Care Products Batch Restock",
-    category: "product_purchases",
-    amount: 18500,
-    paymentMethod: "card",
-    date: "2026-10-29",
-    description: "Wholesale shipment of shampoos, color developer, and condition creams",
-  },
-  {
-    id: "exp-6",
-    title: "Hair Steamer & Blowdryer Servicing",
-    category: "equipment_maintenance",
-    amount: 8500,
-    paymentMethod: "cash",
-    date: "2026-10-25",
-    description: "Quarterly technical check & coil replacement",
-  },
-  {
-    id: "exp-7",
-    title: "SLT Fiber Internet & Hotline",
-    category: "internet_telephone",
-    amount: 4800,
-    paymentMethod: "card",
-    date: "2026-11-02",
-    description: "High speed WiFi for reception desk POS & appointment booking",
-  },
-  {
-    id: "exp-8",
-    title: "Towel Laundry & Cleaning Supplies",
-    category: "other",
-    amount: 2600,
-    paymentMethod: "cash",
-    date: "2026-10-30",
-    description: "Weekly commercial wash service for salon linen and towels",
-  },
-];
 
 const initialFilters: ExpenseFilterState = {
   search: "",
@@ -96,7 +22,13 @@ const initialFilters: ExpenseFilterState = {
 };
 
 export function LedgerExpenses() {
-  const [records, setRecords] = useState<ExpenseRecord[]>(initialExpenses);
+  const {
+    records,
+    createExpense,
+    updateExpense,
+    deleteExpense,
+  } = useExpensesLedger();
+
   const [filters, setFilters] = useState<ExpenseFilterState>(initialFilters);
 
   // Modal states
@@ -115,25 +47,20 @@ export function LedgerExpenses() {
   };
 
   // Add / Edit submit
-  const handleSaveExpense = (data: ExpenseFormData) => {
+  const handleSaveExpense = async (data: ExpenseFormData) => {
     if (editingRecord) {
-      setRecords((prev) =>
-        prev.map((r) => (r.id === editingRecord.id ? { ...r, ...data } : r))
-      );
+      await updateExpense(editingRecord.id, data);
       setEditingRecord(null);
     } else {
-      const newRecord: ExpenseRecord = {
-        id: `exp-${Date.now()}`,
-        ...data,
-      };
-      setRecords((prev) => [newRecord, ...prev]);
+      await createExpense(data);
     }
+    setIsFormModalOpen(false);
   };
 
   // Delete confirm
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!deletingRecord) return;
-    setRecords((prev) => prev.filter((r) => r.id !== deletingRecord.id));
+    await deleteExpense(deletingRecord.id);
     setDeletingRecord(null);
   };
 

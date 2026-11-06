@@ -1,5 +1,6 @@
 import { Eye, Edit3, Trash2, Phone, Mail, AlertCircle, ShieldCheck } from "lucide-react";
 import type { StaffMember, StaffRole } from "../../../../interface/staff.types";
+import { formatStaffId } from "../../../../helpers/format-id.helper";
 
 export type StaffListProps = {
   staffList: StaffMember[];
@@ -75,7 +76,7 @@ export function StaffList({
                   {/* ID */}
                   <td className="whitespace-nowrap px-5 py-4 font-mono font-medium text-slate-600">
                     <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-700">
-                      #{staff.id.toUpperCase()}
+                      {formatStaffId(staff.id)}
                     </span>
                   </td>
 

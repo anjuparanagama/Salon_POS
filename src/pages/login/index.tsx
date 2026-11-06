@@ -1,15 +1,34 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router";
+import axios from "axios";
 import { ROUTES } from "../../routes/sidebar.routes";
 import { BrandHero } from "./components/brand-hero";
 import { LoginForm } from "./components/login-form";
 import { RegisterModal } from "./components/register-modal";
 import { useAuth } from "../../context/use-auth";
+import { authService } from "../../services/auth.service";
 import type {
   AuthSubmitStatus,
   AuthErrorState,
   LoginFormData,
 } from "../../interface/auth.types";
+
+function formatDisplayName(email: string): string {
+  const localPart = email.split("@")[0] || "User";
+  return localPart
+    .split(/[._-]/)
+    .filter(Boolean)
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase() || "AR";
+}
 
 export function Login() {
   const navigate = useNavigate();
@@ -19,10 +38,9 @@ export function Login() {
   const [errors, setErrors] = useState<AuthErrorState>({});
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
-  // Prefilled with demo credentials matching the reference screenshot style
   const [passwordForm, setPasswordForm] = useState<LoginFormData>({
-    email: "demo@sribees.com",
-    password: "Password123!",
+    email: "",
+    password: "",
     rememberMe: true,
   });
 
@@ -32,7 +50,7 @@ export function Login() {
   }
 
   // Handle password login submission
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
@@ -51,22 +69,65 @@ export function Login() {
 
     setStatus("loading");
 
-    setTimeout(() => {
+    try {
+      const response = await authService.login({
+        email: passwordForm.email.trim(),
+        password: passwordForm.password,
+      });
+
+      const displayName = formatDisplayName(passwordForm.email);
+      const formattedRole = response.role
+        ? response.role.charAt(0).toUpperCase() + response.role.slice(1)
+        : "Salon Staff";
+
       // Authenticate session via AuthContext
       login(
         {
-          name: "Amanda Ray",
-          role: "Salon Manager",
-          initials: "AR",
+          name: displayName,
+          role: formattedRole,
+          initials: getInitials(displayName),
           isOnline: true,
-          email: passwordForm.email,
+          email: passwordForm.email.trim(),
+          userId: response.user_id,
+          salonId: response.salon_id,
         },
+        response.access_token,
         passwordForm.rememberMe
       );
 
       setStatus("success");
       navigate(ROUTES.DASHBOARD, { replace: true });
-    }, 600);
+    } catch (err: unknown) {
+      setStatus("error");
+      if (axios.isAxiosError(err)) {
+        if (!err.response) {
+          setErrors({
+            general:
+              "Unable to connect to the backend server. Please verify your connection or API URL in .env.",
+          });
+        } else if (err.response.status === 401) {
+          const detail =
+            typeof err.response.data?.detail === "string"
+              ? err.response.data.detail
+              : "Invalid email or password.";
+          setErrors({ general: detail });
+        } else if (err.response.status === 422) {
+          setErrors({
+            general: "Please enter a valid email address and password.",
+          });
+        } else {
+          const detail =
+            typeof err.response.data?.detail === "string"
+              ? err.response.data.detail
+              : "An unexpected error occurred during login. Please try again.";
+          setErrors({ general: detail });
+        }
+      } else {
+        setErrors({
+          general: "An unexpected error occurred. Please try again.",
+        });
+      }
+    }
   };
 
   return (

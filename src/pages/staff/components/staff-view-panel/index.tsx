@@ -12,6 +12,7 @@ import {
 import SidePanel from "../../../../components/side-panel";
 import type { StaffMember, StaffRole } from "../../../../interface/staff.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { formatStaffId } from "../../../../helpers/format-id.helper";
 
 export type StaffViewPanelProps = {
   isOpen: boolean;
@@ -94,7 +95,7 @@ export function StaffViewPanel({
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-slate-900">{staff.name}</h3>
               <span className="font-mono text-[11px] font-semibold text-slate-500 bg-slate-200/70 px-1.5 py-0.5 rounded">
-                #{staff.id.toUpperCase()}
+                {formatStaffId(staff.id)}
               </span>
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-2">

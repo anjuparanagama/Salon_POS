@@ -9,12 +9,15 @@ export type AuthUser = {
   avatarUrl?: string;
   initials?: string;
   isOnline?: boolean;
+  userId?: string;
+  salonId?: string;
 };
 
 export type AuthContextType = {
   user: AuthUser | null;
+  token: string | null;
   isAuthenticated: boolean;
-  login: (user: AuthUser, rememberMe?: boolean) => void;
+  login: (user: AuthUser, token?: string, rememberMe?: boolean) => void;
   logout: () => void;
 };
 

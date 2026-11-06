@@ -11,4 +11,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'https://sribees-gkbeajd5dzatf3gc.southeastasia-01.azurewebsites.net',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

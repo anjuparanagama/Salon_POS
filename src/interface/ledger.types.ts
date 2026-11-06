@@ -118,3 +118,10 @@ export type TransactionFilterState = {
   paymentMethod: TransactionPaymentMethod;
   status?: TransactionStatus;
 };
+
+export type LedgerSummary = {
+  totalIncome: number;
+  totalExpenses: number;
+  netProfit: number;
+  totalTransactions: number;
+};

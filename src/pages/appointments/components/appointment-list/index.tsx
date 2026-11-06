@@ -1,6 +1,7 @@
 import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown } from "lucide-react";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { formatAppointmentId } from "../../../../helpers/format-id.helper";
 
 export type AppointmentListProps = {
   appointments: Appointment[];
@@ -11,8 +12,21 @@ export type AppointmentListProps = {
   onPrintInvoice?: (appointment: Appointment) => void;
 };
 
-const statusBadgeStyles: Record<AppointmentStatus, { text: string; bg: string; border: string; label: string }> = {
+const defaultBadge = {
+  text: "text-purple-700",
+  bg: "bg-purple-50",
+  border: "border-purple-200",
+  label: "Pending",
+};
+
+const statusBadgeStyles: Record<string, { text: string; bg: string; border: string; label: string }> = {
   confirmed: {
+    text: "text-emerald-700",
+    bg: "bg-emerald-50",
+    border: "border-emerald-200",
+    label: "Confirmed",
+  },
+  approved: {
     text: "text-emerald-700",
     bg: "bg-emerald-50",
     border: "border-emerald-200",
@@ -30,7 +44,19 @@ const statusBadgeStyles: Record<AppointmentStatus, { text: string; bg: string; b
     border: "border-blue-200",
     label: "Completed",
   },
+  done: {
+    text: "text-blue-700",
+    bg: "bg-blue-50",
+    border: "border-blue-200",
+    label: "Completed",
+  },
   pending: {
+    text: "text-purple-700",
+    bg: "bg-purple-50",
+    border: "border-purple-200",
+    label: "Pending",
+  },
+  open: {
     text: "text-purple-700",
     bg: "bg-purple-50",
     border: "border-purple-200",
@@ -42,14 +68,6 @@ const statusBadgeStyles: Record<AppointmentStatus, { text: string; bg: string; b
     border: "border-rose-200",
     label: "Cancelled",
   },
-};
-
-const getAppointmentNumber = (id: string) => {
-  const raw = id.replace("apt-", "");
-  if (/^\d+$/.test(raw)) {
-    return raw.length > 5 ? `#APT-${raw.slice(-4)}` : `#APT-${raw.padStart(3, "0")}`;
-  }
-  return `#APT-${raw.toUpperCase()}`;
 };
 
 export function AppointmentList({
@@ -97,23 +115,27 @@ export function AppointmentList({
           </thead>
           <tbody className="divide-y divide-slate-100">
             {appointments.map((apt) => {
-              const badge = statusBadgeStyles[apt.status];
+              const badge = (apt.status && statusBadgeStyles[apt.status]) || defaultBadge;
+              const clientDisplayName = apt.clientName || "Client";
+              const clientDisplayPhone = apt.clientPhone || "N/A";
+              const serviceDisplayName = apt.serviceName || "Service";
+              const staffDisplayName = apt.staffName || "Specialist";
               return (
                 <tr key={apt.id} className="group hover:bg-slate-50/70 transition-colors">
                   {/* Appointment Number */}
                   <td className="whitespace-nowrap px-5 py-4 font-mono font-semibold text-slate-800">
                     <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs border border-slate-200/80">
-                      {getAppointmentNumber(apt.id)}
+                      {formatAppointmentId(apt)}
                     </span>
                   </td>
 
                   {/* Date & Time */}
                   <td className="whitespace-nowrap px-5 py-4">
-                    <div className="font-semibold text-slate-900">{apt.date}</div>
+                    <div className="font-semibold text-slate-900">{apt.date || "N/A"}</div>
                     <div className="flex items-center gap-1 text-[11px] text-slate-500">
                       <Clock className="size-3 text-slate-400" />
                       <span>
-                        {apt.time} ({apt.durationMinutes} mins)
+                        {apt.time || "09:00 AM"} ({apt.durationMinutes ?? 45} mins)
                       </span>
                     </div>
                   </td>
@@ -122,13 +144,13 @@ export function AppointmentList({
                   <td className="whitespace-nowrap px-5 py-4">
                     <div className="flex items-center gap-2.5">
                       <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-[11px] font-bold text-primary">
-                        {apt.clientName.charAt(0)}
+                        {clientDisplayName.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <div className="font-semibold text-slate-900">{apt.clientName}</div>
+                        <div className="font-semibold text-slate-900">{clientDisplayName}</div>
                         <div className="flex items-center gap-1 text-[11px] text-slate-500 whitespace-nowrap">
                           <Phone className="size-3 text-slate-400 shrink-0" />
-                          <span className="whitespace-nowrap">{apt.clientPhone}</span>
+                          <span className="whitespace-nowrap">{clientDisplayPhone}</span>
                         </div>
                       </div>
                     </div>
@@ -136,7 +158,7 @@ export function AppointmentList({
 
                   {/* Service */}
                   <td className="px-5 py-4">
-                    <div className="font-medium text-slate-900">{apt.serviceName}</div>
+                    <div className="font-medium text-slate-900">{serviceDisplayName}</div>
                     {apt.notes && (
                       <div className="text-[11px] text-slate-400 truncate max-w-xs">{apt.notes}</div>
                     )}
@@ -146,13 +168,13 @@ export function AppointmentList({
                   <td className="whitespace-nowrap px-5 py-4">
                     <div className="flex items-center gap-1.5 text-slate-700">
                       <User className="size-3.5 text-slate-400" />
-                      <span>{apt.staffName}</span>
+                      <span>{staffDisplayName}</span>
                     </div>
                   </td>
 
                   {/* Price */}
                   <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-900">
-                    {formatPrice(apt.price)}
+                    {formatPrice(apt.price ?? 0)}
                   </td>
 
                   {/* Status Dropdown */}

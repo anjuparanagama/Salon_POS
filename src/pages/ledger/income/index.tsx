@@ -1,93 +1,10 @@
 import { useState, useMemo } from "react";
-import type { IncomeRecord, IncomeFilterState } from "../../../interface/ledger.types";
+import type { IncomeFilterState } from "../../../interface/ledger.types";
+import { useIncomeLedger } from "../../../hooks/ledger";
 import Header from "../../../components/header";
 import IncomeStats from "./components/income-stats";
 import IncomeFilters from "./components/income-filters";
 import IncomeTable from "./components/income-table";
-
-// Initial mock sales data representing automated sales receipts from POS checkout
-const initialSalesIncomeRecords: IncomeRecord[] = [
-  {
-    id: "inc-1",
-    saleId: "SAL-1001",
-    customerName: "Kasun Perera",
-    incomeType: "service",
-    amount: 14500,
-    paymentMethod: "card",
-    date: "2026-11-05",
-    description: "Keratin Hair Treatment & Styling",
-  },
-  {
-    id: "inc-2",
-    saleId: "SAL-1002",
-    customerName: "Dilani Fernando",
-    incomeType: "product",
-    amount: 6800,
-    paymentMethod: "cash",
-    date: "2026-11-05",
-    description: "L'Oreal Professional Hair Serum (100ml)",
-  },
-  {
-    id: "inc-3",
-    saleId: "SAL-1003",
-    customerName: "Sachini Jayawardena",
-    incomeType: "service",
-    amount: 4500,
-    paymentMethod: "cash",
-    date: "2026-11-04",
-    description: "Layered Haircut & Blowdry",
-  },
-  {
-    id: "inc-4",
-    saleId: "SAL-1004",
-    customerName: "Nimasha Silva",
-    incomeType: "service",
-    amount: 8500,
-    paymentMethod: "bank",
-    date: "2026-11-03",
-    description: "Gold Facial & Cleanup",
-  },
-  {
-    id: "inc-5",
-    saleId: "SAL-1005",
-    customerName: "Amara Wickramasinghe",
-    incomeType: "product",
-    amount: 5200,
-    paymentMethod: "card",
-    date: "2026-11-02",
-    description: "Moroccan Argan Shampoo & Conditioner",
-  },
-  {
-    id: "inc-6",
-    saleId: "SAL-1006",
-    customerName: "Ruwanthi De Silva",
-    incomeType: "service",
-    amount: 25000,
-    paymentMethod: "bank",
-    date: "2026-11-01",
-    description: "Bridal Full Dressing & Makeup",
-  },
-  {
-    id: "inc-7",
-    saleId: "SAL-1007",
-    customerName: "Sanduni Gunasekara",
-    incomeType: "product",
-    amount: 3200,
-    paymentMethod: "cash",
-    date: "2026-10-30",
-    description: "Matte Finish Hair Clay Wax",
-  },
-  {
-    id: "inc-8",
-    saleId: "SAL-1008",
-    customerName: "Chathurika Senanayake",
-    incomeType: "service",
-    amount: 6000,
-    paymentMethod: "card",
-    date: "2026-10-28",
-    description: "Pedicure & Manicure Deluxe",
-  },
-];
 
 const initialFilters: IncomeFilterState = {
   search: "",
@@ -97,7 +14,7 @@ const initialFilters: IncomeFilterState = {
 };
 
 export function LedgerIncome() {
-  const [records] = useState<IncomeRecord[]>(initialSalesIncomeRecords);
+  const { records } = useIncomeLedger();
   const [filters, setFilters] = useState<IncomeFilterState>(initialFilters);
 
   const handleFilterChange = (updated: Partial<IncomeFilterState>) => {
