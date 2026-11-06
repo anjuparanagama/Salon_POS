@@ -67,8 +67,27 @@ export function formatStaffId(id?: string): string {
   if (!id) return "#STF-001";
   const str = String(id).trim().replace(/^#/, "").replace(/^st-?/i, "");
 
+  // If already like STF-001
+  const stfMatch = str.match(/STF[_-]?(\w+)/i);
+  if (stfMatch && stfMatch[1]) {
+    const code = stfMatch[1];
+    if (/^\d+$/.test(code)) {
+      return `#STF-${String(parseInt(code, 10)).padStart(3, "0")}`;
+    }
+    return `#STF-${code.toUpperCase()}`;
+  }
+
+  // Handle legacy 20000000 series (shift by 5 so they map to 006 - 010)
+  if (str.startsWith("20000000-0000-0000-0000-")) {
+    const trailing = str.match(/(\d+)$/);
+    if (trailing && trailing[1]) {
+      const num = parseInt(trailing[1], 10);
+      return `#STF-${String(num + 5).padStart(3, "0")}`;
+    }
+  }
+
   if (str.includes("-") || str.length >= 16) {
-    const trailingDigits = str.match(/(\d+)$/);
+    const trailingDigits = str.match(/0*(\d+)$/);
     if (trailingDigits && trailingDigits[1] && trailingDigits[1].length <= 6) {
       return `#STF-${String(parseInt(trailingDigits[1], 10)).padStart(3, "0")}`;
     }
