@@ -20,8 +20,18 @@ export function formatAppointmentId(
 
   const str = String(idOrNum).trim().replace(/^#/, "");
 
-  // If already like APT-0001 or APT-DEMO-001
-  const aptMatch = str.match(/APT[_-]?(?:DEMO[_-]?)?(\w+)/i);
+  // If demo appointment code e.g. APT-DEMO-001
+  const demoMatch = str.match(/APT[_-]?DEMO[_-]?(\w+)/i);
+  if (demoMatch && demoMatch[1]) {
+    const code = demoMatch[1];
+    if (/^\d+$/.test(code)) {
+      return `#APT-D${String(parseInt(code, 10)).padStart(3, "0")}`;
+    }
+    return `#APT-D${code.toUpperCase()}`;
+  }
+
+  // If standard appointment code e.g. APT-0001
+  const aptMatch = str.match(/APT[_-]?(\w+)/i);
   if (aptMatch && aptMatch[1]) {
     const code = aptMatch[1];
     if (/^\d+$/.test(code)) {
