@@ -10,7 +10,7 @@ import Header from "../../../components/header";
 import ExpenseStats from "./components/expense-stats";
 import ExpenseFilters from "./components/expense-filters";
 import ExpenseTable from "./components/expense-table";
-import ExpenseModal from "./components/expense-modal";
+import ExpensePanel from "./components/expense-modal";
 import ExpenseViewModal from "./components/expense-view-modal";
 import ExpenseDeleteModal from "./components/expense-delete-modal";
 
@@ -156,8 +156,8 @@ export function LedgerExpenses() {
         onDelete={(rec) => setDeletingRecord(rec)}
       />
 
-      {/* Add / Edit Expense Form Modal */}
-      <ExpenseModal
+      {/* Add / Edit Expense Form Side Panel */}
+      <ExpensePanel
         isOpen={isFormModalOpen}
         onClose={() => {
           setIsFormModalOpen(false);

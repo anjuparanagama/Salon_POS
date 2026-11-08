@@ -6,7 +6,7 @@ import {
   BookOpen,
   TrendingUp,
   TrendingDown,
-  ArrowLeftRight,
+  // ArrowLeftRight,
   Users,
   UserCheck,
 } from "lucide-react";
@@ -72,11 +72,11 @@ export const sidebarRoutes: SidebarItem[] = [
         href: ROUTES.LEDGER_EXPENSES,
         icon: TrendingDown,
       },
-      {
-        label: "Transactions",
-        href: ROUTES.LEDGER_TRANSACTIONS,
-        icon: ArrowLeftRight,
-      },
+      // {
+      //   label: "Transactions",
+      //   href: ROUTES.LEDGER_TRANSACTIONS,
+      //   icon: ArrowLeftRight,
+      // },
     ],
   },
 ];
