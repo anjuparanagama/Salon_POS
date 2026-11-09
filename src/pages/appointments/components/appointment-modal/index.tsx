@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import SidePanel from "../../../../components/side-panel";
 import type { Appointment, AppointmentFormData } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
@@ -8,30 +8,65 @@ export type AppointmentModalProps = {
   onClose: () => void;
   onSubmit: (data: AppointmentFormData) => void;
   staffList: string[];
-  servicesList: { name: string; price: number; duration: number }[];
+  staffMembers?: Array<{ id: string; name: string }>;
+  servicesList: { id?: string; name: string; price: number; duration: number }[];
   initialData?: Appointment | null;
 };
 
 type AppointmentFormProps = {
   initialValues: AppointmentFormData;
   staffList: string[];
-  servicesList: { name: string; price: number; duration: number }[];
+  staffMembers?: Array<{ id: string; name: string }>;
+  servicesList: { id?: string; name: string; price: number; duration: number }[];
   onSubmit: (data: AppointmentFormData) => void;
 };
 
 function AppointmentForm({
   initialValues,
   staffList,
+  staffMembers,
   servicesList,
   onSubmit,
 }: AppointmentFormProps) {
   const [formData, setFormData] = useState<AppointmentFormData>(initialValues);
+
+  useEffect(() => {
+    if (!formData.serviceName && servicesList.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        serviceName: servicesList[0].name,
+        serviceId: servicesList[0].id || prev.serviceId,
+        price: servicesList[0].price,
+        durationMinutes: servicesList[0].duration,
+      }));
+    }
+  }, [formData.serviceName, servicesList]);
+
+  useEffect(() => {
+    if (!formData.staffName && staffList.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        staffName: staffList[0],
+        staffId: staffMembers?.find((s) => s.name === staffList[0])?.id || prev.staffId,
+      }));
+    }
+  }, [formData.staffName, staffList, staffMembers]);
+
+  const handleStaffChange = (staffName: string) => {
+    const matched = staffMembers?.find((s) => s.name === staffName);
+    setFormData((prev) => ({
+      ...prev,
+      staffName,
+      staffId: matched?.id || prev.staffId,
+    }));
+  };
 
   const handleServiceChange = (serviceName: string) => {
     const selected = servicesList.find((s) => s.name === serviceName);
     setFormData((prev) => ({
       ...prev,
       serviceName,
+      serviceId: selected?.id || prev.serviceId,
       price: selected ? selected.price : prev.price,
       durationMinutes: selected ? selected.duration : prev.durationMinutes,
     }));
@@ -95,7 +130,7 @@ function AppointmentForm({
           <label className="block mb-1 font-medium text-slate-700">Assign Specialist</label>
           <select
             value={formData.staffName}
-            onChange={(e) => setFormData({ ...formData, staffName: e.target.value })}
+            onChange={(e) => handleStaffChange(e.target.value)}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white cursor-pointer"
           >
             {staffList.map((staff) => (
@@ -180,6 +215,7 @@ export function AppointmentModal({
   onClose,
   onSubmit,
   staffList,
+  staffMembers,
   servicesList,
   initialData,
 }: AppointmentModalProps) {
@@ -189,7 +225,9 @@ export function AppointmentModal({
     ? {
         clientName: initialData.clientName,
         clientPhone: initialData.clientPhone,
+        serviceId: initialData.serviceId,
         serviceName: initialData.serviceName,
+        staffId: initialData.staffId,
         staffName: initialData.staffName,
         date: initialData.date,
         time: initialData.time,
@@ -200,12 +238,14 @@ export function AppointmentModal({
     : {
         clientName: "",
         clientPhone: "",
-        serviceName: servicesList[0]?.name ?? "Haircut & Styling",
-        staffName: staffList[0] ?? "Amelia Vance",
+        serviceId: servicesList[0]?.id,
+        serviceName: servicesList[0]?.name ?? "",
+        staffId: staffMembers?.find((s) => s.name === (staffList[0] ?? ""))?.id,
+        staffName: staffList[0] ?? "",
         date: new Date().toISOString().split("T")[0],
         time: "10:00 AM",
         durationMinutes: servicesList[0]?.duration ?? 45,
-        price: servicesList[0]?.price ?? 45,
+        price: servicesList[0]?.price ?? 0,
         notes: "",
       };
 
@@ -254,9 +294,10 @@ export function AppointmentModal({
       }
     >
       <AppointmentForm
-        key={initialData ? initialData.id : "new-appointment"}
+        key={`${initialData ? initialData.id : "new-appointment"}-${staffList.join(",")}-${servicesList.map((s) => s.name).join(",")}`}
         initialValues={initialFormValues}
         staffList={staffList}
+        staffMembers={staffMembers}
         servicesList={servicesList}
         onSubmit={handleSubmit}
       />

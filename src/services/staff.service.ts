@@ -28,6 +28,30 @@ export const staffService = {
     return { items: [], total: 0 };
   },
 
+  async getStaffList(): Promise<Array<{ id: string; name: string; role?: string; status?: string }>> {
+    try {
+      const res = await apiClient.get(API_ENDPOINTS.STAFF.LIST);
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        return res.data.map((s: Record<string, unknown>) => ({
+          id: String(s.id),
+          name: String(s.name),
+          role: s.role ? String(s.role) : undefined,
+          status: s.status ? String(s.status) : undefined,
+        }));
+      }
+    } catch {
+      // fallback
+    }
+    const res = await apiClient.get(API_ENDPOINTS.STAFF.BASE, { params: { page_size: 100 } });
+    const items = res.data?.items || (Array.isArray(res.data) ? res.data : []);
+    return items.map((s: Record<string, unknown>) => ({
+      id: String(s.id),
+      name: String(s.name),
+      role: s.role ? String(s.role) : undefined,
+      status: s.status ? String(s.status) : undefined,
+    }));
+  },
+
   async getStats(): Promise<StaffStats> {
     const res = await apiClient.get<StaffStats>(API_ENDPOINTS.STAFF.STATS);
     return res.data;

@@ -208,6 +208,11 @@ export function CustomerModal({
     "Isabella Gomez",
     "Noah Sterling",
     "Sophia Chen",
+    "Chathuri",
+    "Dilshan",
+    "Ishara",
+    "Malith",
+    "Tharushi",
   ],
 }: CustomerModalProps) {
   const initialData: CustomerFormData = editingCustomer

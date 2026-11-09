@@ -62,6 +62,18 @@ const KNOWN_STAFF: Record<string, string> = {
   "20000000-0000-0000-0000-000000000005": "Tharushi",
 };
 
+export function registerStaff(id: string, name: string) {
+  if (id && name) {
+    KNOWN_STAFF[id] = name;
+  }
+}
+
+export function registerService(id: string, name: string) {
+  if (id && name) {
+    KNOWN_SERVICES[name.toLowerCase().trim()] = id;
+  }
+}
+
 const KNOWN_SERVICES: Record<string, string> = {
   "haircut & styling": "e1000000-0000-0000-0000-000000000001",
   "balayage color & highlights": "e1000000-0000-0000-0000-000000000002",
@@ -266,31 +278,20 @@ export const appointmentsService = {
   },
 
   async createAppointment(payload: AppointmentFormData): Promise<Appointment> {
-    const customerId = resolveCustomerId(payload.clientName, payload.clientPhone);
-    const serviceId = resolveServiceId(payload.serviceName);
-    const staffId = resolveStaffId(payload.staffName);
+    const serviceId = payload.serviceId || resolveServiceId(payload.serviceName);
+    const staffId = payload.staffId || resolveStaffId(payload.staffName);
     const appointmentDate = payload.date || new Date().toISOString().split("T")[0];
     const startTime = to24HourTime(payload.time);
 
-    // Cache the entered customer name and phone mapped to this customer ID
-    if (payload.clientName && customerId) {
-      KNOWN_CUSTOMERS[customerId] = {
-        name: payload.clientName,
-        phone: payload.clientPhone || KNOWN_CUSTOMERS[customerId]?.phone || "",
-      };
-    }
-
-    const clientNote = `Client: ${payload.clientName} (${payload.clientPhone})`;
-    const fullNotes = payload.notes
-      ? `${clientNote} - ${payload.notes}`
-      : clientNote;
-
+    // Send the entered client details; the backend finds the customer by phone
+    // or creates a new one. (Never fall back to a hardcoded customer ID.)
     const requestBody = {
-      customer_id: customerId,
+      customer_name: (payload.clientName || "").trim(),
+      customer_phone: (payload.clientPhone || "").trim(),
       assigned_staff_id: staffId || null,
       appointment_date: appointmentDate,
       start_time: startTime,
-      notes: fullNotes,
+      notes: payload.notes?.trim() || null,
       booking_source: "walk_in",
       services: [
         {
@@ -316,8 +317,8 @@ export const appointmentsService = {
     if (payload.time) {
       patchBody.start_time = to24HourTime(payload.time);
     }
-    if (payload.staffName) {
-      patchBody.assigned_staff_id = resolveStaffId(payload.staffName) || null;
+    if (payload.staffId || payload.staffName) {
+      patchBody.assigned_staff_id = payload.staffId || resolveStaffId(payload.staffName) || null;
     }
     if (payload.serviceName || payload.price !== undefined || payload.durationMinutes !== undefined) {
       patchBody.services = [

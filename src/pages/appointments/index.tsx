@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
 import type {
@@ -8,6 +8,9 @@ import type {
   AppointmentStatus,
 } from "../../interface/appointment.types";
 import { useAppointments } from "../../hooks/appointments";
+import { servicesService } from "../../services/services.service";
+import { staffService } from "../../services/staff.service";
+import { registerStaff, registerService } from "../../services/appointments.service";
 
 import AppointmentStats from "./components/appointment-stats";
 import AppointmentFilters from "./components/appointment-filters";
@@ -16,17 +19,6 @@ import AppointmentModal from "./components/appointment-modal";
 import AppointmentViewModal from "./components/appointment-view-modal";
 import AppointmentInvoiceModal from "./components/appointment-invoice-modal";
 import Header from "../../components/header";
-
-const initialStaffList = ["Amelia Vance", "Olivia Wilde", "Isabella Gomez", "Noah Sterling", "Sophia Chen"];
-
-const defaultServices = [
-  { name: "Haircut & Styling", price: 45, duration: 45 },
-  { name: "Balayage Color & Highlights", price: 120, duration: 90 },
-  { name: "Deluxe Manicure & Pedicure", price: 65, duration: 60 },
-  { name: "Hydra Deep Facial", price: 85, duration: 60 },
-  { name: "Bridal Full Glam Makeup", price: 150, duration: 75 },
-  { name: "Aromatherapy Full Body Massage", price: 95, duration: 60 },
-];
 
 export function Appointments() {
   const { t } = useTranslation(["appointments", "common"]);
@@ -37,6 +29,86 @@ export function Appointments() {
     updateStatus,
     isLoading,
   } = useAppointments();
+
+  const [backendServices, setBackendServices] = useState<
+    Array<{ id: string; name: string; price: number; duration: number }>
+  >([]);
+  const [backendStaff, setBackendStaff] = useState<
+    Array<{ id: string; name: string; role?: string; status?: string }>
+  >([]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadBackendData() {
+      try {
+        const [servicesRes, staffRes] = await Promise.allSettled([
+          servicesService.getServicesList(),
+          staffService.getStaffList(),
+        ]);
+
+        if (ignore) return;
+
+        if (servicesRes.status === "fulfilled" && servicesRes.value.length > 0) {
+          servicesRes.value.forEach((svc) => registerService(svc.id, svc.name));
+          setBackendServices(servicesRes.value);
+        }
+
+        if (staffRes.status === "fulfilled" && staffRes.value.length > 0) {
+          staffRes.value.forEach((s) => registerStaff(s.id, s.name));
+          setBackendStaff(staffRes.value);
+        }
+      } catch (err) {
+        console.error("Failed to load services or staff from backend:", err);
+      }
+    }
+
+    void loadBackendData();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const staffList = useMemo(() => {
+    const list: string[] = [];
+    backendStaff.forEach((s) => {
+      const name = s.name?.trim();
+      if (name && !list.includes(name)) {
+        list.push(name);
+      }
+    });
+    appointments.forEach((apt) => {
+      const name = apt.staffName?.trim();
+      if (name && !list.includes(name)) {
+        list.push(name);
+      }
+    });
+    return list;
+  }, [backendStaff, appointments]);
+
+  const servicesList = useMemo(() => {
+    const map = new Map<string, { id?: string; name: string; price: number; duration: number }>();
+    backendServices.forEach((svc) => {
+      map.set(svc.name, {
+        id: svc.id,
+        name: svc.name,
+        price: svc.price,
+        duration: svc.duration,
+      });
+    });
+    appointments.forEach((apt) => {
+      if (apt.serviceName && !map.has(apt.serviceName)) {
+        map.set(apt.serviceName, {
+          id: apt.serviceId,
+          name: apt.serviceName,
+          price: apt.price || 0,
+          duration: apt.durationMinutes || 45,
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [backendServices, appointments]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
@@ -155,7 +227,7 @@ export function Appointments() {
       {/* Filters & Control bar */}
       <AppointmentFilters
         filters={filters}
-        staffList={initialStaffList}
+        staffList={staffList}
         onFilterChange={handleFilterChange}
       />
 
@@ -178,8 +250,9 @@ export function Appointments() {
           setEditingAppointment(null);
         }}
         onSubmit={handleSaveAppointment}
-        staffList={initialStaffList}
-        servicesList={defaultServices}
+        staffList={staffList}
+        staffMembers={backendStaff}
+        servicesList={servicesList}
         initialData={editingAppointment}
       />
 

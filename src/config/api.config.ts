@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
   },
   SERVICES: {
     BASE: "/api/v1/salon/services",
+    LIST: "/api/v1/salon/services/list",
     STATS: "/api/v1/salon/services/stats",
     SUMMARY: "/api/v1/salon/services/summary",
     CATEGORIES: "/api/v1/salon/services/categories",
@@ -56,6 +57,7 @@ export const API_ENDPOINTS = {
   },
   STAFF: {
     BASE: "/api/v1/salon/staff",
+    LIST: "/api/v1/salon/staff/list",
     STATS: "/api/v1/salon/staff/stats",
     SUMMARY: "/api/v1/salon/staff/summary",
     ROLES: "/api/v1/salon/staff/roles",

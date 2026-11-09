@@ -29,6 +29,30 @@ export const servicesService = {
     return { items: [], total: 0 };
   },
 
+  async getServicesList(): Promise<Array<{ id: string; name: string; price: number; duration: number }>> {
+    try {
+      const res = await apiClient.get(API_ENDPOINTS.SERVICES.LIST);
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        return res.data.map((s: Record<string, unknown>) => ({
+          id: String(s.id),
+          name: String(s.name),
+          price: Number(s.price || 0),
+          duration: Number(s.durationMinutes || s.duration || 45),
+        }));
+      }
+    } catch {
+      // fallback
+    }
+    const res = await apiClient.get(API_ENDPOINTS.SERVICES.BASE, { params: { page_size: 100 } });
+    const items = res.data?.items || (Array.isArray(res.data) ? res.data : []);
+    return items.map((s: Record<string, unknown>) => ({
+      id: String(s.id),
+      name: String(s.name),
+      price: Number(s.price || 0),
+      duration: Number(s.durationMinutes || s.duration_minutes || s.duration || 45),
+    }));
+  },
+
   async getStats(): Promise<ServiceStats> {
     const res = await apiClient.get<ServiceStats>(API_ENDPOINTS.SERVICES.STATS);
     return res.data;

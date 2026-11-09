@@ -75,53 +75,63 @@ export function mapSummaryDtoToCards(
   };
   const subtitle = subtitleMap[filter] || "vs previous period";
 
+  const totalApts = dto.appointments || 0;
+  const cancelledApts = dto.cancelled_appointments ?? 0;
+  const activeApts = Math.max(0, totalApts - cancelledApts);
+  const appointmentPercentage =
+    dto.appointment_rate !== undefined
+      ? dto.appointment_rate
+      : totalApts > 0
+      ? Math.round((activeApts / totalApts) * 100)
+      : 0;
+
   return [
     {
       id: "revenues",
       title: "Revenues",
       value: formatPrice(dto.revenue, { space: true }),
-      change: "+14.2%",
-      isPositive: true,
+      change: dto.revenue > 0 ? "+100%" : "0%",
+      isPositive: dto.revenue > 0,
       subtitle,
       icon: DollarSign,
       count: dto.payments,
-      percentage: 14,
+      percentage: dto.revenue > 0 ? Math.min(100, Math.round((dto.revenue / 50000) * 100)) : 0,
       gradientClass: "from-blue-600 via-blue-500 to-sky-500",
     },
     {
       id: "appointments",
       title: "Appointments",
       value: dto.appointments.toLocaleString(),
-      change: "+8.5%",
-      isPositive: true,
+      change: `${appointmentPercentage}%`,
+      isPositive: appointmentPercentage >= 50,
       subtitle,
       icon: CalendarDays,
       count: dto.appointments,
-      percentage: 8,
+      percentage: appointmentPercentage,
       gradientClass: "from-amber-600 via-orange-500 to-amber-500",
     },
     {
       id: "customers",
       title: "Customers",
       value: dto.customers.toLocaleString(),
-      change: "+12.0%",
-      isPositive: true,
+      change: dto.customers > 0 ? "+100%" : "0%",
+      isPositive: dto.customers > 0,
       subtitle,
       icon: Users,
       count: dto.customers,
-      percentage: 12,
+      percentage: dto.customers > 0 ? Math.min(100, Math.round((dto.customers / 20) * 100)) : 0,
       gradientClass: "from-lime-700 via-green-600 to-emerald-500",
     },
     {
       id: "sold_products",
       title: "Sold Products",
       value: dto.sold_products.toLocaleString(),
-      change: "-2.4%",
-      isPositive: false,
+      change: dto.sold_products > 0 ? "+100%" : "0%",
+      isPositive: dto.sold_products > 0,
       subtitle,
       icon: PackageCheck,
       count: dto.sold_products,
-      percentage: 4,
+      percentage: dto.sold_products > 0 ? Math.min(100, Math.round((dto.sold_products / 20) * 100)) : 0,
       gradientClass: "from-rose-950 via-rose-800 to-red-600",
     },
   ];

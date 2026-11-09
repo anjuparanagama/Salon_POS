@@ -190,35 +190,39 @@ export function AppointmentList({
 
                   {/* Status Dropdown */}
                   <td className="whitespace-nowrap px-5 py-4">
-                    <div className="relative inline-block">
-                      <select
-                        value={apt.status}
-                        onChange={(e) =>
-                          onStatusChange(apt.id, e.target.value as AppointmentStatus)
-                        }
-                        className={`appearance-none rounded-full border px-3 py-1 pr-6 text-[11px] font-semibold outline-none transition cursor-pointer ${badge.bg} ${badge.text} ${badge.border} hover:opacity-90 focus:ring-2 focus:ring-primary/20`}
-                        title="Change Appointment Status"
-                      >
-                        <option value="pending" className="bg-white text-purple-700 font-semibold py-1">
-                          Pending
-                        </option>
-                        <option value="confirmed" className="bg-white text-emerald-700 font-semibold py-1">
-                          Confirmed
-                        </option>
-                        <option value="in_progress" className="bg-white text-amber-700 font-semibold py-1">
-                          In Progress
-                        </option>
-                        <option value="completed" className="bg-white text-blue-700 font-semibold py-1">
-                          Completed
-                        </option>
-                        <option value="cancelled" className="bg-white text-rose-700 font-semibold py-1">
-                          Cancelled
-                        </option>
-                      </select>
-                      <ChevronDown
-                        className={`pointer-events-none absolute right-2 top-1/2 size-3 -translate-y-1/2 ${badge.text} opacity-70`}
-                      />
-                    </div>
+                    {apt.status === "pending" ? (
+                      <span className="text-slate-400 font-semibold px-2">-</span>
+                    ) : (
+                      <div className="relative inline-block">
+                        <select
+                          value={apt.status}
+                          onChange={(e) =>
+                            onStatusChange(apt.id, e.target.value as AppointmentStatus)
+                          }
+                          className={`appearance-none rounded-full border px-3 py-1 pr-6 text-[11px] font-semibold outline-none transition cursor-pointer ${badge.bg} ${badge.text} ${badge.border} hover:opacity-90 focus:ring-2 focus:ring-primary/20`}
+                          title="Change Appointment Status"
+                        >
+                          <option value="pending" className="bg-white text-purple-700 font-semibold py-1">
+                            Pending
+                          </option>
+                          <option value="confirmed" className="bg-white text-emerald-700 font-semibold py-1">
+                            Confirmed
+                          </option>
+                          <option value="in_progress" className="bg-white text-amber-700 font-semibold py-1">
+                            In Progress
+                          </option>
+                          <option value="completed" className="bg-white text-blue-700 font-semibold py-1">
+                            Completed
+                          </option>
+                          <option value="cancelled" className="bg-white text-rose-700 font-semibold py-1">
+                            Cancelled
+                          </option>
+                        </select>
+                        <ChevronDown
+                          className={`pointer-events-none absolute right-2 top-1/2 size-3 -translate-y-1/2 ${badge.text} opacity-70`}
+                        />
+                      </div>
+                    )}
                   </td>
 
                   {/* Actions Column - Sticky Right */}

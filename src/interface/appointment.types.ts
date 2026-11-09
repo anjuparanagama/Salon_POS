@@ -44,7 +44,9 @@ export type AppointmentFilterState = {
 export type AppointmentFormData = {
   clientName: string;
   clientPhone: string;
+  serviceId?: string;
   serviceName: string;
+  staffId?: string;
   staffName: string;
   date: string;
   time: string;

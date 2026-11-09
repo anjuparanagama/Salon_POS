@@ -84,6 +84,8 @@ export type DashboardFilterParams = {
 export type DashboardSummaryDto = {
   revenue: number;
   appointments: number;
+  cancelled_appointments?: number;
+  appointment_rate?: number;
   customers: number;
   payments: number;
   sold_products: number;
