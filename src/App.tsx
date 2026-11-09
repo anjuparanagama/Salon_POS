@@ -143,6 +143,7 @@ function AppContent() {
           { label: t("nav.system", "System") },
           { label: t("nav.settings", "Settings"), href: ROUTES.SETTINGS, isCurrent: true },
         ];
+      case ROUTES.DASHBOARD:
       default:
         return [
           { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
@@ -157,7 +158,7 @@ function AppContent() {
   };
 
   // If user is not authenticated or currently on the login page, render AppRoutes directly
-  if (!isAuthenticated || location.pathname === ROUTES.LOGIN) {
+  if (!isAuthenticated || location.pathname === ROUTES.LOGIN || location.pathname === "/login") {
     return <AppRoutes />;
   }
 

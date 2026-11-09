@@ -17,6 +17,9 @@ import type { SidebarItem } from "../../interface/routes.types";
 
 export type { SidebarItem };
 
+const SIDEBAR_GRADIENT =
+  "linear-gradient(180deg, #3A0524 0%, #5B0638 60%, #45052C 100%) fixed";
+
 export type SidebarProps = {
   items?: SidebarItem[];
   activeHref?: string;
@@ -463,9 +466,10 @@ export function Sidebar({
       <nav aria-label="Main navigation" className="flex h-full flex-col">
         <ul
           className={[
-            "bg-[#D9145A] px-2 text-white",
+            "px-2 text-white",
             !isCollapsed && activeItem ? "rounded-br-xl" : "",
           ].join(" ")}
+          style={{ background: SIDEBAR_GRADIENT }}
         >
           <li
             className={[
@@ -517,9 +521,10 @@ export function Sidebar({
         {activeItem && (
           <div
             className={[
-              "relative z-10 bg-[#D9145A]",
+              "relative z-10",
               isCollapsed ? "px-2 my-0.5" : "pl-2",
             ].join(" ")}
+            style={{ background: SIDEBAR_GRADIENT }}
           >
             {renderItem(activeItem, true)}
           </div>
@@ -527,9 +532,10 @@ export function Sidebar({
 
         <div
           className={[
-            "flex flex-1 flex-col justify-between bg-[#D9145A] px-2 pb-3 text-white",
+            "flex flex-1 flex-col justify-between px-2 pb-3 text-white",
             !isCollapsed && activeItem ? "rounded-tr-xl" : "",
           ].join(" ")}
+          style={{ background: SIDEBAR_GRADIENT }}
         >
           <ul className={`flex flex-col ${isCollapsed ? "gap-0.5" : "gap-1"}`}>
             {afterActive.map((item) => (

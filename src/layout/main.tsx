@@ -32,7 +32,13 @@ export function MainLayout({
   topHeaderProps,
 }: MainLayoutProps) {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-primary">
+    <div
+      className="flex h-screen w-full overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(180deg, #3A0524 0%, #5B0638 60%, #45052C 100%)",
+      }}
+    >
       <Sidebar
         activeHref={activeHref}
         items={sidebarItems}

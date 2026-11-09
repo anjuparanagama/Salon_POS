@@ -28,6 +28,7 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path={ROUTES.LOGIN} element={<Login />} />
+      <Route path="/login" element={<Navigate to={ROUTES.LOGIN} replace />} />
       <Route
         path={ROUTES.DASHBOARD}
         element={
