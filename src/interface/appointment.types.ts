@@ -5,6 +5,13 @@ export type AppointmentStatus =
   | "completed"
   | "cancelled";
 
+export type AppointmentServiceItem = {
+  id?: string;
+  name: string;
+  price: number;
+  durationMinutes: number;
+};
+
 export type Appointment = {
   id: string;
   appointmentNumber?: string;
@@ -13,6 +20,7 @@ export type Appointment = {
   clientAvatar?: string;
   serviceId: string;
   serviceName: string;
+  services?: AppointmentServiceItem[];
   staffId: string;
   staffName: string;
   staffAvatar?: string;
@@ -46,6 +54,7 @@ export type AppointmentFormData = {
   clientPhone: string;
   serviceId?: string;
   serviceName: string;
+  services?: AppointmentServiceItem[];
   staffId?: string;
   staffName: string;
   date: string;

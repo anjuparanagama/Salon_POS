@@ -5,6 +5,7 @@ import type {
   AppointmentStats,
   AppointmentFormData,
   AppointmentStatus,
+  AppointmentServiceItem,
 } from "../interface/appointment.types";
 
 export interface AppointmentQueryParams {
@@ -229,6 +230,23 @@ export function normalizeAppointment(
     (raw.appointmentNumber as string) ||
     undefined;
 
+  const normalizedServices: AppointmentServiceItem[] =
+    rawServices.length > 0
+      ? rawServices.map((s) => ({
+          id: String(s.service_id || s.id || ""),
+          name: String(s.name || s.service_name || "Service"),
+          price: Number(s.unit_price || s.price || 0),
+          durationMinutes: Number(s.duration_minutes || s.duration || 45),
+        }))
+      : fallbackFormData?.services || [
+          {
+            id: String(raw.serviceId || firstService?.service_id || firstService?.id || "svc-1"),
+            name: serviceName,
+            price: totalPrice,
+            durationMinutes: totalDuration,
+          },
+        ];
+
   return {
     id: String(raw.id || `apt-${index + 1}`),
     appointmentNumber,
@@ -237,6 +255,7 @@ export function normalizeAppointment(
     clientAvatar: typeof raw.clientAvatar === "string" ? raw.clientAvatar : undefined,
     serviceId: String(raw.serviceId || firstService?.service_id || firstService?.id || "svc-1"),
     serviceName,
+    services: normalizedServices,
     staffId: String(raw.staffId || raw.assigned_staff_id || "st-1"),
     staffName,
     staffAvatar: typeof raw.staffAvatar === "string" ? raw.staffAvatar : undefined,
@@ -333,6 +352,25 @@ export const appointmentsService = {
     const appointmentDate = payload.date || new Date().toISOString().split("T")[0];
     const startTime = to24HourTime(payload.time);
 
+    const servicesToSend =
+      payload.services && payload.services.length > 0
+        ? payload.services.map((s) => ({
+            service_id: s.id || resolveServiceId(s.name),
+            name: s.name,
+            unit_price: Number(s.price || 0),
+            duration_minutes: Math.max(5, Number(s.durationMinutes || 15)),
+            quantity: 1,
+          }))
+        : [
+            {
+              service_id: serviceId,
+              name: payload.serviceName || "Haircut & Styling",
+              unit_price: Number(payload.price || 45),
+              duration_minutes: Math.max(5, Number(payload.durationMinutes || 15)),
+              quantity: 1,
+            },
+          ];
+
     // Send the entered client details; the backend finds the customer by phone
     // or creates a new one. (Never fall back to a hardcoded customer ID.)
     const requestBody = {
@@ -343,15 +381,7 @@ export const appointmentsService = {
       start_time: startTime,
       notes: payload.notes?.trim() || null,
       booking_source: "walk_in",
-      services: [
-        {
-          service_id: serviceId,
-          name: payload.serviceName || "Haircut & Styling",
-          unit_price: Number(payload.price || 45),
-          duration_minutes: Math.max(5, Number(payload.durationMinutes || 15)),
-          quantity: 1,
-        },
-      ],
+      services: servicesToSend,
     };
 
     const res = await apiClient.post(API_ENDPOINTS.APPOINTMENTS.BASE, requestBody);
@@ -370,7 +400,15 @@ export const appointmentsService = {
     if (payload.staffId || payload.staffName) {
       patchBody.assigned_staff_id = payload.staffId || resolveStaffId(payload.staffName) || null;
     }
-    if (payload.serviceName || payload.price !== undefined || payload.durationMinutes !== undefined) {
+    if (payload.services && payload.services.length > 0) {
+      patchBody.services = payload.services.map((s) => ({
+        service_id: s.id || resolveServiceId(s.name),
+        name: s.name,
+        unit_price: Number(s.price || 0),
+        duration_minutes: Math.max(5, Number(s.durationMinutes || 15)),
+        quantity: 1,
+      }));
+    } else if (payload.serviceName || payload.price !== undefined || payload.durationMinutes !== undefined) {
       patchBody.services = [
         {
           service_id: resolveServiceId(payload.serviceName),

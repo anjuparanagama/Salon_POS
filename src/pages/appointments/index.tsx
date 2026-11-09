@@ -253,6 +253,7 @@ export function Appointments() {
         staffList={staffList}
         staffMembers={backendStaff}
         servicesList={servicesList}
+        existingAppointments={appointments}
         initialData={editingAppointment}
       />
 
