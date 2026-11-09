@@ -24,7 +24,7 @@ export function NotificationButton({
       aria-label={title}
       onClick={onClick}
       className={[
-        "relative flex size-8 sm:size-8.5 items-center justify-center rounded-full bg-[#FDF2F7] text-[#D9145A] hover:bg-[#FCE8F0] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] cursor-pointer",
+        "relative flex size-8 sm:size-8.5 items-center justify-center rounded-full bg-[#FCE8F0] text-[#D9145A] hover:bg-[#FAD9E5] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] cursor-pointer",
         className,
       ].join(" ")}
     >

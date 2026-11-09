@@ -30,7 +30,7 @@ export function Breadcrumb({
             )}
 
             {isCurrent ? (
-              <span className="inline-flex items-center rounded-full bg-[#FDF2F7] px-2.5 py-0.5 text-[11px] sm:text-xs font-semibold text-[#D9145A]">
+              <span className="inline-flex items-center rounded-full bg-[#FCE8F0] px-2.5 py-0.5 text-[11px] sm:text-xs font-semibold text-[#D9145A]">
                 {Icon && <Icon aria-hidden="true" className="mr-1 size-3 shrink-0" />}
                 {item.label}
               </span>

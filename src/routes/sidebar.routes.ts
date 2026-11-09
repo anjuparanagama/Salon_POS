@@ -24,6 +24,7 @@ export const ROUTES = {
   LEDGER_INCOME: "/ledger/income",
   LEDGER_EXPENSES: "/ledger/expenses",
   LEDGER_TRANSACTIONS: "/ledger/transactions",
+  SETTINGS: "/settings",
 } as const;
 
 export const sidebarRoutes: SidebarItem[] = [

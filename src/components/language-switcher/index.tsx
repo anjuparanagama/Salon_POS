@@ -45,7 +45,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
         aria-label="Change Language"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex h-8 sm:h-8.5 items-center gap-1.5 rounded-full bg-[#FDF2F7] px-2.5 sm:px-3 text-xs font-medium text-[#D9145A] hover:bg-[#FCE8F0] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] cursor-pointer"
+        className="flex h-8 sm:h-8.5 items-center gap-1.5 rounded-full bg-[#FCE8F0] px-2.5 sm:px-3 text-xs font-medium text-[#D9145A] hover:bg-[#FAD9E5] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A] cursor-pointer"
       >
         <Languages aria-hidden="true" className="size-3.5 sm:size-4 shrink-0" strokeWidth={2.25} />
         <span className="hidden md:inline font-semibold">{currentOption.nativeLabel}</span>
@@ -71,7 +71,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
                 onClick={() => handleLanguageChange(lang.code)}
                 className={`flex w-full items-center justify-between px-3 py-2 text-xs sm:text-sm transition-colors cursor-pointer ${
                   isSelected
-                    ? "bg-[#FDF2F7] font-semibold text-[#D9145A]"
+                    ? "bg-[#FCE8F0] font-semibold text-[#D9145A]"
                     : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >

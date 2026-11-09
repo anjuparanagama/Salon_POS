@@ -137,6 +137,12 @@ function AppContent() {
           { label: t("nav.financialLedger", "Financial Ledger") },
           { label: t("nav.transactions", "Transactions & Refunds"), href: ROUTES.LEDGER_TRANSACTIONS, isCurrent: true },
         ];
+      case ROUTES.SETTINGS:
+        return [
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.system", "System") },
+          { label: t("nav.settings", "Settings"), href: ROUTES.SETTINGS, isCurrent: true },
+        ];
       default:
         return [
           { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
@@ -160,6 +166,8 @@ function AppContent() {
       activeHref={location.pathname}
       sidebarItems={translatedSidebarRoutes}
       onNavigate={(item) => navigate(item.href)}
+      onSettingsClick={() => navigate(ROUTES.SETTINGS)}
+      settingsHref={ROUTES.SETTINGS}
       onLogoutClick={handleLogout}
       logoutHref={ROUTES.LOGIN}
       topHeaderProps={{

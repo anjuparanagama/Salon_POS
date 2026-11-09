@@ -10,6 +10,7 @@ import Products from "../pages/products";
 import LedgerIncome from "../pages/ledger/income";
 import LedgerExpenses from "../pages/ledger/expenses";
 import LedgerTransactions from "../pages/ledger/transactions";
+import Settings from "../pages/settings";
 import { ROUTES } from "./sidebar.routes";
 import { useAuth } from "../context/use-auth";
 
@@ -100,6 +101,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute>
             <LedgerTransactions />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.SETTINGS}
+        element={
+          <ProtectedRoute>
+            <Settings />
           </ProtectedRoute>
         }
       />

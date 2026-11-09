@@ -86,10 +86,10 @@ export function SearchBar({
         }
       }}
       className={[
-        "relative flex h-8 sm:h-8.5 items-center overflow-hidden rounded-full bg-[#FDF2F7] transition-all duration-300 ease-in-out",
+        "relative flex h-8 sm:h-8.5 items-center overflow-hidden rounded-full bg-[#FCE8F0] transition-all duration-300 ease-in-out",
         isSearchOpen
           ? "w-48 sm:w-64 md:w-80 border border-pink-200/80 shadow-xs ring-2 ring-[#D9145A]/20"
-          : "w-8 sm:w-8.5 cursor-pointer border border-transparent hover:bg-[#FCE8F0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A]",
+          : "w-8 sm:w-8.5 cursor-pointer border border-transparent hover:bg-[#FAD9E5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9145A]",
         className,
       ].join(" ")}
     >
