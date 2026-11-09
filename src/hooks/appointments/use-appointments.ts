@@ -121,22 +121,50 @@ export function useAppointments(
   };
 
   const updateStatus = async (id: string, status: AppointmentStatus, reason?: string) => {
+    // 1. Optimistically update row status immediately
+    setAppointments((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, status } : a))
+    );
+
     try {
-      await appointmentsService.updateStatus(id, status, reason);
-    } finally {
-      setAppointments((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, status } : a))
-      );
+      const updated = await appointmentsService.updateStatus(id, status, reason);
+      if (updated) {
+        setAppointments((prev) =>
+          prev.map((a) => {
+            if (a.id !== id) return a;
+            return {
+              ...a,
+              status: updated.status || status,
+              ...(updated.clientName && updated.clientName !== "Walk-in Client"
+                ? { clientName: updated.clientName }
+                : {}),
+              ...(updated.clientPhone && updated.clientPhone !== "+1 (555) 000-0000"
+                ? { clientPhone: updated.clientPhone }
+                : {}),
+              ...(updated.serviceName ? { serviceName: updated.serviceName } : {}),
+              ...(updated.staffName ? { staffName: updated.staffName } : {}),
+            };
+          })
+        );
+      }
+      // 2. Refresh the table and stats from the server
+      await fetchAll();
+    } catch (err) {
+      console.error("Failed to update status on server:", err);
+      await fetchAll();
     }
   };
 
   const cancelAppointment = async (id: string, reason?: string) => {
+    setAppointments((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, status: "cancelled" } : a))
+    );
     try {
       await appointmentsService.cancelAppointment(id, reason);
-    } finally {
-      setAppointments((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, status: "cancelled" } : a))
-      );
+      await fetchAll();
+    } catch (err) {
+      console.error("Failed to cancel appointment on server:", err);
+      await fetchAll();
     }
   };
 

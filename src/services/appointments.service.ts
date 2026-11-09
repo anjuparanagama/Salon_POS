@@ -28,6 +28,16 @@ export function normalizeStatus(status?: string): AppointmentStatus {
   return "pending";
 }
 
+export function toBackendStatus(status: string): string {
+  const s = status.toLowerCase().trim().replace(/[\s-]+/g, "_");
+  if (s === "pending" || s === "open") return "Open";
+  if (s === "confirmed" || s === "approved") return "Approved";
+  if (s === "in_progress" || s === "inprogress") return "In Progress";
+  if (s === "completed" || s === "done") return "Done";
+  if (s === "cancelled" || s === "canceled") return "Cancelled";
+  return status;
+}
+
 const KNOWN_CUSTOMERS: Record<string, { name: string; phone: string }> = {
   "c1000000-0000-0000-0000-000000000001": { name: "Emma Wilson", phone: "+1 (555) 234-5678" },
   "c1000000-0000-0000-0000-000000000002": { name: "Sophia Brown", phone: "+1 (555) 345-6789" },
@@ -340,9 +350,10 @@ export const appointmentsService = {
   },
 
   async updateStatus(id: string, status: string, reason?: string): Promise<Appointment> {
+    const backendStatus = toBackendStatus(status);
     const res = await apiClient.patch(
       API_ENDPOINTS.APPOINTMENTS.STATUS(id),
-      { status, reason }
+      { status: backendStatus, reason }
     );
     return normalizeAppointment(res.data);
   },
