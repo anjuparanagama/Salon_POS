@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { BrowserRouter, useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import {
-  ArrowLeftRight,
+  // ArrowLeftRight,
   BookOpen,
   CalendarDays,
   ClipboardList,
@@ -75,11 +75,11 @@ function AppContent() {
             href: ROUTES.LEDGER_EXPENSES,
             icon: TrendingDown,
           },
-          {
-            label: t("nav.transactions", "Transactions"),
-            href: ROUTES.LEDGER_TRANSACTIONS,
-            icon: ArrowLeftRight,
-          },
+          // {
+          //   label: t("nav.transactions", "Transactions"),
+          //   href: ROUTES.LEDGER_TRANSACTIONS,
+          //   icon: ArrowLeftRight,
+          // },
         ],
       },
     ],

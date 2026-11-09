@@ -108,3 +108,9 @@ export type StockSalePayload = {
   note?: string;
   reference?: string;
 };
+
+export type ShareProductsModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  shareUrl?: string;
+};

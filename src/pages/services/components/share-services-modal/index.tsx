@@ -3,7 +3,7 @@ import { Check, Copy } from "lucide-react";
 import Modal from "../../../../components/modal";
 import type { ShareServicesModalProps } from "../../../../interface/service.types";
 
-const DEFAULT_DUMMY_URL = "https://social.oms.storemate.cloud/services/sribees-salon";
+const DEFAULT_DUMMY_URL = "https://salora.lk/services/sribees-salon";
 
 export function ShareServicesModal({
   isOpen,
@@ -35,7 +35,7 @@ export function ShareServicesModal({
 
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
   const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-    `Check out our Salon Services Catalog: ${shareUrl}`
+    `Check out our Salon Services Catalog: ${shareUrl}`,
   )}`;
 
   return (

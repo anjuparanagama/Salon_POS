@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Share2 } from "lucide-react";
 import type {
   Product,
   ProductFilterState,
@@ -16,7 +16,9 @@ import ProductList from "./components/product-list";
 import ProductPanel from "./components/product-panel";
 import ProductViewPanel from "./components/product-view-panel";
 import StockModal, { type StockModalMode } from "./components/stock-modal";
+import ShareProductsModal from "./components/share-products-modal";
 import Header from "../../components/header";
+import Tooltip from "../../components/tooltip";
 
 const categories = [
   { label: "All Items", value: "all" },
@@ -42,6 +44,7 @@ export function Products() {
 
   // Right Slider Drawers State
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const [isViewOpen, setIsViewOpen] = useState(false);
@@ -243,6 +246,18 @@ export function Products() {
       <Header
         title="Products"
         description="Manage your salon products and stock."
+        titleSuffix={
+          <Tooltip content="Share Product Catalog" placement="right">
+            <button
+              type="button"
+              aria-label="Share Product Catalog"
+              onClick={() => setIsShareModalOpen(true)}
+              className="inline-flex size-6 sm:size-7 items-center justify-center rounded-lg text-slate-400 hover:text-primary hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
+            >
+              <Share2 aria-hidden="true" className="size-3.5 sm:size-4" strokeWidth={2} />
+            </button>
+          </Tooltip>
+        }
         actions={
           <button
             type="button"
@@ -314,6 +329,12 @@ export function Products() {
         onStockIn={handleStockIn}
         onStockAdjustment={handleStockAdjustment}
         onRecordSale={handleRecordSale}
+      />
+
+      {/* 8. Share Products Modal */}
+      <ShareProductsModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
       />
     </div>
   );
