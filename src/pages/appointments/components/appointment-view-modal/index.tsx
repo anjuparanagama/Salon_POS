@@ -1,4 +1,3 @@
-import { Clock, Phone, User, Calendar, Scissors, FileText, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
@@ -14,37 +13,27 @@ export type AppointmentViewModalProps = {
 
 const statusDetails: Record<
   AppointmentStatus,
-  { label: string; bg: string; text: string; icon: typeof CheckCircle2 }
+  { label: string; badge: string }
 > = {
   confirmed: {
-    label: "Confirmed / Approved",
-    bg: "bg-emerald-50 border-emerald-200",
-    text: "text-emerald-700",
-    icon: CheckCircle2,
+    label: "Confirmed",
+    badge: "bg-emerald-50 border-emerald-200 text-emerald-700",
   },
   in_progress: {
     label: "In Progress",
-    bg: "bg-amber-50 border-amber-200",
-    text: "text-amber-700",
-    icon: Clock,
+    badge: "bg-amber-50 border-amber-200 text-amber-700",
   },
   completed: {
     label: "Completed",
-    bg: "bg-blue-50 border-blue-200",
-    text: "text-blue-700",
-    icon: CheckCircle2,
+    badge: "bg-blue-50 border-blue-200 text-blue-700",
   },
   pending: {
-    label: "Pending Approval",
-    bg: "bg-purple-50 border-purple-200",
-    text: "text-purple-700",
-    icon: AlertCircle,
+    label: "Pending",
+    badge: "bg-purple-50 border-purple-200 text-purple-700",
   },
   cancelled: {
     label: "Cancelled",
-    bg: "bg-rose-50 border-rose-200",
-    text: "text-rose-700",
-    icon: XCircle,
+    badge: "bg-rose-50 border-rose-200 text-rose-700",
   },
 };
 
@@ -59,14 +48,10 @@ export function AppointmentViewModal({
 
   const defaultStatusInfo = {
     label: "Pending",
-    bg: "bg-purple-50 border-purple-200",
-    text: "text-purple-700",
-    icon: AlertCircle,
+    badge: "bg-purple-50 border-purple-200 text-purple-700",
   };
 
   const statusInfo = (appointment.status && statusDetails[appointment.status]) || defaultStatusInfo;
-  const StatusIcon = statusInfo.icon;
-
   const aptNumber = formatAppointmentId(appointment);
 
   const clientDisplayName = appointment.clientName || "Client";
@@ -80,7 +65,7 @@ export function AppointmentViewModal({
       onClose={onClose}
       title="Appointment Details"
       description={`Booking reference ${aptNumber}`}
-      size="lg"
+      size="md"
       footer={
         <div className="flex items-center justify-end gap-2">
           <button
@@ -119,107 +104,76 @@ export function AppointmentViewModal({
         </div>
       }
     >
-      <div className="flex flex-col gap-3.5 text-xs">
-        {/* Status & Price Hero Banner */}
-        <div
-          className={`flex items-center justify-between rounded-xl border px-4 py-3 ${statusInfo.bg}`}
-        >
-          <div className="flex items-center gap-2">
-            <StatusIcon className={`size-4 ${statusInfo.text}`} />
-            <span className={`text-xs font-semibold ${statusInfo.text}`}>{statusInfo.label}</span>
-          </div>
-          <div className="text-right">
-            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider block">
-              Total Price
+      <div className="py-2 text-xs">
+        <ul className="divide-y divide-slate-100">
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Status:</span>
+            <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold ${statusInfo.badge}`}>
+              {statusInfo.label}
             </span>
-            <span className="font-bold text-slate-900 text-sm">{formatPrice(appointment.price ?? 0)}</span>
-          </div>
-        </div>
+          </li>
 
-        {/* Row 1: Client Information & Assigned Specialist in the SAME row */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* Client Box */}
-          <div className="flex flex-col justify-between rounded-xl border border-slate-100 bg-slate-50/60 p-3.5 transition-colors">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Client Information
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Total Price:</span>
+            <span className="font-bold text-slate-900 text-sm">
+              {formatPrice(appointment.price ?? 0)}
             </span>
-            <div className="mt-2.5 flex items-center gap-2.5">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-xs font-bold text-primary shadow-2xs">
-                {clientDisplayName.charAt(0).toUpperCase()}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-slate-900 text-xs">{clientDisplayName}</p>
-                <div className="mt-0.5 flex items-center gap-1 text-[11px] text-slate-500">
-                  <Phone className="size-3 shrink-0 text-slate-400" />
-                  <span className="truncate">{clientDisplayPhone}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          </li>
 
-          {/* Assigned Specialist Box */}
-          <div className="flex flex-col justify-between rounded-xl border border-slate-100 bg-slate-50/60 p-3.5 transition-colors">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Assigned Specialist
-            </span>
-            <div className="mt-2.5 flex items-center gap-2.5">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700 shadow-2xs">
-                <User className="size-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-slate-900 text-xs">{staffDisplayName}</p>
-                <p className="mt-0.5 text-[11px] text-slate-500 truncate">Salon Specialist</p>
-              </div>
-            </div>
-          </div>
-        </div>
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Client Name:</span>
+            <span className="font-medium text-slate-900">{clientDisplayName}</span>
+          </li>
 
-        {/* Row 2: Service Information & Schedule in the SAME row */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* Service Box */}
-          <div className="flex flex-col justify-between rounded-xl border border-slate-100 p-3.5 bg-white">
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <Scissors className="size-3.5 text-primary" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Service
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Phone Number:</span>
+            <span className="font-medium text-slate-800">{clientDisplayPhone}</span>
+          </li>
+
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Assigned Specialist:</span>
+            <span className="font-medium text-slate-900">{staffDisplayName}</span>
+          </li>
+
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Service:</span>
+            <span className="font-medium text-slate-900">{serviceDisplayName}</span>
+          </li>
+
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Duration:</span>
+            <span className="font-medium text-slate-800">{appointment.durationMinutes ?? 45} mins</span>
+          </li>
+
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Date:</span>
+            <span className="font-medium text-slate-900">{appointment.date || "N/A"}</span>
+          </li>
+
+          <li className="flex items-center gap-3 py-2.5">
+            <span className="size-1.5 rounded-full bg-slate-400 shrink-0" />
+            <span className="w-36 shrink-0 text-slate-500 font-medium">Time:</span>
+            <span className="font-medium text-slate-900">{appointment.time || "09:00 AM"}</span>
+          </li>
+
+          {appointment.notes && (
+            <li className="flex items-start gap-3 py-2.5">
+              <span className="size-1.5 rounded-full bg-slate-400 shrink-0 mt-1.5" />
+              <span className="w-36 shrink-0 text-slate-500 font-medium">Special Notes:</span>
+              <span className="text-slate-800 font-medium whitespace-pre-wrap break-words flex-1">
+                {appointment.notes}
               </span>
-            </div>
-            <div className="mt-2">
-              <p className="font-semibold text-slate-900 text-xs line-clamp-1">
-                {serviceDisplayName}
-              </p>
-              <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-500">
-                <Clock className="size-3 text-slate-400" />
-                <span>{appointment.durationMinutes ?? 45} mins session</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Schedule Box */}
-          <div className="flex flex-col justify-between rounded-xl border border-slate-100 p-3.5 bg-white">
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <Calendar className="size-3.5 text-primary" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Date & Time
-              </span>
-            </div>
-            <div className="mt-2">
-              <p className="font-semibold text-slate-900 text-xs">{appointment.date || "N/A"}</p>
-              <p className="mt-1 text-[11px] text-slate-500">Time: {appointment.time || "09:00 AM"}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Special Notes (if available) */}
-        {appointment.notes && (
-          <div className="rounded-xl border border-amber-200/60 bg-amber-50/50 p-3.5">
-            <div className="flex items-center gap-1.5 text-amber-800">
-              <FileText className="size-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Special Notes</span>
-            </div>
-            <p className="mt-1.5 text-xs text-slate-700 leading-relaxed">{appointment.notes}</p>
-          </div>
-        )}
+            </li>
+          )}
+        </ul>
       </div>
     </SidePanel>
   );

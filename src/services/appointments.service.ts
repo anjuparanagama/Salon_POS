@@ -269,17 +269,57 @@ export const appointmentsService = {
   },
 
   async getSummary(): Promise<AppointmentStats> {
-    const res = await apiClient.get(API_ENDPOINTS.APPOINTMENTS.SUMMARY);
-    const data = res.data || {};
-    return {
-      today: data.today ?? 0,
-      total: data.total ?? data.total_appointments ?? 0,
-      cancelled: data.cancelled ?? 0,
-      upcoming: data.upcoming ?? (data.open ?? 0) + (data.approved ?? 0),
-      confirmed: data.confirmed ?? data.approved ?? 0,
-      inProgress: data.inProgress ?? data.in_progress ?? 0,
-      completed: data.completed ?? data.done ?? 0,
-    };
+    try {
+      const res = await apiClient.get(API_ENDPOINTS.APPOINTMENTS.SUMMARY);
+      const data = res.data || {};
+      return {
+        today: data.today ?? 0,
+        total: data.total ?? data.total_appointments ?? 0,
+        cancelled: data.cancelled ?? 0,
+        upcoming: data.upcoming ?? (data.open ?? 0) + (data.approved ?? 0),
+        confirmed: data.confirmed ?? data.approved ?? 0,
+        inProgress: data.inProgress ?? data.in_progress ?? 0,
+        completed: data.completed ?? data.done ?? 0,
+      };
+    } catch {
+      try {
+        const { items, total } = await appointmentsService.getAppointments({ pageSize: 100 });
+        const todayStr = new Date().toISOString().split("T")[0];
+        let todayCount = 0;
+        let confirmed = 0;
+        let inProgress = 0;
+        let completed = 0;
+        let cancelled = 0;
+
+        items.forEach((item) => {
+          if (item.date === todayStr) todayCount++;
+          if (item.status === "confirmed") confirmed++;
+          else if (item.status === "in_progress") inProgress++;
+          else if (item.status === "completed") completed++;
+          else if (item.status === "cancelled") cancelled++;
+        });
+
+        return {
+          today: todayCount,
+          total: total || items.length,
+          cancelled,
+          upcoming: confirmed,
+          confirmed,
+          inProgress,
+          completed,
+        };
+      } catch {
+        return {
+          today: 0,
+          total: 0,
+          cancelled: 0,
+          upcoming: 0,
+          confirmed: 0,
+          inProgress: 0,
+          completed: 0,
+        };
+      }
+    }
   },
 
   async getAppointmentById(id: string): Promise<Appointment> {
