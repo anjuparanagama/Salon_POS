@@ -7,6 +7,7 @@ import type {
   ServiceFilterState,
   ServiceFormData,
 } from "../../interface/service.types";
+import { useServices } from "../../hooks/services";
 
 import ServiceStats from "./components/service-stats";
 import ServiceFilters from "./components/service-filters";
@@ -16,131 +17,19 @@ import ShareServicesModal from "./components/share-services-modal";
 import Header from "../../components/header";
 import Tooltip from "../../components/tooltip";
 
-const initialCategories: ServiceCategoryItem[] = [
-  { id: "cat-1", label: "Hair Care", value: "hair" },
-  { id: "cat-2", label: "Skin & Facial", value: "skin" },
-  { id: "cat-3", label: "Nail Care", value: "nails" },
-  { id: "cat-4", label: "Spa & Massage", value: "spa" },
-  { id: "cat-5", label: "Makeup & Bridal", value: "makeup" },
-];
 
-const initialServices: ServiceItem[] = [
-  {
-    id: "svc-1",
-    name: "Classic Haircut & Blowdry",
-    category: "hair",
-    durationMinutes: 45,
-    price: 45.0,
-    description: "Custom precision cut tailored to hair texture and face shape, followed by signature blowdry styling.",
-    isActive: true,
-    popular: true,
-    images: [
-      "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800&auto=format&fit=crop&q=80",
-    ],
-  },
-  {
-    id: "svc-2",
-    name: "Balayage Color & Gloss Toner",
-    category: "hair",
-    durationMinutes: 90,
-    price: 135.0,
-    description: "Hand-painted sun-kissed dimension highlights with custom tone blending and moisturizing gloss finish.",
-    isActive: true,
-    popular: true,
-    images: [
-      "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=800&auto=format&fit=crop&q=80",
-    ],
-  },
-  {
-    id: "svc-3",
-    name: "Hydra Deep Cleaning Facial",
-    category: "skin",
-    durationMinutes: 60,
-    price: 85.0,
-    description: "Multi-step treatment that cleanses, exfoliates, extracts impurities, and infuses restorative antioxidants.",
-    isActive: true,
-    popular: true,
-    images: [
-      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&auto=format&fit=crop&q=80",
-    ],
-  },
-  {
-    id: "svc-4",
-    name: "Anti-Aging Collagen Facial",
-    category: "skin",
-    durationMinutes: 75,
-    price: 110.0,
-    description: "Revitalizing firming treatment with pure marine collagen, micro-current lifting, and LED therapy.",
-    isActive: true,
-  },
-  {
-    id: "svc-5",
-    name: "Deluxe Gel Manicure & Pedicure",
-    category: "nails",
-    durationMinutes: 65,
-    price: 70.0,
-    description: "Organic citrus scrub, cuticle care, tension-relief massage, and long-lasting high-shine gel polish.",
-    isActive: true,
-    popular: true,
-    images: [
-      "https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=800&auto=format&fit=crop&q=80",
-    ],
-  },
-  {
-    id: "svc-6",
-    name: "Acrylic Full Set with Nail Art",
-    category: "nails",
-    durationMinutes: 80,
-    price: 90.0,
-    description: "Full extension tips with custom acrylic powder sculpting, hand-painted art accents, and top seal.",
-    isActive: true,
-  },
-  {
-    id: "svc-7",
-    name: "Aromatherapy Full Body Massage",
-    category: "spa",
-    durationMinutes: 60,
-    price: 95.0,
-    description: "Swedish massage technique using pure essential oils to ease muscular tension and restore balance.",
-    isActive: true,
-  },
-  {
-    id: "svc-8",
-    name: "Hot Stone Therapy Ritual",
-    category: "spa",
-    durationMinutes: 90,
-    price: 130.0,
-    description: "Warm basalt stones melt deep tension paired with warm organic oils and rhythmic soothing strokes.",
-    isActive: true,
-  },
-  {
-    id: "svc-9",
-    name: "Bridal Signature Glam & Lashes",
-    category: "makeup",
-    durationMinutes: 90,
-    price: 165.0,
-    description: "Long-wear HD airbrush bridal makeup, mink lash extensions, and complimentary touch-up kit.",
-    isActive: true,
-    popular: true,
-    images: [
-      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&auto=format&fit=crop&q=80",
-    ],
-  },
-  {
-    id: "svc-10",
-    name: "Soft Glam Evening Makeup",
-    category: "makeup",
-    durationMinutes: 50,
-    price: 75.0,
-    description: "Flawless luminous skin, defined eyes, tailored contouring, and velvet lips for evening events.",
-    isActive: true,
-  },
-];
 
 export function Services() {
   const { t } = useTranslation(["services", "common"]);
-  const [categories, setCategories] = useState<ServiceCategoryItem[]>(initialCategories);
-  const [services, setServices] = useState<ServiceItem[]>(initialServices);
+  const {
+    services,
+    categories,
+    createService,
+    updateService,
+    toggleStatus,
+    addCategory,
+  } = useServices();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
@@ -156,16 +45,11 @@ export function Services() {
   };
 
   const handleAddCategory = (newCat: ServiceCategoryItem) => {
-    setCategories((prev) => {
-      if (prev.some((c) => c.value === newCat.value)) return prev;
-      return [...prev, newCat];
-    });
+    addCategory(newCat.label, newCat.value);
   };
 
   const handleToggleStatus = (id: string) => {
-    setServices((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isActive: !item.isActive } : item))
-    );
+    toggleStatus(id);
   };
 
   const handleEditClick = (service: ServiceItem) => {
@@ -178,25 +62,11 @@ export function Services() {
     setIsModalOpen(true);
   };
 
-  const handleSaveService = (data: ServiceFormData) => {
+  const handleSaveService = async (data: ServiceFormData) => {
     if (editingService) {
-      setServices((prev) =>
-        prev.map((item) =>
-          item.id === editingService.id
-            ? {
-                ...item,
-                ...data,
-              }
-            : item
-        )
-      );
+      await updateService(editingService.id, data);
     } else {
-      const newService: ServiceItem = {
-        id: `svc-${Date.now()}`,
-        ...data,
-        popular: false,
-      };
-      setServices((prev) => [newService, ...prev]);
+      await createService(data);
     }
   };
 

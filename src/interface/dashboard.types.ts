@@ -72,3 +72,55 @@ export type RecentAppointment = {
   service: string;
   staff: string;
 };
+
+// Backend API Request and Response Types
+export type DashboardFilterParams = {
+  period?: "today" | "this_week" | "this_month" | string;
+  from?: string;
+  to?: string;
+  limit?: number;
+};
+
+export type DashboardSummaryDto = {
+  revenue: number;
+  appointments: number;
+  customers: number;
+  payments: number;
+  sold_products: number;
+};
+
+export type DateOrderPointDto = {
+  date: string;
+  orders: number;
+};
+
+export type OrdersChartResponseDto = {
+  data: DateOrderPointDto[];
+};
+
+export type TopProductDto = {
+  name: string;
+  quantity: number;
+};
+
+export type TopProductsResponseDto = {
+  data: TopProductDto[];
+};
+
+export type TopServiceDto = {
+  name: string;
+  orders: number;
+};
+
+export type TopServicesResponseDto = {
+  data: TopServiceDto[];
+};
+
+export type PaymentTypeDto = {
+  type: string;
+  amount: number;
+};
+
+export type PaymentTypesResponseDto = {
+  data: PaymentTypeDto[];
+};

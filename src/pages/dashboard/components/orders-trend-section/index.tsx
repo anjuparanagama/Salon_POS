@@ -8,14 +8,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Scissors, ShoppingBag } from "lucide-react";
+import { Loader2, Scissors, ShoppingBag } from "lucide-react";
 import type { ChartTimeFilter, TrendChartPoint } from "../../../../interface/dashboard.types";
-import {
-  CHART_TIME_FILTER_OPTIONS,
-  PRODUCT_ORDERS_DATA,
-  SERVICE_ORDERS_DATA,
-} from "../../data/dashboard.mock";
+import { CHART_TIME_FILTER_OPTIONS } from "../../data/dashboard.mock";
 import TimeFilterSelect from "../time-filter-select";
+import {
+  useServiceOrdersTrend,
+  useProductOrdersTrend,
+} from "../../../../hooks/dashboard";
 
 type CustomTooltipProps = {
   active?: boolean;
@@ -55,11 +55,17 @@ export function OrdersTrendSection() {
   const [serviceFilter, setServiceFilter] = useState<ChartTimeFilter>("7d");
   const [productFilter, setProductFilter] = useState<ChartTimeFilter>("7d");
 
-  const serviceData = SERVICE_ORDERS_DATA[serviceFilter] ?? [];
-  const productData = PRODUCT_ORDERS_DATA[productFilter] ?? [];
+  const {
+    data: serviceData,
+    totalOrders: totalServiceOrders,
+    isLoading: isServiceLoading,
+  } = useServiceOrdersTrend(serviceFilter);
 
-  const totalServiceOrders = serviceData.reduce((acc, curr) => acc + curr.orders, 0);
-  const totalProductOrders = productData.reduce((acc, curr) => acc + curr.orders, 0);
+  const {
+    data: productData,
+    totalOrders: totalProductOrders,
+    isLoading: isProductLoading,
+  } = useProductOrdersTrend(productFilter);
 
   return (
     <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -71,9 +77,12 @@ export function OrdersTrendSection() {
               <Scissors aria-hidden="true" className="size-4.5" />
             </span>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">
-                Orders Based on Services
-              </h3>
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-sm font-bold text-slate-900">
+                  Orders Based on Services
+                </h3>
+                {isServiceLoading && <Loader2 className="size-3.5 animate-spin text-slate-400" />}
+              </div>
               <p className="text-xs text-slate-500">
                 Total: <span className="font-semibold text-slate-800">{totalServiceOrders.toLocaleString()} bookings</span>
               </p>
@@ -90,45 +99,57 @@ export function OrdersTrendSection() {
         </div>
 
         {/* Bar Chart Container */}
-        <div className="mt-4 h-64 w-full min-w-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={serviceData}
-              margin={{ top: 15, right: 15, left: -5, bottom: 5 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#e2e8f0"
-              />
-              <XAxis
-                dataKey="label"
-                tickLine={false}
-                axisLine={{ stroke: "#cbd5e1" }}
-                tick={{ fontSize: 11, fill: "#64748b" }}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tick={{ fontSize: 11, fill: "#64748b" }}
-                allowDecimals={false}
-                width={36}
-              />
-              <Tooltip
-                cursor={false}
-                content={<ChartCustomTooltip metricLabel="Service Bookings" />}
-              />
-              <Bar
-                dataKey="orders"
-                fill="#D9145A"
-                radius={[5, 5, 0, 0]}
-                maxBarSize={32}
-                className="cursor-pointer"
-                activeBar={{ fill: "#800b55", cursor: "pointer" }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {isServiceLoading && serviceData.length === 0 ? (
+          <div className="mt-4 flex h-64 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+            <Loader2 className="size-8 animate-spin text-primary" />
+            <span className="text-xs font-medium text-slate-500">Loading service orders...</span>
+          </div>
+        ) : serviceData.length === 0 ? (
+          <div className="mt-4 flex h-64 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+            <Scissors className="size-6 text-slate-300" />
+            <span className="text-xs font-medium text-slate-500">No service bookings for this period</span>
+          </div>
+        ) : (
+          <div className="mt-4 h-64 w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={serviceData}
+                margin={{ top: 15, right: 15, left: -5, bottom: 5 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e2e8f0"
+                />
+                <XAxis
+                  dataKey="label"
+                  tickLine={false}
+                  axisLine={{ stroke: "#cbd5e1" }}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
+                  allowDecimals={false}
+                  width={36}
+                />
+                <Tooltip
+                  cursor={false}
+                  content={<ChartCustomTooltip metricLabel="Service Bookings" />}
+                />
+                <Bar
+                  dataKey="orders"
+                  fill="#D9145A"
+                  radius={[5, 5, 0, 0]}
+                  maxBarSize={32}
+                  className="cursor-pointer"
+                  activeBar={{ fill: "#800b55", cursor: "pointer" }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
 
       {/* Chart 2: Orders Based on Products (Bar Chart) */}
@@ -139,9 +160,12 @@ export function OrdersTrendSection() {
               <ShoppingBag aria-hidden="true" className="size-4.5" />
             </span>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">
-                Orders Based on Products
-              </h3>
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-sm font-bold text-slate-900">
+                  Orders Based on Products
+                </h3>
+                {isProductLoading && <Loader2 className="size-3.5 animate-spin text-slate-400" />}
+              </div>
               <p className="text-xs text-slate-500">
                 Total: <span className="font-semibold text-slate-800">{totalProductOrders.toLocaleString()} sales</span>
               </p>
@@ -158,45 +182,57 @@ export function OrdersTrendSection() {
         </div>
 
         {/* Bar Chart Container */}
-        <div className="mt-4 h-64 w-full min-w-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={productData}
-              margin={{ top: 15, right: 15, left: -5, bottom: 5 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#e2e8f0"
-              />
-              <XAxis
-                dataKey="label"
-                tickLine={false}
-                axisLine={{ stroke: "#cbd5e1" }}
-                tick={{ fontSize: 11, fill: "#64748b" }}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tick={{ fontSize: 11, fill: "#64748b" }}
-                allowDecimals={false}
-                width={36}
-              />
-              <Tooltip
-                cursor={false}
-                content={<ChartCustomTooltip metricLabel="Product Sales" />}
-              />
-              <Bar
-                dataKey="orders"
-                fill="#0284c7"
-                radius={[5, 5, 0, 0]}
-                maxBarSize={32}
-                className="cursor-pointer"
-                activeBar={{ fill: "#0369a1", cursor: "pointer" }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {isProductLoading && productData.length === 0 ? (
+          <div className="mt-4 flex h-64 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+            <Loader2 className="size-8 animate-spin text-sky-600" />
+            <span className="text-xs font-medium text-slate-500">Loading product orders...</span>
+          </div>
+        ) : productData.length === 0 ? (
+          <div className="mt-4 flex h-64 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+            <ShoppingBag className="size-6 text-slate-300" />
+            <span className="text-xs font-medium text-slate-500">No product sales for this period</span>
+          </div>
+        ) : (
+          <div className="mt-4 h-64 w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={productData}
+                margin={{ top: 15, right: 15, left: -5, bottom: 5 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e2e8f0"
+                />
+                <XAxis
+                  dataKey="label"
+                  tickLine={false}
+                  axisLine={{ stroke: "#cbd5e1" }}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fontSize: 11, fill: "#64748b" }}
+                  allowDecimals={false}
+                  width={36}
+                />
+                <Tooltip
+                  cursor={false}
+                  content={<ChartCustomTooltip metricLabel="Product Sales" />}
+                />
+                <Bar
+                  dataKey="orders"
+                  fill="#0284c7"
+                  radius={[5, 5, 0, 0]}
+                  maxBarSize={32}
+                  className="cursor-pointer"
+                  activeBar={{ fill: "#0369a1", cursor: "pointer" }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -6,18 +6,18 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { CreditCard, PackageCheck, Sparkles } from "lucide-react";
+import { CreditCard, Loader2, PackageCheck, Sparkles } from "lucide-react";
 import type {
   ChartTimeFilter,
   PaymentTypeItem,
 } from "../../../../interface/dashboard.types";
-import {
-  CHART_TIME_FILTER_OPTIONS,
-  PAYMENT_TYPES_DATA,
-  TOP_PRODUCTS_DATA,
-  TOP_SERVICES_DATA,
-} from "../../data/dashboard.mock";
+import { CHART_TIME_FILTER_OPTIONS } from "../../data/dashboard.mock";
 import TimeFilterSelect from "../time-filter-select";
+import {
+  useTopProducts,
+  useTopServices,
+  usePaymentTypes,
+} from "../../../../hooks/dashboard";
 
 type PaymentTooltipProps = {
   active?: boolean;
@@ -59,12 +59,18 @@ export function BreakdownChartsSection() {
   const [serviceFilter, setServiceFilter] = useState<ChartTimeFilter>("30d");
   const [paymentFilter, setPaymentFilter] = useState<ChartTimeFilter>("30d");
 
-  const maxProductPct = Math.max(...TOP_PRODUCTS_DATA.map((p) => p.percentage), 1);
-  const maxServicePct = Math.max(...TOP_SERVICES_DATA.map((s) => s.percentage), 1);
-  const totalPaymentAmount = PAYMENT_TYPES_DATA.reduce(
-    (acc, curr) => acc + curr.value,
-    0
-  );
+  const { data: topProducts, isLoading: isProductsLoading } =
+    useTopProducts(productFilter);
+  const { data: topServices, isLoading: isServicesLoading } =
+    useTopServices(serviceFilter);
+  const {
+    data: paymentTypes,
+    totalAmount: totalPaymentAmount,
+    isLoading: isPaymentLoading,
+  } = usePaymentTypes(paymentFilter);
+
+  const maxProductPct = Math.max(...topProducts.map((p) => p.percentage), 1);
+  const maxServicePct = Math.max(...topServices.map((s) => s.percentage), 1);
 
   return (
     <section className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -75,9 +81,14 @@ export function BreakdownChartsSection() {
             <span className="flex size-7 items-center justify-center rounded-lg bg-sky-100/70 text-sky-700">
               <PackageCheck className="size-4" />
             </span>
-            <h3 className="text-sm font-semibold tracking-tight text-slate-800">
-              Top Products
-            </h3>
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-sm font-semibold tracking-tight text-slate-800">
+                Top Products
+              </h3>
+              {isProductsLoading && (
+                <Loader2 className="size-3.5 animate-spin text-slate-400" />
+              )}
+            </div>
           </div>
 
           <TimeFilterSelect
@@ -88,36 +99,48 @@ export function BreakdownChartsSection() {
           />
         </div>
 
-        <div className="mt-3 flex flex-col divide-y divide-slate-100/60">
-          {TOP_PRODUCTS_DATA.map((item) => {
-            const barWidth = Math.max(
-              Math.round((item.percentage / maxProductPct) * 44),
-              7
-            );
+        <div className="mt-3 flex flex-col divide-y divide-slate-100/60 min-h-[160px]">
+          {isProductsLoading && topProducts.length === 0 ? (
+            <div className="flex h-40 flex-col items-center justify-center gap-3">
+              <Loader2 className="size-6 animate-spin text-sky-600" />
+              <span className="text-xs font-medium text-slate-400">Loading top products...</span>
+            </div>
+          ) : topProducts.length === 0 ? (
+            <div className="flex h-40 flex-col items-center justify-center gap-1.5 text-center">
+              <PackageCheck className="size-6 text-slate-300" />
+              <span className="text-xs text-slate-400">No products sold in this period</span>
+            </div>
+          ) : (
+            topProducts.map((item) => {
+              const barWidth = Math.max(
+                Math.round((item.percentage / maxProductPct) * 44),
+                7
+              );
 
-            return (
-              <div
-                key={item.name}
-                title={`${item.sales} units sold • Rs. ${item.revenue.toLocaleString()}`}
-                className="group flex items-center justify-between gap-3 py-2.5 transition-colors hover:bg-white/70 px-1 rounded-lg cursor-default"
-              >
-                <span className="min-w-0 flex-1 truncate text-xs font-medium text-slate-700 group-hover:text-slate-900">
-                  {item.name}
-                </span>
+              return (
+                <div
+                  key={item.name}
+                  title={`${item.sales} units sold • Rs. ${item.revenue.toLocaleString()}`}
+                  className="group flex items-center justify-between gap-3 py-2.5 transition-colors hover:bg-white/70 px-1 rounded-lg cursor-default"
+                >
+                  <span className="min-w-0 flex-1 truncate text-xs font-medium text-slate-700 group-hover:text-slate-900">
+                    {item.name}
+                  </span>
 
-                <div className="flex w-16 sm:w-20 items-center justify-start shrink-0">
-                  <span
-                    className="h-2 rounded-full bg-sky-500 transition-all duration-300"
-                    style={{ width: `${barWidth}px` }}
-                  />
+                  <div className="flex w-16 sm:w-20 items-center justify-start shrink-0">
+                    <span
+                      className="h-2 rounded-full bg-sky-500 transition-all duration-300"
+                      style={{ width: `${barWidth}px` }}
+                    />
+                  </div>
+
+                  <span className="w-12 text-right text-xs font-semibold text-slate-700 shrink-0">
+                    {item.percentage}%
+                  </span>
                 </div>
-
-                <span className="w-12 text-right text-xs font-semibold text-slate-700 shrink-0">
-                  {item.percentage}%
-                </span>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -128,9 +151,14 @@ export function BreakdownChartsSection() {
             <span className="flex size-7 items-center justify-center rounded-lg bg-primary-lighter text-primary">
               <Sparkles className="size-4" />
             </span>
-            <h3 className="text-sm font-semibold tracking-tight text-slate-800">
-              Top Services
-            </h3>
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-sm font-semibold tracking-tight text-slate-800">
+                Top Services
+              </h3>
+              {isServicesLoading && (
+                <Loader2 className="size-3.5 animate-spin text-slate-400" />
+              )}
+            </div>
           </div>
 
           <TimeFilterSelect
@@ -141,36 +169,48 @@ export function BreakdownChartsSection() {
           />
         </div>
 
-        <div className="mt-3 flex flex-col divide-y divide-slate-100/60">
-          {TOP_SERVICES_DATA.map((item) => {
-            const barWidth = Math.max(
-              Math.round((item.percentage / maxServicePct) * 44),
-              7
-            );
+        <div className="mt-3 flex flex-col divide-y divide-slate-100/60 min-h-[160px]">
+          {isServicesLoading && topServices.length === 0 ? (
+            <div className="flex h-40 flex-col items-center justify-center gap-3">
+              <Loader2 className="size-6 animate-spin text-primary" />
+              <span className="text-xs font-medium text-slate-400">Loading top services...</span>
+            </div>
+          ) : topServices.length === 0 ? (
+            <div className="flex h-40 flex-col items-center justify-center gap-1.5 text-center">
+              <Sparkles className="size-6 text-slate-300" />
+              <span className="text-xs text-slate-400">No services booked in this period</span>
+            </div>
+          ) : (
+            topServices.map((item) => {
+              const barWidth = Math.max(
+                Math.round((item.percentage / maxServicePct) * 44),
+                7
+              );
 
-            return (
-              <div
-                key={item.name}
-                title={`${item.bookings} bookings • Rs. ${item.revenue.toLocaleString()}`}
-                className="group flex items-center justify-between gap-3 py-2.5 transition-colors hover:bg-white/70 px-1 rounded-lg cursor-default"
-              >
-                <span className="min-w-0 flex-1 truncate text-xs font-medium text-slate-700 group-hover:text-slate-900">
-                  {item.name}
-                </span>
+              return (
+                <div
+                  key={item.name}
+                  title={`${item.bookings} bookings • Rs. ${item.revenue.toLocaleString()}`}
+                  className="group flex items-center justify-between gap-3 py-2.5 transition-colors hover:bg-white/70 px-1 rounded-lg cursor-default"
+                >
+                  <span className="min-w-0 flex-1 truncate text-xs font-medium text-slate-700 group-hover:text-slate-900">
+                    {item.name}
+                  </span>
 
-                <div className="flex w-16 sm:w-20 items-center justify-start shrink-0">
-                  <span
-                    className="h-2 rounded-full bg-sky-500 transition-all duration-300"
-                    style={{ width: `${barWidth}px` }}
-                  />
+                  <div className="flex w-16 sm:w-20 items-center justify-start shrink-0">
+                    <span
+                      className="h-2 rounded-full bg-sky-500 transition-all duration-300"
+                      style={{ width: `${barWidth}px` }}
+                    />
+                  </div>
+
+                  <span className="w-12 text-right text-xs font-semibold text-slate-700 shrink-0">
+                    {item.percentage}%
+                  </span>
                 </div>
-
-                <span className="w-12 text-right text-xs font-semibold text-slate-700 shrink-0">
-                  {item.percentage}%
-                </span>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -182,10 +222,13 @@ export function BreakdownChartsSection() {
               <span className="flex size-7 items-center justify-center rounded-lg bg-indigo-100/70 text-indigo-700">
                 <CreditCard className="size-4" />
               </span>
-              <div>
+              <div className="flex items-center gap-1.5">
                 <h3 className="text-sm font-semibold tracking-tight text-slate-800">
                   Payment Types
                 </h3>
+                {isPaymentLoading && (
+                  <Loader2 className="size-3.5 animate-spin text-slate-400" />
+                )}
               </div>
             </div>
 
@@ -206,47 +249,61 @@ export function BreakdownChartsSection() {
 
           {/* Donut Chart */}
           <div className="mt-2 h-44 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={PAYMENT_TYPES_DATA}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={46}
-                  outerRadius={68}
-                  paddingAngle={4}
-                >
-                  {PAYMENT_TYPES_DATA.map((entry) => (
-                    <Cell key={`cell-${entry.name}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip content={<PaymentPieTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
+            {isPaymentLoading && paymentTypes.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center gap-3">
+                <Loader2 className="size-6 animate-spin text-indigo-600" />
+                <span className="text-xs font-medium text-slate-400">Loading payment distribution...</span>
+              </div>
+            ) : paymentTypes.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center gap-1.5 text-center">
+                <CreditCard className="size-6 text-slate-300" />
+                <span className="text-xs text-slate-400">No payment data in this period</span>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={paymentTypes}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={46}
+                    outerRadius={68}
+                    paddingAngle={4}
+                  >
+                    {paymentTypes.map((entry) => (
+                      <Cell key={`cell-${entry.name}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<PaymentPieTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
         {/* Legend */}
-        <div className="mt-3 grid grid-cols-2 gap-2.5 pt-3 border-t border-slate-100">
-          {PAYMENT_TYPES_DATA.map((item) => (
-            <div key={item.name} className="flex items-center gap-2">
-              <span
-                className="size-2.5 rounded-full shrink-0"
-                style={{ backgroundColor: item.color }}
-              />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[11px] font-medium text-slate-600">
-                  {item.name}
-                </p>
-                <p className="text-[10px] font-semibold text-slate-900">
-                  {item.percentage}% ({item.count})
-                </p>
+        {paymentTypes.length > 0 && (
+          <div className="mt-3 grid grid-cols-2 gap-2.5 pt-3 border-t border-slate-100">
+            {paymentTypes.map((item) => (
+              <div key={item.name} className="flex items-center gap-2">
+                <span
+                  className="size-2.5 rounded-full shrink-0"
+                  style={{ backgroundColor: item.color }}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[11px] font-medium text-slate-600">
+                    {item.name}
+                  </p>
+                  <p className="text-[10px] font-semibold text-slate-900">
+                    {item.percentage}% ({item.count})
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

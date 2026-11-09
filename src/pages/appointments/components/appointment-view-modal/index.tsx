@@ -2,6 +2,7 @@ import { Clock, Phone, User, Calendar, Scissors, FileText, CheckCircle2, AlertCi
 import SidePanel from "../../../../components/side-panel";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { formatAppointmentId } from "../../../../helpers/format-id.helper";
 
 export type AppointmentViewModalProps = {
   isOpen: boolean;
@@ -56,15 +57,22 @@ export function AppointmentViewModal({
 }: AppointmentViewModalProps) {
   if (!appointment) return null;
 
-  const statusInfo = statusDetails[appointment.status];
+  const defaultStatusInfo = {
+    label: "Pending",
+    bg: "bg-purple-50 border-purple-200",
+    text: "text-purple-700",
+    icon: AlertCircle,
+  };
+
+  const statusInfo = (appointment.status && statusDetails[appointment.status]) || defaultStatusInfo;
   const StatusIcon = statusInfo.icon;
 
-  const raw = appointment.id.replace("apt-", "");
-  const aptNumber = /^\d+$/.test(raw)
-    ? raw.length > 5
-      ? `#APT-${raw.slice(-4)}`
-      : `#APT-${raw.padStart(3, "0")}`
-    : `#APT-${raw.toUpperCase()}`;
+  const aptNumber = formatAppointmentId(appointment);
+
+  const clientDisplayName = appointment.clientName || "Client";
+  const clientDisplayPhone = appointment.clientPhone || "N/A";
+  const staffDisplayName = appointment.staffName || "Specialist";
+  const serviceDisplayName = appointment.serviceName || "Service";
 
   return (
     <SidePanel
@@ -124,7 +132,7 @@ export function AppointmentViewModal({
             <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider block">
               Total Price
             </span>
-            <span className="font-bold text-slate-900 text-sm">{formatPrice(appointment.price)}</span>
+            <span className="font-bold text-slate-900 text-sm">{formatPrice(appointment.price ?? 0)}</span>
           </div>
         </div>
 
@@ -137,13 +145,13 @@ export function AppointmentViewModal({
             </span>
             <div className="mt-2.5 flex items-center gap-2.5">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-xs font-bold text-primary shadow-2xs">
-                {appointment.clientName.charAt(0)}
+                {clientDisplayName.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-slate-900 text-xs">{appointment.clientName}</p>
+                <p className="truncate font-semibold text-slate-900 text-xs">{clientDisplayName}</p>
                 <div className="mt-0.5 flex items-center gap-1 text-[11px] text-slate-500">
                   <Phone className="size-3 shrink-0 text-slate-400" />
-                  <span className="truncate">{appointment.clientPhone}</span>
+                  <span className="truncate">{clientDisplayPhone}</span>
                 </div>
               </div>
             </div>
@@ -159,7 +167,7 @@ export function AppointmentViewModal({
                 <User className="size-4" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-slate-900 text-xs">{appointment.staffName}</p>
+                <p className="truncate font-semibold text-slate-900 text-xs">{staffDisplayName}</p>
                 <p className="mt-0.5 text-[11px] text-slate-500 truncate">Salon Specialist</p>
               </div>
             </div>
@@ -178,11 +186,11 @@ export function AppointmentViewModal({
             </div>
             <div className="mt-2">
               <p className="font-semibold text-slate-900 text-xs line-clamp-1">
-                {appointment.serviceName}
+                {serviceDisplayName}
               </p>
               <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-500">
                 <Clock className="size-3 text-slate-400" />
-                <span>{appointment.durationMinutes} mins session</span>
+                <span>{appointment.durationMinutes ?? 45} mins session</span>
               </div>
             </div>
           </div>
@@ -196,8 +204,8 @@ export function AppointmentViewModal({
               </span>
             </div>
             <div className="mt-2">
-              <p className="font-semibold text-slate-900 text-xs">{appointment.date}</p>
-              <p className="mt-1 text-[11px] text-slate-500">Time: {appointment.time}</p>
+              <p className="font-semibold text-slate-900 text-xs">{appointment.date || "N/A"}</p>
+              <p className="mt-1 text-[11px] text-slate-500">Time: {appointment.time || "09:00 AM"}</p>
             </div>
           </div>
         </div>
