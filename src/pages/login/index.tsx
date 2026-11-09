@@ -146,7 +146,7 @@ export function Login() {
             alt="Logo"
             className="mx-auto h-auto w-48 sm:w-56 max-w-full object-contain drop-shadow-xs"
           />
-          <p className="mt-2 text-xs font-medium tracking-wide text-primary-lighter/90">
+          <p className="mt-1 text-xs font-medium tracking-wide text-primary-lighter/90">
             Salon Management
           </p>
         </div>

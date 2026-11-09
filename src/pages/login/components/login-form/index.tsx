@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
-import type { LoginFormData, AuthSubmitStatus, AuthErrorState } from "../../../../interface/auth.types";
+import type {
+  LoginFormData,
+  AuthSubmitStatus,
+  AuthErrorState,
+} from "../../../../interface/auth.types";
 
 export type LoginFormProps = {
   formData: LoginFormData;
@@ -17,7 +21,7 @@ export function LoginForm({
   onSubmit,
   status,
   errors,
-  onRegisterClick,
+  onRegisterClick: _onRegisterClick,
 }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isLoading = status === "loading";
@@ -138,7 +142,7 @@ export function LoginForm({
       </form>
 
       {/* Don't Have an Account? Register Here */}
-      <p className="mt-6 text-center text-xs text-slate-600">
+      {/*       <p className="mt-6 text-center text-xs text-slate-600">
         Don&apos;t Have an Account?{" "}
         <button
           type="button"
@@ -147,7 +151,7 @@ export function LoginForm({
         >
           Register Here
         </button>
-      </p>
+      </p> */}
     </div>
   );
 }

@@ -9,7 +9,13 @@ export function BrandHero() {
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id="sribeesHeroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient
+            id="sribeesHeroGrad"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <stop offset="0%" stopColor="#59083c" />
             <stop offset="45%" stopColor="#800b55" />
             <stop offset="100%" stopColor="#D9145A" />
@@ -70,14 +76,9 @@ export function BrandHero() {
         />
 
         {/* Subtitle matching "Order Management" in our Salon POS theme */}
-        <p className="mt-4 text-base sm:text-lg font-medium tracking-wide text-primary-lighter/95">
-          Salon Management
+        <p className="-mt-4 text-base sm:text-lg font-medium tracking-wide text-primary-lighter/95">
+          Salon Management System
         </p>
-
-        {/* Point of Sale badge */}
-        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1 text-[11px] font-medium text-white/80 backdrop-blur-xs border border-white/15">
-          <span>Point of Sale Edition</span>
-        </div>
       </div>
     </div>
   );
