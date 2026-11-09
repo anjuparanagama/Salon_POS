@@ -25,42 +25,49 @@ export function formatAppointmentId(
   if (demoMatch && demoMatch[1]) {
     const code = demoMatch[1];
     if (/^\d+$/.test(code)) {
-      return `#APT-D${String(parseInt(code, 10)).padStart(3, "0")}`;
-    }
-    return `#APT-D${code.toUpperCase()}`;
-  }
-
-  // If standard appointment code e.g. APT-0001
-  const aptMatch = str.match(/APT[_-]?(\w+)/i);
-  if (aptMatch && aptMatch[1]) {
-    const code = aptMatch[1];
-    if (/^\d+$/.test(code)) {
       return `#APT-${String(parseInt(code, 10)).padStart(3, "0")}`;
-    }
-    if (code.length > 5) {
-      const subMatch = code.match(/(\d+)$/);
-      if (subMatch && subMatch[1]) {
-        return `#APT-${String(parseInt(subMatch[1], 10)).padStart(3, "0")}`;
-      }
-      return `#APT-${code.slice(-4).toUpperCase()}`;
     }
     return `#APT-${code.toUpperCase()}`;
   }
 
-  // If it's a UUID (contains hyphens or is long)
-  if (str.includes("-") || str.length >= 16) {
-    const trailingDigits = str.match(/(\d+)$/);
-    if (trailingDigits && trailingDigits[1] && trailingDigits[1].length <= 6) {
-      return `#APT-${String(parseInt(trailingDigits[1], 10)).padStart(3, "0")}`;
+  // If standard appointment code e.g. APT-001, APT-0005, APT-59
+  const aptMatch = str.match(/^APT[_-]?(\d+)$/i);
+  if (aptMatch && aptMatch[1]) {
+    return `#APT-${String(parseInt(aptMatch[1], 10)).padStart(3, "0")}`;
+  }
+
+  // If general APT- prefix with alphanumeric e.g. APT-001, APT-abc
+  const aptGeneral = str.match(/^APT[_-]?(.*)$/i);
+  const cleanCode = aptGeneral ? aptGeneral[1] : str;
+
+  // If purely numeric e.g. 1, 5, 059
+  if (/^\d+$/.test(cleanCode)) {
+    return `#APT-${String(parseInt(cleanCode, 10)).padStart(3, "0")}`;
+  }
+
+  // If UUID or long string with hyphens e.g. 3128360b-321c-4def-9d9b-96c0bb375176
+  if (cleanCode.includes("-") || cleanCode.length >= 16) {
+    const trailingDigits = cleanCode.match(/(\d+)$/);
+    if (trailingDigits && trailingDigits[1] && trailingDigits[1].length <= 5) {
+      const num = parseInt(trailingDigits[1], 10);
+      return `#APT-${String(num <= 999 ? num : (num % 900) + 100).padStart(3, "0")}`;
     }
-    return `#APT-${str.slice(-4).toUpperCase()}`;
+    // Take last 4 hex characters and convert to a neat 3-digit number (e.g. 100 - 999)
+    const cleanHex = cleanCode.replace(/[^0-9a-fA-F]/g, "");
+    const hexVal = parseInt(cleanHex.slice(-4), 16);
+    if (!isNaN(hexVal)) {
+      return `#APT-${String((hexVal % 900) + 100).padStart(3, "0")}`;
+    }
+    return `#APT-001`;
   }
 
-  if (/^\d+$/.test(str)) {
-    return `#APT-${str.padStart(3, "0")}`;
+  // Any other alphanumeric code e.g. "059" or "A12"
+  const digits = cleanCode.match(/\d+/);
+  if (digits) {
+    return `#APT-${String(parseInt(digits[0], 10)).padStart(3, "0")}`;
   }
 
-  return `#APT-${str.toUpperCase()}`;
+  return `#APT-${cleanCode.slice(-4).toUpperCase()}`;
 }
 
 export function formatStaffId(id?: string): string {

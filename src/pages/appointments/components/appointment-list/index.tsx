@@ -141,14 +141,10 @@ export function AppointmentList({
                   </td>
 
                   {/* Date & Time */}
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <div className="font-semibold text-slate-900">{apt.date || "N/A"}</div>
-                    <div className="flex items-center gap-1 text-[11px] text-slate-500">
-                      <Clock className="size-3 text-slate-400" />
-                      <span>
-                        {apt.time || "09:00 AM"} ({apt.durationMinutes ?? 45} mins)
-                      </span>
-                    </div>
+                  <td className="whitespace-nowrap px-5 py-4 text-xs">
+                    <span className="font-semibold text-slate-900">{apt.date || "N/A"}</span>
+                    <span className="text-slate-400 font-normal mx-1.5">at</span>
+                    <span className="font-medium text-slate-700">{apt.time || "09:00 AM"}</span>
                   </td>
 
                   {/* Client Info */}

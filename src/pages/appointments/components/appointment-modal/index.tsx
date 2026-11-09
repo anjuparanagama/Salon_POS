@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import SidePanel from "../../../../components/side-panel";
 import type { Appointment, AppointmentFormData } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { formatAppointmentId } from "../../../../helpers/format-id.helper";
 
 export type AppointmentModalProps = {
   isOpen: boolean;
@@ -254,14 +255,7 @@ export function AppointmentModal({
     onClose();
   };
 
-  const raw = initialData?.id.replace("apt-", "") || "";
-  const aptNumber = raw
-    ? /^\d+$/.test(raw)
-      ? raw.length > 5
-        ? `#APT-${raw.slice(-4)}`
-        : `#APT-${raw.padStart(3, "0")}`
-      : `#APT-${raw.toUpperCase()}`
-    : "";
+  const aptNumber = initialData ? formatAppointmentId(initialData) : "";
 
   return (
     <SidePanel
