@@ -76,7 +76,7 @@ export function BrandHero() {
         />
 
         {/* Subtitle matching "Order Management" in our Salon POS theme */}
-        <p className="-mt-4 text-base sm:text-lg font-medium tracking-wide text-primary-lighter/95">
+        <p className="-mt-1 text-base sm:text-lg font-medium tracking-wide text-primary-lighter/95">
           Salon Management System
         </p>
       </div>

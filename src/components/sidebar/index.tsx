@@ -466,29 +466,34 @@ export function Sidebar({
       <nav aria-label="Main navigation" className="flex h-full flex-col">
         <ul
           className={[
-            "px-2 text-white",
+            "px-2 pt-2 text-white",
             !isCollapsed && activeItem ? "rounded-br-xl" : "",
           ].join(" ")}
           style={{ background: SIDEBAR_GRADIENT }}
         >
           <li
             className={[
-              "flex items-center justify-between gap-2 px-2",
-              isCollapsed ? "min-h-12" : "min-h-14",
+              "flex items-center gap-2 px-2",
+              isCollapsed
+                ? "justify-center min-h-11 pb-0.5"
+                : "justify-between min-h-12 pb-0.5",
             ].join(" ")}
           >
-            <span
-              aria-label="Sribees POS"
-              className={[
-                "font-semibold tracking-tight",
-                isCollapsed ? "mx-auto text-base" : "truncate text-lg",
-              ].join(" ")}
-            >
-              {isCollapsed ? "S" : "Sribees POS"}
-            </span>
+            {!isCollapsed && (
+              <div className="flex min-w-0 flex-1 items-center pl-1">
+                <img
+                  src="/logo.png"
+                  alt="Salora Logo"
+                  className="h-10 w-auto max-h-10 max-w-[150px] object-contain drop-shadow-xs"
+                />
+              </div>
+            )}
             <button
               aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-              className="shrink-0 rounded-xl p-2 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className={[
+                "shrink-0 rounded-xl p-2 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
+                isCollapsed ? "mx-auto" : "",
+              ].join(" ")}
               onClick={() => {
                 setIsCollapsed((collapsed) => !collapsed);
                 setCollapsedFlyout(null);
@@ -505,8 +510,8 @@ export function Sidebar({
           <div
             className={
               isCollapsed
-                ? "mb-1.5 border-b border-slate-50/5"
-                : "mb-3 border-b border-slate-50/5"
+                ? "mb-1 border-b border-white/10"
+                : "mb-1.5 border-b border-white/10"
             }
           />
           <div className={`flex flex-col ${isCollapsed ? "gap-0.5" : "gap-1"}`}>
