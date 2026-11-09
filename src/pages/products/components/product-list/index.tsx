@@ -4,8 +4,6 @@ import {
   Package,
   AlertCircle,
   AlertTriangle,
-  PlusCircle,
-  TrendingDown,
   Loader2,
 } from "lucide-react";
 import type { Product } from "../../../../interface/product.types";
@@ -25,8 +23,8 @@ export function ProductList({
   products,
   onView,
   onEdit,
-  onQuickStockIn,
-  onQuickAdjust,
+  onQuickStockIn: _onQuickStockIn,
+  onQuickAdjust: _onQuickAdjust,
   onToggleStatus,
   isLoading = false,
 }: ProductListProps) {
@@ -102,7 +100,7 @@ export function ProductList({
               {/* Sticky Right Fixed Actions Header */}
               <th
                 scope="col"
-                className="sticky right-0 z-20 bg-slate-50/95 backdrop-blur-xs px-3.5 py-2.5 text-center shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)] border-l border-slate-100 min-w-[130px]"
+                className="sticky right-0 z-20 bg-slate-50/95 backdrop-blur-xs px-3.5 py-2.5 text-center shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)] border-l border-slate-100 min-w-[90px]"
               >
                 Actions
               </th>
@@ -217,7 +215,7 @@ export function ProductList({
                     className="sticky right-0 z-10 bg-white group-hover:bg-slate-50/95 transition-colors px-3 py-2 text-center shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)] border-l border-slate-100"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div className="flex items-center justify-center gap-1">
+                    <div className="flex items-center justify-center gap-1.5">
                       {/* View Action - Icon only */}
                       <button
                         type="button"
@@ -237,30 +235,6 @@ export function ProductList({
                       >
                         <Edit3 className="size-3.5" />
                       </button>
-
-                      {/* Quick Stock In - Icon only */}
-                      {onQuickStockIn && (
-                        <button
-                          type="button"
-                          onClick={() => onQuickStockIn(item)}
-                          className="rounded-md p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition cursor-pointer"
-                          title="Quick Stock In"
-                        >
-                          <PlusCircle className="size-3.5" />
-                        </button>
-                      )}
-
-                      {/* Stock Adjustment - Icon only */}
-                      {onQuickAdjust && (
-                        <button
-                          type="button"
-                          onClick={() => onQuickAdjust(item)}
-                          className="rounded-md p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition cursor-pointer"
-                          title="Stock Adjustment"
-                        >
-                          <TrendingDown className="size-3.5" />
-                        </button>
-                      )}
                     </div>
                   </td>
                 </tr>

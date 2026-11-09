@@ -290,24 +290,62 @@ function ProductForm({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block mb-1 font-medium text-slate-700">
-              {isEditing ? "Current Stock Quantity" : "Initial Stock Quantity"}{" "}
+              {isEditing ? "Stock Quantity" : "Initial Stock Quantity"}{" "}
               <span className="text-rose-500">*</span>
             </label>
-            <input
-              type="number"
-              min="0"
-              required
-              value={formData.stock}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  stock: parseInt(e.target.value, 10) || 0,
-                })
-              }
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            />
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min="0"
+                required
+                value={formData.stock}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    stock: Math.max(0, parseInt(e.target.value, 10) || 0),
+                  })
+                }
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+              {isEditing && (
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, stock: prev.stock + 1 }))
+                    }
+                    className="rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 px-2 py-2 text-[11px] font-medium text-slate-700 transition cursor-pointer"
+                    title="Add 1 to stock"
+                  >
+                    +1
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, stock: prev.stock + 5 }))
+                    }
+                    className="rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 px-2 py-2 text-[11px] font-medium text-slate-700 transition cursor-pointer"
+                    title="Add 5 to stock"
+                  >
+                    +5
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, stock: prev.stock + 10 }))
+                    }
+                    className="rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 px-2 py-2 text-[11px] font-medium text-slate-700 transition cursor-pointer"
+                    title="Add 10 to stock"
+                  >
+                    +10
+                  </button>
+                </div>
+              )}
+            </div>
             <span className="text-[10px] text-slate-400 mt-0.5 block">
-              Available items in salon storage
+              {isEditing
+                ? "Enter new total or use quick + buttons to add incoming stock"
+                : "Available items in salon storage"}
             </span>
           </div>
 
