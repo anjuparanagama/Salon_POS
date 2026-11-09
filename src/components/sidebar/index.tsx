@@ -42,7 +42,9 @@ export function Sidebar({
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [currentDate, setCurrentDate] = useState(() => new Date());
-  const [userCarouselIndex, setUserCarouselIndex] = useState<number | null>(null);
+  const [userCarouselIndex, setUserCarouselIndex] = useState<number | null>(
+    null,
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -105,7 +107,8 @@ export function Sidebar({
     }));
   };
 
-  const isItemActive = (item: SidebarItem) => item.href === activeHref && !item.subItems;
+  const isItemActive = (item: SidebarItem) =>
+    item.href === activeHref && !item.subItems;
 
   const activeIndex = items.findIndex(isItemActive);
   const hasActiveItem = activeIndex !== -1;
@@ -179,7 +182,9 @@ export function Sidebar({
 
   const handlePrevAction = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setUserCarouselIndex((carouselIndex - 1 + bottomActions.length) % bottomActions.length);
+    setUserCarouselIndex(
+      (carouselIndex - 1 + bottomActions.length) % bottomActions.length,
+    );
   };
 
   const handleNextAction = (e: React.MouseEvent) => {
@@ -195,7 +200,7 @@ export function Sidebar({
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
       "flex-col gap-1 py-2 px-1 text-center w-full",
       isActive
-        ? "bg-white text-[#D9145A] font-semibold shadow-sm"
+        ? "bg-[#FFF4F7] text-[#D9145A] font-semibold shadow-sm"
         : "text-white/80 hover:bg-white/10 hover:text-white",
     ].join(" ");
 
@@ -203,7 +208,9 @@ export function Sidebar({
     const Icon = item.icon;
     const hasSub = Boolean(item.subItems && item.subItems.length > 0);
     const isOpen = Boolean(openMenus[item.label]);
-    const isSubChildActive = Boolean(item.subItems?.some((sub) => sub.href === activeHref));
+    const isSubChildActive = Boolean(
+      item.subItems?.some((sub) => sub.href === activeHref),
+    );
     const isItemEffectivelyActive = active || isSubChildActive;
 
     return (
@@ -229,19 +236,23 @@ export function Sidebar({
             onClick={(e) => {
               if (isCollapsed) {
                 e.preventDefault();
-                setCollapsedFlyout((prev) => (prev === item.label ? null : item.label));
+                setCollapsedFlyout((prev) =>
+                  prev === item.label ? null : item.label,
+                );
               } else {
                 toggleMenu(item.label, e);
               }
             }}
           >
-            <div className={`flex items-center ${isCollapsed ? "flex-col gap-0.5" : "gap-2"}`}>
+            <div
+              className={`flex items-center ${isCollapsed ? "flex-col gap-0.5" : "gap-2"}`}
+            >
               <span
                 className={[
                   "flex shrink-0 items-center justify-center transition-colors",
                   isCollapsed
                     ? isItemEffectivelyActive
-                      ? "size-7 rounded-full bg-white text-[#D9145A] shadow-sm"
+                      ? "size-7 rounded-full bg-[#FFF4F7] text-[#D9145A] shadow-sm"
                       : "size-7 rounded-full bg-[#B31350] text-white"
                     : "size-4",
                 ].join(" ")}
@@ -252,11 +263,15 @@ export function Sidebar({
                   strokeWidth={isItemEffectivelyActive ? 2.25 : 2}
                 />
               </span>
-              <span className={isCollapsed ? "text-[9px] leading-tight" : ""}>{item.label}</span>
+              <span className={isCollapsed ? "text-[9px] leading-tight" : ""}>
+                {item.label}
+              </span>
             </div>
 
             {!isCollapsed && (
-              <span className={`shrink-0 p-0.5 ${isItemEffectivelyActive ? "text-white" : "text-white/80"}`}>
+              <span
+                className={`shrink-0 p-0.5 ${isItemEffectivelyActive ? "text-white" : "text-white/80"}`}
+              >
                 {isOpen ? (
                   <ChevronUp aria-hidden="true" className="size-3.5" />
                 ) : (
@@ -279,7 +294,7 @@ export function Sidebar({
               active
                 ? isCollapsed
                   ? "text-white"
-                  : "min-h w-[calc(100%+0.5rem)] rounded-l-full rounded-r-none bg-white text-[#D9145A]"
+                  : "min-h w-[calc(100%+0.5rem)] rounded-l-full rounded-r-none bg-[#FFF4F7] text-[#D9145A]"
                 : "rounded-xl text-white hover:bg-white/10",
             ].join(" ")}
             href={item.href}
@@ -295,7 +310,7 @@ export function Sidebar({
                 "flex shrink-0 items-center justify-center transition-colors",
                 isCollapsed
                   ? active
-                    ? "size-7 rounded-full bg-white text-[#D9145A] shadow-sm"
+                    ? "size-7 rounded-full bg-[#FFF4F7] text-[#D9145A] shadow-sm"
                     : "size-7 rounded-full bg-[#B31350] text-white"
                   : "size-4",
               ].join(" ")}
@@ -306,7 +321,9 @@ export function Sidebar({
                 strokeWidth={active ? 2.25 : 2}
               />
             </span>
-            <span className={isCollapsed ? "text-[9px] leading-tight" : ""}>{item.label}</span>
+            <span className={isCollapsed ? "text-[9px] leading-tight" : ""}>
+              {item.label}
+            </span>
           </a>
         )}
 
@@ -335,7 +352,7 @@ export function Sidebar({
                   className={[
                     "flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs font-medium transition cursor-pointer",
                     isSubActive
-                      ? "bg-white text-[#D9145A] font-semibold shadow-xs"
+                      ? "bg-[#FFF4F7] text-[#D9145A] font-semibold shadow-xs"
                       : "text-white/80 hover:bg-white/10 hover:text-white",
                   ].join(" ")}
                 >
@@ -359,76 +376,79 @@ export function Sidebar({
         )}
 
         {/* Collapsed flyout popover modal when sidebar is collapsed */}
-        {hasSub && isCollapsed && collapsedFlyout === item.label && item.subItems && (
-          <div
-            ref={flyoutRef}
-            className="absolute left-[calc(100%+0.5rem)] top-0 z-50 w-52 rounded-2xl bg-white p-2.5 text-slate-900 shadow-2xl border border-slate-100"
-          >
-            <div className="flex items-center justify-between border-b border-slate-100 px-2 pb-2">
-              <div className="flex items-center gap-1.5 font-semibold text-xs text-slate-900">
-                <Icon className="size-4 text-[#D9145A]" />
-                <span>{item.label}</span>
+        {hasSub &&
+          isCollapsed &&
+          collapsedFlyout === item.label &&
+          item.subItems && (
+            <div
+              ref={flyoutRef}
+              className="absolute left-[calc(100%+0.5rem)] top-0 z-50 w-52 rounded-2xl bg-white p-2.5 text-slate-900 shadow-2xl border border-slate-100"
+            >
+              <div className="flex items-center justify-between border-b border-slate-100 px-2 pb-2">
+                <div className="flex items-center gap-1.5 font-semibold text-xs text-slate-900">
+                  <Icon className="size-4 text-[#D9145A]" />
+                  <span>{item.label}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCollapsedFlyout(null);
+                  }}
+                  className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
+                >
+                  <X className="size-3.5" />
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCollapsedFlyout(null);
-                }}
-                className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
-              >
-                <X className="size-3.5" />
-              </button>
-            </div>
 
-            <div className="mt-1.5 flex flex-col gap-1">
-              {item.subItems.map((sub) => {
-                const isSubActive = activeHref === sub.href;
-                const SubIcon = sub.icon;
+              <div className="mt-1.5 flex flex-col gap-1">
+                {item.subItems.map((sub) => {
+                  const isSubActive = activeHref === sub.href;
+                  const SubIcon = sub.icon;
 
-                return (
-                  <a
-                    key={sub.href}
-                    href={sub.href}
-                    aria-current={isSubActive ? "page" : undefined}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCollapsedFlyout(null);
-                      if (onNavigate) {
-                        e.preventDefault();
-                        onNavigate({
-                          label: sub.label,
-                          href: sub.href,
-                          icon: sub.icon || item.icon,
-                        });
-                      }
-                    }}
-                    className={[
-                      "flex items-center gap-2 rounded-xl px-2.5 py-2 text-xs font-medium transition cursor-pointer",
-                      isSubActive
-                        ? "bg-[#D9145A] text-white font-semibold shadow-xs"
-                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
-                    ].join(" ")}
-                  >
-                    {SubIcon ? (
-                      <SubIcon
-                        aria-hidden="true"
-                        className={`size-3.5 ${isSubActive ? "text-white" : "text-slate-400"}`}
-                      />
-                    ) : (
-                      <span
-                        className={`size-1.5 rounded-full ${
-                          isSubActive ? "bg-white" : "bg-slate-400"
-                        } shrink-0`}
-                      />
-                    )}
-                    <span>{sub.label}</span>
-                  </a>
-                );
-              })}
+                  return (
+                    <a
+                      key={sub.href}
+                      href={sub.href}
+                      aria-current={isSubActive ? "page" : undefined}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCollapsedFlyout(null);
+                        if (onNavigate) {
+                          e.preventDefault();
+                          onNavigate({
+                            label: sub.label,
+                            href: sub.href,
+                            icon: sub.icon || item.icon,
+                          });
+                        }
+                      }}
+                      className={[
+                        "flex items-center gap-2 rounded-xl px-2.5 py-2 text-xs font-medium transition cursor-pointer",
+                        isSubActive
+                          ? "bg-[#D9145A] text-white font-semibold shadow-xs"
+                          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
+                      ].join(" ")}
+                    >
+                      {SubIcon ? (
+                        <SubIcon
+                          aria-hidden="true"
+                          className={`size-3.5 ${isSubActive ? "text-white" : "text-slate-400"}`}
+                        />
+                      ) : (
+                        <span
+                          className={`size-1.5 rounded-full ${
+                            isSubActive ? "bg-white" : "bg-slate-400"
+                          } shrink-0`}
+                        />
+                      )}
+                      <span>{sub.label}</span>
+                    </a>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     );
   };
@@ -437,7 +457,7 @@ export function Sidebar({
     <aside
       className={[
         "ml-1 flex h-screen min-w-0 shrink-0 flex-col overflow-visible transition-[width] duration-200",
-        isCollapsed ? "w-20" : "w-[max(13.2857vw,13rem)] bg-white",
+        isCollapsed ? "w-20" : "w-[max(13.2857vw,13rem)] bg-[#FFF4F7]",
       ].join(" ")}
     >
       <nav aria-label="Main navigation" className="flex h-full flex-col">
@@ -478,7 +498,13 @@ export function Sidebar({
               )}
             </button>
           </li>
-          <div className={isCollapsed ? "mb-1.5 border-b border-slate-50/5" : "mb-3 border-b border-slate-50/5"} />
+          <div
+            className={
+              isCollapsed
+                ? "mb-1.5 border-b border-slate-50/5"
+                : "mb-3 border-b border-slate-50/5"
+            }
+          />
           <div className={`flex flex-col ${isCollapsed ? "gap-0.5" : "gap-1"}`}>
             {beforeActive.map((item) => (
               <li key={item.href} className="list-none">
@@ -568,7 +594,7 @@ export function Sidebar({
                         "flex size-8 items-center justify-center rounded-xl transition-colors cursor-pointer",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
                         currentAction.isActive
-                          ? "bg-white text-[#D9145A] font-semibold shadow-sm"
+                          ? "bg-[#FFF4F7] text-[#D9145A] font-semibold shadow-sm"
                           : "text-white/80 hover:bg-white/10 hover:text-white",
                       ].join(" ")}
                     >
@@ -589,7 +615,7 @@ export function Sidebar({
                         "flex size-8 items-center justify-center rounded-xl transition-colors cursor-pointer",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
                         currentAction.isActive
-                          ? "bg-white text-[#D9145A] font-semibold shadow-sm"
+                          ? "bg-[#FFF4F7] text-[#D9145A] font-semibold shadow-sm"
                           : "text-white/80 hover:bg-white/10 hover:text-white",
                       ].join(" ")}
                     >
