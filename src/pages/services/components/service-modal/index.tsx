@@ -22,7 +22,7 @@ const defaultInitialData: ServiceFormData = {
   name: "",
   category: "hair",
   durationMinutes: 45,
-  price: 45,
+  price: 0,
   description: "",
   isActive: true,
   images: [],
@@ -42,11 +42,42 @@ function ServiceForm({
   onSubmit,
 }: ServiceFormProps) {
   const [formData, setFormData] = useState<ServiceFormData>(initialValues);
+  const [priceInput, setPriceInput] = useState<string>(
+    initialValues.price > 0 ? String(initialValues.price) : ""
+  );
+  const [durationInput, setDurationInput] = useState<string>(
+    initialValues.durationMinutes > 0 ? String(initialValues.durationMinutes) : "45"
+  );
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const images = formData.images || [];
+
+  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    // Allow empty, digits, and at most one decimal point
+    if (val === "" || /^\d*\.?\d*$/.test(val)) {
+      setPriceInput(val);
+      const parsed = parseFloat(val);
+      setFormData((prev) => ({
+        ...prev,
+        price: isNaN(parsed) ? 0 : parsed,
+      }));
+    }
+  };
+
+  const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (val === "" || /^\d+$/.test(val)) {
+      setDurationInput(val);
+      const parsed = parseInt(val, 10);
+      setFormData((prev) => ({
+        ...prev,
+        durationMinutes: isNaN(parsed) ? 0 : parsed,
+      }));
+    }
+  };
 
   const handleAddNewCategory = () => {
     const trimmed = newCategoryName.trim();
@@ -113,7 +144,13 @@ function ServiceForm({
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) return;
-    onSubmit(formData);
+    const finalPrice = priceInput === "" ? 0 : parseFloat(priceInput) || 0;
+    const finalDuration = durationInput === "" ? 30 : parseInt(durationInput, 10) || 30;
+    onSubmit({
+      ...formData,
+      price: finalPrice,
+      durationMinutes: finalDuration,
+    });
   };
 
   return (
@@ -213,32 +250,38 @@ function ServiceForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block mb-1 font-medium text-slate-700">Duration (mins) *</label>
-          <input
-            type="number"
-            min="5"
-            step="5"
-            required
-            value={formData.durationMinutes}
-            onChange={(e) =>
-              setFormData({ ...formData, durationMinutes: Number(e.target.value) })
-            }
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              inputMode="numeric"
+              required
+              placeholder="45"
+              value={durationInput}
+              onChange={handleDurationChange}
+              className="w-full rounded-lg border border-slate-200 pl-3 pr-12 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 pointer-events-none">
+              mins
+            </span>
+          </div>
         </div>
 
         <div>
           <label className="block mb-1 font-medium text-slate-700">Price (Rs.) *</label>
-          <input
-            type="number"
-            min="0"
-            step="0.5"
-            required
-            value={formData.price}
-            onChange={(e) =>
-              setFormData({ ...formData, price: Number(e.target.value) })
-            }
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
-          />
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 pointer-events-none">
+              Rs.
+            </span>
+            <input
+              type="text"
+              inputMode="decimal"
+              required
+              placeholder="0.00"
+              value={priceInput}
+              onChange={handlePriceChange}
+              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
+            />
+          </div>
         </div>
       </div>
 

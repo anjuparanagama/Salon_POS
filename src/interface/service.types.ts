@@ -31,6 +31,7 @@ export type ServiceFilterState = {
   search: string;
   category: ServiceCategory;
   sortBy: "name" | "price-asc" | "price-desc" | "duration";
+  status?: "all" | "active" | "inactive";
 };
 
 export type ServiceFormData = {

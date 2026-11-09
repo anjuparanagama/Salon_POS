@@ -39,6 +39,7 @@ export function Services() {
     search: "",
     category: "all",
     sortBy: "name",
+    status: "all",
   });
 
   const handleFilterChange = (updated: Partial<ServiceFilterState>) => {
@@ -95,7 +96,14 @@ export function Services() {
           const q = filters.search.toLowerCase();
           const matchName = service.name.toLowerCase().includes(q);
           const matchDesc = service.description.toLowerCase().includes(q);
-          if (!matchName && !matchDesc) return false;
+          const matchCat = service.category.toLowerCase().includes(q);
+          if (!matchName && !matchDesc && !matchCat) return false;
+        }
+
+        // Status filter
+        if (filters.status && filters.status !== "all") {
+          if (filters.status === "active" && !service.isActive) return false;
+          if (filters.status === "inactive" && service.isActive) return false;
         }
 
         // Category filter
