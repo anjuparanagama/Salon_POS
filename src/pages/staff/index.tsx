@@ -22,6 +22,7 @@ export function Staff() {
     updateStaff,
     deleteStaff,
     toggleStatus,
+    isLoading,
   } = useStaff();
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -119,6 +120,7 @@ export function Staff() {
           "staff.subtitle",
           "Manage salon team members, performance, and commission rates."
         )}
+        isLoading={isLoading}
         actions={
           <button
             type="button"
@@ -137,6 +139,7 @@ export function Staff() {
       {/* Staff Table */}
       <StaffList
         staffList={filteredStaff}
+        isLoading={isLoading}
         onView={handleOpenView}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}

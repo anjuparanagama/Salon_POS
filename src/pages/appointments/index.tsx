@@ -35,6 +35,7 @@ export function Appointments() {
     createAppointment,
     updateAppointment,
     updateStatus,
+    isLoading,
   } = useAppointments();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -132,6 +133,7 @@ export function Appointments() {
       <Header
         title={t("appointments:title", "Appointments")}
         description={t("appointments:subtitle", "Manage bookings, schedule clients, and assign salon staff.")}
+        isLoading={isLoading}
         actions={
           <button
             type="button"
@@ -160,6 +162,7 @@ export function Appointments() {
       {/* Appointments List */}
       <AppointmentList
         appointments={filteredAppointments}
+        isLoading={isLoading}
         onStatusChange={handleStatusChange}
         onApprove={handleApproveAppointment}
         onView={handleViewAppointment}

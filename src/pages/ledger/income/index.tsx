@@ -14,7 +14,7 @@ const initialFilters: IncomeFilterState = {
 };
 
 export function LedgerIncome() {
-  const { records } = useIncomeLedger();
+  const { records, isLoading } = useIncomeLedger();
   const [filters, setFilters] = useState<IncomeFilterState>(initialFilters);
 
   const handleFilterChange = (updated: Partial<IncomeFilterState>) => {
@@ -76,6 +76,7 @@ export function LedgerIncome() {
       <Header
         title="Income Ledger"
         description="Track incoming salon revenue automatically recorded from service treatments and product sales."
+        isLoading={isLoading}
       />
 
       {/* 3 Summary Cards */}
@@ -89,7 +90,7 @@ export function LedgerIncome() {
       />
 
       {/* Income Table */}
-      <IncomeTable records={filteredRecords} />
+      <IncomeTable records={filteredRecords} isLoading={isLoading} />
     </div>
   );
 }

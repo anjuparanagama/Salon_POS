@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Layers, Share2 } from "lucide-react";
+import { Plus, Layers, Share2, Loader2 } from "lucide-react";
 import type {
   ServiceItem,
   ServiceCategoryItem,
@@ -28,6 +28,7 @@ export function Services() {
     updateService,
     toggleStatus,
     addCategory,
+    isLoading,
   } = useServices();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -118,6 +119,7 @@ export function Services() {
       <Header
         title={t("services:title", "Services Catalog")}
         description={t("services:subtitle", "Manage your salon treatments, styling packages, and pricing tiers.")}
+        isLoading={isLoading}
         titleSuffix={
           <Tooltip content="Share Service Catalog" placement="right">
             <button
@@ -153,7 +155,12 @@ export function Services() {
       />
 
       {/* Service Cards Grid */}
-      {filteredServices.length === 0 ? (
+      {isLoading && services.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
+          <Loader2 className="size-8 animate-spin text-primary" />
+          <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading services...</h3>
+        </div>
+      ) : filteredServices.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
           <div className="flex size-12 items-center justify-center rounded-full bg-slate-50 text-slate-400">
             <Layers className="size-6" />

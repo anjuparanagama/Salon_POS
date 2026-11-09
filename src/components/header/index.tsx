@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Info } from "lucide-react";
+import { Info, Loader2 } from "lucide-react";
 import Tooltip, { type TooltipPlacement } from "../tooltip";
 
 export type HeaderProps = {
@@ -13,6 +13,7 @@ export type HeaderProps = {
   actions?: ReactNode;
   children?: ReactNode;
   className?: string;
+  isLoading?: boolean;
 };
 
 export function Header({
@@ -26,6 +27,7 @@ export function Header({
   actions,
   children,
   className = "",
+  isLoading = false,
 }: HeaderProps) {
   const tooltipText = infoTooltip || description;
 
@@ -56,6 +58,13 @@ export function Header({
               <Info aria-hidden="true" className="size-3.5" strokeWidth={2} />
             </button>
           </Tooltip>
+        )}
+
+        {isLoading && (
+          <Loader2
+            className="size-4 animate-spin text-slate-400 shrink-0 ml-0.5"
+            aria-label="Loading..."
+          />
         )}
 
         {titleSuffix}

@@ -40,6 +40,7 @@ export function Products() {
     stockIn,
     adjustStock,
     recordSale,
+    isLoading,
   } = useProducts();
 
   // Right Slider Drawers State
@@ -246,6 +247,7 @@ export function Products() {
       <Header
         title="Products"
         description="Manage your salon products and stock."
+        isLoading={isLoading}
         titleSuffix={
           <Tooltip content="Share Product Catalog" placement="right">
             <button
@@ -285,6 +287,7 @@ export function Products() {
       {/* 4. Products Table */}
       <ProductList
         products={filteredProducts}
+        isLoading={isLoading}
         onView={handleOpenView}
         onEdit={handleOpenEdit}
         onQuickStockIn={handleOpenStockIn}

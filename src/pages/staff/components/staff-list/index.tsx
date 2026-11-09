@@ -1,4 +1,4 @@
-import { Eye, Edit3, Trash2, Phone, Mail, AlertCircle, ShieldCheck } from "lucide-react";
+import { Eye, Edit3, Trash2, Phone, Mail, AlertCircle, ShieldCheck, Loader2 } from "lucide-react";
 import type { StaffMember, StaffRole } from "../../../../interface/staff.types";
 import { formatStaffId } from "../../../../helpers/format-id.helper";
 
@@ -8,6 +8,7 @@ export type StaffListProps = {
   onEdit: (staff: StaffMember) => void;
   onDelete: (staffId: string) => void;
   onToggleStatus: (staffId: string) => void;
+  isLoading?: boolean;
 };
 
 const roleLabels: Record<StaffRole, string> = {
@@ -37,7 +38,17 @@ export function StaffList({
   onEdit,
   onDelete,
   onToggleStatus,
+  isLoading = false,
 }: StaffListProps) {
+  if (isLoading && staffList.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+        <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading staff members...</h3>
+      </div>
+    );
+  }
+
   if (staffList.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">

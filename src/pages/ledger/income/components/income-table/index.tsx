@@ -1,12 +1,22 @@
-import { Scissors, Package, CreditCard, Banknote, Building2, Receipt } from "lucide-react";
+import { Scissors, Package, CreditCard, Banknote, Building2, Receipt, Loader2 } from "lucide-react";
 import type { IncomeRecord } from "../../../../../interface/ledger.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
 
 export type IncomeTableProps = {
   records: IncomeRecord[];
+  isLoading?: boolean;
 };
 
-export function IncomeTable({ records }: IncomeTableProps) {
+export function IncomeTable({ records, isLoading = false }: IncomeTableProps) {
+  if (isLoading && records.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+        <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading income records...</h3>
+      </div>
+    );
+  }
+
   if (records.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">

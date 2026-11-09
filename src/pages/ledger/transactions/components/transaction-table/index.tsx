@@ -7,15 +7,26 @@ import {
   Banknote,
   Building2,
   Receipt,
+  Loader2,
 } from "lucide-react";
 import type { TransactionRecord } from "../../../../../interface/ledger.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
 
 export type TransactionTableProps = {
   records: TransactionRecord[];
+  isLoading?: boolean;
 };
 
-export function TransactionTable({ records }: TransactionTableProps) {
+export function TransactionTable({ records, isLoading = false }: TransactionTableProps) {
+  if (isLoading && records.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+        <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading transactions...</h3>
+      </div>
+    );
+  }
+
   if (records.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">

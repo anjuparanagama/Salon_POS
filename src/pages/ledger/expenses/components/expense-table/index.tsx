@@ -6,6 +6,7 @@ import {
   Eye,
   Pencil,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import type { ExpenseRecord } from "../../../../../interface/ledger.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
@@ -16,9 +17,25 @@ export type ExpenseTableProps = {
   onView: (record: ExpenseRecord) => void;
   onEdit: (record: ExpenseRecord) => void;
   onDelete: (record: ExpenseRecord) => void;
+  isLoading?: boolean;
 };
 
-export function ExpenseTable({ records, onView, onEdit, onDelete }: ExpenseTableProps) {
+export function ExpenseTable({
+  records,
+  onView,
+  onEdit,
+  onDelete,
+  isLoading = false,
+}: ExpenseTableProps) {
+  if (isLoading && records.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+        <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading expenses...</h3>
+      </div>
+    );
+  }
+
   if (records.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">

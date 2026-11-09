@@ -27,6 +27,7 @@ export function LedgerExpenses() {
     createExpense,
     updateExpense,
     deleteExpense,
+    isLoading,
   } = useExpensesLedger();
 
   const [filters, setFilters] = useState<ExpenseFilterState>(initialFilters);
@@ -123,6 +124,7 @@ export function LedgerExpenses() {
       <Header
         title="Expense Ledger"
         description="Manage salon operational expenses, bills, staff salaries, and supply costs."
+        isLoading={isLoading}
         actions={
           <button
             type="button"
@@ -151,6 +153,7 @@ export function LedgerExpenses() {
       {/* Expenses Table with View / Edit / Delete */}
       <ExpenseTable
         records={filteredRecords}
+        isLoading={isLoading}
         onView={(rec) => setViewingRecord(rec)}
         onEdit={handleStartEdit}
         onDelete={(rec) => setDeletingRecord(rec)}

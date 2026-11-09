@@ -1,4 +1,4 @@
-import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown } from "lucide-react";
+import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown, Loader2 } from "lucide-react";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { formatAppointmentId } from "../../../../helpers/format-id.helper";
@@ -10,6 +10,7 @@ export type AppointmentListProps = {
   onView?: (appointment: Appointment) => void;
   onEdit?: (appointment: Appointment) => void;
   onPrintInvoice?: (appointment: Appointment) => void;
+  isLoading?: boolean;
 };
 
 const defaultBadge = {
@@ -77,7 +78,17 @@ export function AppointmentList({
   onView,
   onEdit,
   onPrintInvoice,
+  isLoading = false,
 }: AppointmentListProps) {
+  if (isLoading && appointments.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+        <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading appointments...</h3>
+      </div>
+    );
+  }
+
   if (appointments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">

@@ -17,7 +17,7 @@ const initialFilters: TransactionFilterState = {
 };
 
 export function LedgerTransactions() {
-  const { records: transactions } = useTransactionsLedger();
+  const { records: transactions, isLoading } = useTransactionsLedger();
   const [filters, setFilters] = useState<TransactionFilterState>(initialFilters);
 
   const handleFilterChange = (updated: Partial<TransactionFilterState>) => {
@@ -86,6 +86,7 @@ export function LedgerTransactions() {
       <Header
         title="Transaction Ledger"
         description="View all salon financial transactions, customer settlements, and refund reversals."
+        isLoading={isLoading}
       />
 
       {/* 3 Summary Cards: Total Transactions, Total Received, Total Refunded */}
@@ -99,7 +100,7 @@ export function LedgerTransactions() {
       />
 
       {/* Transactions Table */}
-      <TransactionTable records={filteredTransactions} />
+      <TransactionTable records={filteredTransactions} isLoading={isLoading} />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   PlusCircle,
   TrendingDown,
+  Loader2,
 } from "lucide-react";
 import type { Product } from "../../../../interface/product.types";
 import { formatPrice } from "../../../../helpers/price.helper";
@@ -17,6 +18,7 @@ export type ProductListProps = {
   onQuickStockIn?: (product: Product) => void;
   onQuickAdjust?: (product: Product) => void;
   onToggleStatus?: (productId: string) => void;
+  isLoading?: boolean;
 };
 
 export function ProductList({
@@ -26,7 +28,17 @@ export function ProductList({
   onQuickStockIn,
   onQuickAdjust,
   onToggleStatus,
+  isLoading = false,
 }: ProductListProps) {
+  if (isLoading && products.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center shadow-xs">
+        <Loader2 className="size-8 animate-spin text-primary" />
+        <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading products...</h3>
+      </div>
+    );
+  }
+
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center shadow-xs">
