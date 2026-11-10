@@ -31,7 +31,7 @@ export function Appointments() {
   } = useAppointments();
 
   const [backendServices, setBackendServices] = useState<
-    Array<{ id: string; name: string; price: number; duration: number }>
+    Array<{ id: string; name: string; price: number; duration: number; isActive: boolean }>
   >([]);
   const [backendStaff, setBackendStaff] = useState<
     Array<{ id: string; name: string; role?: string; status?: string }>
@@ -88,25 +88,35 @@ export function Appointments() {
   }, [backendStaff, appointments]);
 
   const servicesList = useMemo(() => {
-    const map = new Map<string, { id?: string; name: string; price: number; duration: number }>();
+    const map = new Map<
+      string,
+      { id?: string; name: string; price: number; duration: number; isActive: boolean }
+    >();
+
     backendServices.forEach((svc) => {
       map.set(svc.name, {
         id: svc.id,
         name: svc.name,
         price: svc.price,
         duration: svc.duration,
+        isActive: svc.isActive,
       });
     });
-    appointments.forEach((apt) => {
-      if (apt.serviceName && !map.has(apt.serviceName)) {
-        map.set(apt.serviceName, {
-          id: apt.serviceId,
-          name: apt.serviceName,
-          price: apt.price || 0,
-          duration: apt.durationMinutes || 45,
-        });
-      }
-    });
+
+    if (backendServices.length === 0) {
+      appointments.forEach((apt) => {
+        if (apt.serviceName && !map.has(apt.serviceName)) {
+          map.set(apt.serviceName, {
+            id: apt.serviceId,
+            name: apt.serviceName,
+            price: apt.price || 0,
+            duration: apt.durationMinutes || 45,
+            isActive: true,
+          });
+        }
+      });
+    }
+
     return Array.from(map.values());
   }, [backendServices, appointments]);
 

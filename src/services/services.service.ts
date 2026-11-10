@@ -29,15 +29,19 @@ export const servicesService = {
     return { items: [], total: 0 };
   },
 
-  async getServicesList(): Promise<Array<{ id: string; name: string; price: number; duration: number }>> {
+  async getServicesList(): Promise<Array<{ id: string; name: string; price: number; duration: number; isActive: boolean }>> {
     const res = await apiClient.get(API_ENDPOINTS.SERVICES.BASE, { params: { page_size: 100 } });
     const items = res.data?.items || (Array.isArray(res.data) ? res.data : []);
-    return items.map((s: Record<string, unknown>) => ({
-      id: String(s.id),
-      name: String(s.name),
-      price: Number(s.price || 0),
-      duration: Number(s.durationMinutes || s.duration_minutes || s.duration || 45),
-    }));
+    return items.map((s: Record<string, unknown>) => {
+      const active = s.isActive ?? s.is_active ?? s.active;
+      return {
+        id: String(s.id),
+        name: String(s.name),
+        price: Number(s.price || 0),
+        duration: Number(s.durationMinutes || s.duration_minutes || s.duration || 45),
+        isActive: active === undefined ? true : Boolean(active),
+      };
+    });
   },
 
   async getStats(): Promise<ServiceStats> {

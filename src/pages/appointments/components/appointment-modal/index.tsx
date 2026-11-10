@@ -15,7 +15,13 @@ export type AppointmentModalProps = {
   onSubmit: (data: AppointmentFormData) => void;
   staffList: string[];
   staffMembers?: Array<{ id: string; name: string }>;
-  servicesList: { id?: string; name: string; price: number; duration: number }[];
+  servicesList: {
+    id?: string;
+    name: string;
+    price: number;
+    duration: number;
+    isActive?: boolean;
+  }[];
   existingAppointments?: Appointment[];
   initialData?: Appointment | null;
 };
@@ -24,7 +30,13 @@ type AppointmentFormProps = {
   initialValues: AppointmentFormData;
   staffList: string[];
   staffMembers?: Array<{ id: string; name: string }>;
-  servicesList: { id?: string; name: string; price: number; duration: number }[];
+  servicesList: {
+    id?: string;
+    name: string;
+    price: number;
+    duration: number;
+    isActive?: boolean;
+  }[];
   existingAppointments?: Appointment[];
   currentAppointmentId?: string;
   onConflictChange?: (hasConflict: boolean) => void;
@@ -70,18 +82,23 @@ function AppointmentForm({
   const [serviceError, setServiceError] = useState<string | null>(null);
 
   // Initialize selected services (default to empty unless editing or provided)
-  const [selectedServices, setSelectedServices] = useState<AppointmentServiceItem[]>(() => {
+  const [selectedServices, setSelectedServices] = useState<
+    AppointmentServiceItem[]
+  >(() => {
     if (initialValues.services && initialValues.services.length > 0) {
       return initialValues.services;
     }
     if (initialValues.serviceName) {
-      const found = servicesList.find((s) => s.name === initialValues.serviceName);
+      const found = servicesList.find(
+        (s) => s.name === initialValues.serviceName,
+      );
       return [
         {
           id: found?.id || initialValues.serviceId,
           name: initialValues.serviceName,
           price: found?.price ?? initialValues.price ?? 45,
-          durationMinutes: found?.duration ?? initialValues.durationMinutes ?? 45,
+          durationMinutes:
+            found?.duration ?? initialValues.durationMinutes ?? 45,
         },
       ];
     }
@@ -94,7 +111,10 @@ function AppointmentForm({
     if (updatedList.length > 0) {
       setServiceError(null);
     }
-    const totalDuration = updatedList.reduce((sum, s) => sum + s.durationMinutes, 0);
+    const totalDuration = updatedList.reduce(
+      (sum, s) => sum + s.durationMinutes,
+      0,
+    );
     const totalPrice = updatedList.reduce((sum, s) => sum + s.price, 0);
     const joinedNames = updatedList.map((s) => s.name).join(", ");
 
@@ -108,9 +128,10 @@ function AppointmentForm({
     }));
   };
 
-  const handleAddService = () => {
-    if (!serviceToAdd) return;
-    const found = servicesList.find((s) => s.name === serviceToAdd);
+  const handleAddService = (serviceNameToAdd?: string) => {
+    const target = serviceNameToAdd || serviceToAdd;
+    if (!target) return;
+    const found = servicesList.find((s) => s.name === target);
     if (!found) return;
 
     const newItem: AppointmentServiceItem = {
@@ -134,7 +155,9 @@ function AppointmentForm({
       setFormData((prev) => ({
         ...prev,
         staffName: staffList[0],
-        staffId: staffMembers?.find((s) => s.name === staffList[0])?.id || prev.staffId,
+        staffId:
+          staffMembers?.find((s) => s.name === staffList[0])?.id ||
+          prev.staffId,
       }));
     }
   }, [formData.staffName, staffList, staffMembers]);
@@ -164,15 +187,19 @@ function AppointmentForm({
 
     return (
       existingAppointments.find((apt) => {
-        if (currentAppointmentId && apt.id === currentAppointmentId) return false;
+        if (currentAppointmentId && apt.id === currentAppointmentId)
+          return false;
         if (apt.status === "cancelled") return false;
         if (apt.date !== formData.date) return false;
 
         const isSameStaff =
-          (formData.staffId && apt.staffId && apt.staffId === formData.staffId) ||
+          (formData.staffId &&
+            apt.staffId &&
+            apt.staffId === formData.staffId) ||
           (apt.staffName &&
             formData.staffName &&
-            apt.staffName.toLowerCase().trim() === formData.staffName.toLowerCase().trim());
+            apt.staffName.toLowerCase().trim() ===
+              formData.staffName.toLowerCase().trim());
 
         if (!isSameStaff) return false;
 
@@ -214,17 +241,25 @@ function AppointmentForm({
   };
 
   return (
-    <form id="appointment-form" onSubmit={handleSubmit} className="flex flex-col gap-4 text-xs">
+    <form
+      id="appointment-form"
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 text-xs"
+    >
       {/* Conflict Warning Alert */}
       {conflict && (
         <div className="rounded-xl border border-rose-200 bg-rose-50/90 p-3.5 text-xs text-rose-900 flex items-start gap-2.5 shadow-2xs">
           <AlertCircle className="size-4 shrink-0 text-rose-600 mt-0.5" />
           <div>
-            <p className="font-semibold text-rose-800">Specialist Already Booked (Time Conflict)</p>
+            <p className="font-semibold text-rose-800">
+              Specialist Already Booked (Time Conflict)
+            </p>
             <p className="mt-1 text-[11px] text-rose-700 leading-relaxed">
               <strong>{formData.staffName}</strong> is already booked on{" "}
-              <strong>{formData.date}</strong> at <strong>{conflict.time}</strong> (
-              {conflict.durationMinutes ?? 45} mins). Please pick a different time slot or assign another specialist.
+              <strong>{formData.date}</strong> at{" "}
+              <strong>{conflict.time}</strong> ({conflict.durationMinutes ?? 45}{" "}
+              mins). Please pick a different time slot or assign another
+              specialist.
             </p>
           </div>
         </div>
@@ -233,25 +268,33 @@ function AppointmentForm({
       {/* Row 1: Client Name & Phone Number */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block mb-1 font-medium text-slate-700">Client Name *</label>
+          <label className="block mb-1 font-medium text-slate-700">
+            Client Name *
+          </label>
           <input
             type="text"
             required
             placeholder="e.g. Emma Watson"
             value={formData.clientName}
-            onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, clientName: e.target.value })
+            }
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
           />
         </div>
 
         <div>
-          <label className="block mb-1 font-medium text-slate-700">Phone Number *</label>
+          <label className="block mb-1 font-medium text-slate-700">
+            Phone Number *
+          </label>
           <input
             type="tel"
             required
             placeholder="e.g. +1 555-0199"
             value={formData.clientPhone}
-            onChange={(e) => setFormData({ ...formData, clientPhone: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, clientPhone: e.target.value })
+            }
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
           />
         </div>
@@ -264,7 +307,10 @@ function AppointmentForm({
             Selected Services ({selectedServices.length})
           </label>
           <span className="text-[11px] text-slate-500 font-medium">
-            Total Duration: <strong className="text-slate-900">{formData.durationMinutes} mins</strong>
+            Total Duration:{" "}
+            <strong className="text-slate-900">
+              {formData.durationMinutes} mins
+            </strong>
           </span>
         </div>
 
@@ -280,13 +326,17 @@ function AppointmentForm({
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-bold">
                     {idx + 1}
                   </span>
-                  <span className="font-medium text-slate-900 truncate">{svc.name}</span>
+                  <span className="font-medium text-slate-900 truncate">
+                    {svc.name}
+                  </span>
                   <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 shrink-0">
                     {svc.durationMinutes} mins
                   </span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="font-semibold text-slate-900">{formatPrice(svc.price)}</span>
+                  <span className="font-semibold text-slate-900">
+                    {formatPrice(svc.price)}
+                  </span>
                   <button
                     type="button"
                     onClick={() => handleRemoveService(idx)}
@@ -301,24 +351,41 @@ function AppointmentForm({
           </div>
         ) : (
           <div className="rounded-lg border border-dashed border-slate-200 bg-white py-3 px-3 text-center mb-2.5">
-            <p className="text-slate-400 text-xs">No service selected yet. Choose a service below to add.</p>
+            <p className="text-slate-400 text-xs">
+              No service selected yet. Choose a service below to add.
+            </p>
           </div>
         )}
 
         {serviceError && (
-          <p className="mb-2 text-[11px] font-medium text-rose-600">{serviceError}</p>
+          <p className="mb-2 text-[11px] font-medium text-rose-600">
+            {serviceError}
+          </p>
         )}
 
-        {/* Add Another Service Dropdown */}
-        <div className="flex items-center gap-2">
+        {/* Add Service Dropdown Row */}
+        <div className="flex items-center gap-2 w-full min-w-0">
           <select
             value={serviceToAdd}
-            onChange={(e) => setServiceToAdd(e.target.value)}
-            className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white cursor-pointer"
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val) {
+                handleAddService(val);
+              }
+            }}
+            className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white cursor-pointer truncate"
           >
-            <option value="">+ Choose another service to add...</option>
+            <option value="">
+              {selectedServices.length === 0
+                ? "+ Select a service to add..."
+                : "+ Add another service..."}
+            </option>
             {servicesList
-              .filter((s) => !selectedServices.some((sel) => sel.name === s.name))
+              .filter(
+                (s) =>
+                  s.isActive !== false &&
+                  !selectedServices.some((sel) => sel.name === s.name),
+              )
               .map((svc) => (
                 <option key={svc.name} value={svc.name}>
                   {svc.name} ({svc.duration} mins - {formatPrice(svc.price)})
@@ -328,8 +395,8 @@ function AppointmentForm({
           <button
             type="button"
             disabled={!serviceToAdd}
-            onClick={handleAddService}
-            className="inline-flex items-center gap-1 rounded-lg bg-slate-800 px-3 py-2 text-xs font-semibold text-white shadow-xs hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+            onClick={() => handleAddService()}
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
           >
             <Plus className="size-3.5" />
             <span>Add</span>
@@ -339,7 +406,9 @@ function AppointmentForm({
 
       {/* Row 3: Specialist Selection */}
       <div>
-        <label className="block mb-1 font-medium text-slate-700">Assign Specialist *</label>
+        <label className="block mb-1 font-medium text-slate-700">
+          Assign Specialist *
+        </label>
         <select
           value={formData.staffName}
           onChange={(e) => handleStaffChange(e.target.value)}
@@ -356,7 +425,9 @@ function AppointmentForm({
       {/* Row 4: Date & Time */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block mb-1 font-medium text-slate-700">Date *</label>
+          <label className="block mb-1 font-medium text-slate-700">
+            Date *
+          </label>
           <input
             type="date"
             required
@@ -367,7 +438,9 @@ function AppointmentForm({
         </div>
 
         <div>
-          <label className="block mb-1 font-medium text-slate-700">Time *</label>
+          <label className="block mb-1 font-medium text-slate-700">
+            Time *
+          </label>
           <input
             type="text"
             required
@@ -403,14 +476,18 @@ function AppointmentForm({
           </label>
           <div className="w-full rounded-lg border border-slate-200 bg-slate-100/90 px-3 py-2 text-slate-900 font-bold select-none flex items-center justify-between">
             <span>{formatPrice(formData.price)}</span>
-            <span className="text-[10px] text-slate-400 font-normal">Approx total</span>
+            <span className="text-[10px] text-slate-400 font-normal">
+              Approx total
+            </span>
           </div>
         </div>
       </div>
 
       {/* Row 6: Special Notes */}
       <div>
-        <label className="block mb-1 font-medium text-slate-700">Special Notes (Optional)</label>
+        <label className="block mb-1 font-medium text-slate-700">
+          Special Notes (Optional)
+        </label>
         <textarea
           rows={3}
           placeholder="Preferences, allergy cautions, or styling notes..."
@@ -483,7 +560,7 @@ export function AppointmentModal({
           ? `Update details for appointment ${aptNumber}`
           : "Schedule a new client appointment and assign a specialist."
       }
-      size="lg"
+      size="xl"
       footer={
         <div className="flex items-center justify-end gap-2">
           <button
@@ -502,8 +579,8 @@ export function AppointmentModal({
             {hasConflict
               ? "Specialist Unavailable"
               : isEdit
-              ? "Update Appointment"
-              : "Confirm Appointment"}
+                ? "Update Appointment"
+                : "Confirm Appointment"}
           </button>
         </div>
       }
