@@ -88,6 +88,9 @@ export function ProductList({
               <th scope="col" className="px-3 py-2.5 min-w-[120px]">
                 Category
               </th>
+              <th scope="col" className="px-3 py-2.5 min-w-[180px] max-w-[260px]">
+                Description
+              </th>
               <th scope="col" className="px-3 py-2.5 text-right min-w-[110px]">
                 Selling Price
               </th>
@@ -100,7 +103,7 @@ export function ProductList({
               {/* Sticky Right Fixed Actions Header */}
               <th
                 scope="col"
-                className="sticky right-0 z-20 bg-slate-50/95 backdrop-blur-xs px-3.5 py-2.5 text-center shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)] border-l border-slate-100 min-w-[90px]"
+                className="sticky right-0 z-20 bg-slate-50/95 backdrop-blur-xs px-3.5 py-2.5 text-center min-w-[90px]"
               >
                 Actions
               </th>
@@ -162,6 +165,15 @@ export function ProductList({
                     </span>
                   </td>
 
+                  {/* Description */}
+                  <td className="px-3 py-2 text-slate-600 max-w-[260px]" title={item.description || ""}>
+                    {item.description && item.description.trim() ? (
+                      <span className="truncate block">{item.description.trim()}</span>
+                    ) : (
+                      <span className="text-slate-400 font-medium">-</span>
+                    )}
+                  </td>
+
                   {/* Selling Price */}
                   <td className="px-3 py-2 text-right font-medium text-slate-900">
                     {formatPrice(item.sellingPrice)}
@@ -212,7 +224,7 @@ export function ProductList({
 
                   {/* Sticky Right Fixed Actions: Icons ONLY, no borders */}
                   <td
-                    className="sticky right-0 z-10 bg-white group-hover:bg-slate-50/95 transition-colors px-3 py-2 text-center shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)] border-l border-slate-100"
+                    className="sticky right-0 z-10 bg-white group-hover:bg-slate-50/95 transition-colors px-3 py-2 text-center"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center justify-center gap-1.5">
