@@ -10,6 +10,7 @@ export type ProductViewPanelProps = {
   isOpen: boolean;
   onClose: () => void;
   product: Product | null;
+  categories?: Array<{ label: string; value: string }>;
   onEdit: (product: Product) => void;
   onStockIn?: (product: Product) => void;
   onStockAdjustment?: (product: Product) => void;
@@ -20,9 +21,14 @@ export function ProductViewPanel({
   isOpen,
   onClose,
   product,
+  categories,
   onEdit,
 }: ProductViewPanelProps) {
   if (!product) return null;
+
+  const categoryLabel =
+    categories?.find((c) => c.value === product.category)?.label ||
+    product.category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
   const isOutOfStock = product.stock <= 0;
   const isLowStock = !isOutOfStock && product.stock <= product.lowStockLevel;
@@ -252,8 +258,8 @@ export function ProductViewPanel({
             <span className="w-36 shrink-0 text-slate-500 font-medium">
               Category:
             </span>
-            <span className="font-medium text-slate-800 capitalize">
-              {product.category.replace("_", " ")}
+            <span className="font-medium text-slate-800">
+              {categoryLabel}
             </span>
           </li>
 

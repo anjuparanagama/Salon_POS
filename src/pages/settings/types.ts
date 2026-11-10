@@ -5,7 +5,8 @@ export type SettingsSectionId =
   | "appointments"
   | "staff"
   | "layout"
-  | "notifications";
+  | "notifications"
+  | "categories";
 
 export interface SettingsCardItem {
   id: SettingsSectionId;

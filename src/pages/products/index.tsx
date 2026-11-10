@@ -20,7 +20,7 @@ import ShareProductsModal from "./components/share-products-modal";
 import Header from "../../components/header";
 import Tooltip from "../../components/tooltip";
 
-const categories = [
+const defaultCategories = [
   { label: "All Items", value: "all" },
   { label: "Shampoo", value: "shampoo" },
   { label: "Hair Care", value: "hair_care" },
@@ -34,6 +34,7 @@ const categories = [
 export function Products() {
   const {
     products,
+    categories: apiCategories,
     createProduct,
     updateProduct,
     toggleStatus,
@@ -42,6 +43,13 @@ export function Products() {
     recordSale,
     isLoading,
   } = useProducts();
+
+  const categories = useMemo(() => {
+    if (!apiCategories || apiCategories.length === 0) return defaultCategories;
+    const hasAll = apiCategories.some((c) => c.value === "all");
+    const list = hasAll ? [...apiCategories] : [{ label: "All Items", value: "all" }, ...apiCategories];
+    return list;
+  }, [apiCategories]);
 
   // Right Slider Drawers State
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
@@ -287,6 +295,7 @@ export function Products() {
       {/* 4. Products Table */}
       <ProductList
         products={filteredProducts}
+        categories={categories}
         isLoading={isLoading}
         onView={handleOpenView}
         onEdit={handleOpenEdit}
@@ -309,6 +318,7 @@ export function Products() {
       {/* 6. Right Slider Side Panel for Product Details / View */}
       <ProductViewPanel
         isOpen={isViewOpen}
+        categories={categories}
         onClose={() => {
           setIsViewOpen(false);
           setViewingProduct(null);

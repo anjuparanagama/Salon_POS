@@ -25,9 +25,9 @@ export function ServiceCard({
 }: ServiceCardProps) {
   const predefinedBadge = categoryBadges[service.category];
   const matchedCategory = categories?.find((c) => c.value === service.category);
-  const badge = predefinedBadge || {
-    label: matchedCategory ? matchedCategory.label : service.category,
-    style: "bg-slate-50 text-slate-700 border-slate-200",
+  const badge = {
+    label: matchedCategory ? matchedCategory.label : (predefinedBadge?.label || service.category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())),
+    style: predefinedBadge?.style || "bg-slate-50 text-slate-700 border-slate-200",
   };
 
   const images = service.images || [];

@@ -1,5 +1,6 @@
 import {
   useState,
+  useEffect,
   useRef,
   type FormEvent,
   type ChangeEvent,
@@ -22,6 +23,7 @@ import type {
   ProductFormData,
 } from "../../../../interface/product.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { productsService } from "../../../../services/products.service";
 
 function compressImage(
   file: File,
@@ -128,6 +130,34 @@ function ProductForm({
   const [sellingPriceInput, setSellingPriceInput] = useState<string>(
     initialValues.sellingPrice > 0 ? String(initialValues.sellingPrice) : "",
   );
+
+  const [categoriesList, setCategoriesList] = useState<Array<{ value: string; label: string }>>(categoryOptions);
+
+  useEffect(() => {
+    let isMounted = true;
+    productsService
+      .getCategories()
+      .then((cats) => {
+        if (!isMounted || !Array.isArray(cats) || cats.length === 0) return;
+        const validCats = cats
+          .filter((c) => c.value !== "all" && c.active !== false)
+          .map((c) => ({ value: c.value, label: c.label }));
+        if (validCats.length > 0) {
+          // If current category is not in list, keep it
+          if (formData.category && !validCats.some((c) => c.value === formData.category)) {
+            validCats.unshift({
+              value: formData.category,
+              label: formData.category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+            });
+          }
+          setCategoriesList(validCats);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [formData.category]);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -335,7 +365,7 @@ function ProductForm({
               }
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
             >
-              {categoryOptions.map((opt) => (
+              {categoriesList.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>

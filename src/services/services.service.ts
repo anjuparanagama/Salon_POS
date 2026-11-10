@@ -2,10 +2,10 @@ import { apiClient } from "../lib/axios";
 import { API_ENDPOINTS } from "../config/api.config";
 import type {
   ServiceItem,
-  ServiceCategoryItem,
   ServiceStats,
   ServiceFormData,
 } from "../interface/service.types";
+import type { CategoryFormData, CategoryItem } from "../interface/category.types";
 
 export interface ServiceQueryParams {
   search?: string;
@@ -49,17 +49,31 @@ export const servicesService = {
     return res.data;
   },
 
-  async getCategories(): Promise<ServiceCategoryItem[]> {
+  async getCategories(): Promise<CategoryItem[]> {
     const res = await apiClient.get(API_ENDPOINTS.SERVICES.CATEGORIES);
     return Array.isArray(res.data) ? res.data : [];
   },
 
-  async addCategory(label: string, value?: string): Promise<ServiceCategoryItem> {
-    const res = await apiClient.post<ServiceCategoryItem>(
+  async addCategory(label: string, value?: string, description?: string, active?: boolean): Promise<CategoryItem> {
+    const res = await apiClient.post<CategoryItem>(
       API_ENDPOINTS.SERVICES.CATEGORIES,
-      { label, value }
+      { label, value, description, active: active !== undefined ? active : true }
     );
     return res.data;
+  },
+
+  async createCategory(payload: CategoryFormData): Promise<CategoryItem> {
+    const res = await apiClient.post<CategoryItem>(API_ENDPOINTS.SERVICES.CATEGORIES, payload);
+    return res.data;
+  },
+
+  async updateCategory(id: string, payload: Partial<CategoryFormData>): Promise<CategoryItem> {
+    const res = await apiClient.put<CategoryItem>(API_ENDPOINTS.SERVICES.CATEGORY_BY_ID(id), payload);
+    return res.data;
+  },
+
+  async deleteCategory(id: string): Promise<void> {
+    await apiClient.delete(API_ENDPOINTS.SERVICES.CATEGORY_BY_ID(id));
   },
 
   async getServiceById(id: string): Promise<ServiceItem> {

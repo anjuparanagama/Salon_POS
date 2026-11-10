@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   BellRing,
   CalendarClock,
+  FolderTree,
   LayoutTemplate,
   SlidersHorizontal,
   UserCog,
@@ -14,6 +15,7 @@ import AppointmentsSettingsView from "./components/appointments-settings";
 import StaffSettingsView from "./components/staff-settings";
 import LayoutSettingsView from "./components/layout-settings";
 import NotificationSettingsView from "./components/notification-settings";
+import CategorySettingsView from "./components/category-settings";
 import type { SettingsCardItem, SettingsSectionId } from "./types";
 
 export const SETTINGS_ITEMS: SettingsCardItem[] = [
@@ -71,6 +73,17 @@ export const SETTINGS_ITEMS: SettingsCardItem[] = [
     badgeBorder: "border border-orange-100",
     accentColor: "text-orange-600 hover:text-orange-700",
     borderColor: "hover:border-orange-300",
+  },
+  {
+    id: "categories",
+    title: "Category Settings",
+    description: "Manage product categories and salon service categories, classifications, and active states.",
+    icon: FolderTree,
+    bannerBg: "bg-[#E6F8F0]",
+    badgeBg: "bg-white text-emerald-600",
+    badgeBorder: "border border-emerald-100",
+    accentColor: "text-emerald-600 hover:text-emerald-700",
+    borderColor: "hover:border-emerald-300",
   },
 ];
 
@@ -149,6 +162,7 @@ export function Settings() {
           {activeSection === "staff" && <StaffSettingsView />}
           {activeSection === "layout" && <LayoutSettingsView />}
           {activeSection === "notifications" && <NotificationSettingsView />}
+          {activeSection === "categories" && <CategorySettingsView />}
         </div>
       )}
     </div>

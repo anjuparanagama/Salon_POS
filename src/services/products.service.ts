@@ -9,6 +9,7 @@ import type {
   StockSalePayload,
   StockMovement,
 } from "../interface/product.types";
+import type { CategoryItem, CategoryFormData } from "../interface/category.types";
 
 export interface ProductQueryParams {
   search?: string;
@@ -38,9 +39,23 @@ export const productsService = {
     return res.data;
   },
 
-  async getCategories(): Promise<Array<{ label: string; value: string }>> {
+  async getCategories(): Promise<CategoryItem[]> {
     const res = await apiClient.get(API_ENDPOINTS.PRODUCTS.CATEGORIES);
     return Array.isArray(res.data) ? res.data : [];
+  },
+
+  async createCategory(payload: CategoryFormData): Promise<CategoryItem> {
+    const res = await apiClient.post<CategoryItem>(API_ENDPOINTS.PRODUCTS.CATEGORIES, payload);
+    return res.data;
+  },
+
+  async updateCategory(id: string, payload: Partial<CategoryFormData>): Promise<CategoryItem> {
+    const res = await apiClient.put<CategoryItem>(API_ENDPOINTS.PRODUCTS.CATEGORY_BY_ID(id), payload);
+    return res.data;
+  },
+
+  async deleteCategory(id: string): Promise<void> {
+    await apiClient.delete(API_ENDPOINTS.PRODUCTS.CATEGORY_BY_ID(id));
   },
 
   async getBrands(): Promise<string[]> {

@@ -11,6 +11,7 @@ import { formatPrice } from "../../../../helpers/price.helper";
 
 export type ProductListProps = {
   products: Product[];
+  categories?: Array<{ label: string; value: string }>;
   onView: (product: Product) => void;
   onEdit: (product: Product) => void;
   onQuickStockIn?: (product: Product) => void;
@@ -21,6 +22,7 @@ export type ProductListProps = {
 
 export function ProductList({
   products,
+  categories,
   onView,
   onEdit,
   onQuickStockIn: _onQuickStockIn,
@@ -52,6 +54,8 @@ export function ProductList({
   }
 
   const getCategoryLabel = (category: string) => {
+    const matched = categories?.find((c) => c.value === category);
+    if (matched) return matched.label;
     switch (category) {
       case "shampoo":
         return "Shampoo";
@@ -68,7 +72,7 @@ export function ProductList({
       case "equipment":
         return "Equipment";
       default:
-        return category.charAt(0).toUpperCase() + category.slice(1).replace("_", " ");
+        return category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     }
   };
 
