@@ -92,6 +92,8 @@ function StaffForm({
 
     onSubmit({
       ...formData,
+      canAccessPos: Boolean(formData.canAccessPos),
+      password: formData.canAccessPos ? formData.password : "",
       commissionRate: finalCommission,
       specialties:
         parsedSpecialties.length > 0
@@ -225,7 +227,15 @@ function StaffForm({
       {/* POS Access & Password Section */}
       <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 flex flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2 cursor-pointer select-none"
+            onClick={() =>
+              setFormData((prev) => ({
+                ...prev,
+                canAccessPos: !prev.canAccessPos,
+              }))
+            }
+          >
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary-lighter text-primary">
               <ShieldCheck className="size-4" />
             </div>
@@ -238,21 +248,30 @@ function StaffForm({
               </p>
             </div>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer mt-0.5">
-            <input
-              type="checkbox"
-              checked={formData.canAccessPos ?? true}
-              onChange={(e) =>
-                setFormData({ ...formData, canAccessPos: e.target.checked })
-              }
-              className="sr-only peer"
+          <button
+            type="button"
+            role="switch"
+            aria-checked={Boolean(formData.canAccessPos)}
+            onClick={() =>
+              setFormData((prev) => ({
+                ...prev,
+                canAccessPos: !prev.canAccessPos,
+              }))
+            }
+            className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+              formData.canAccessPos ? "bg-primary" : "bg-slate-300"
+            }`}
+          >
+            <span
+              className={`inline-block size-4 transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out ${
+                formData.canAccessPos ? "translate-x-4.5" : "translate-x-0.5"
+              }`}
             />
-            <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
-          </label>
+          </button>
         </div>
 
         {/* Password Input */}
-        {(formData.canAccessPos ?? true) && (
+        {Boolean(formData.canAccessPos) && (
           <div className="pt-2 border-t border-slate-200/70">
             <label className="block mb-1 font-medium text-slate-700">
               {isEditing
@@ -345,7 +364,7 @@ export function StaffPanel({
         commissionRate: editingStaff.commissionRate,
         status: editingStaff.status,
         bio: editingStaff.bio || "",
-        canAccessPos: editingStaff.canAccessPos ?? true,
+        canAccessPos: Boolean(editingStaff.canAccessPos),
         password: "",
       }
     : defaultInitialData;

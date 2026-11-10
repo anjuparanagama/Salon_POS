@@ -102,6 +102,7 @@ export function useStaff(
     } catch {
       const fallback: StaffMember = {
         ...data,
+        canAccessPos: Boolean(data.canAccessPos),
         id: `st-${Date.now()}`,
         status: data.status || "active",
         joinedDate: new Date().toISOString().split("T")[0],

@@ -126,12 +126,12 @@ export function StaffViewPanel({
             <div className="flex items-center gap-2.5">
               <div
                 className={`flex size-8 items-center justify-center rounded-lg ${
-                  staff.canAccessPos ?? true
+                  Boolean(staff.canAccessPos)
                     ? "bg-emerald-50 text-emerald-600"
                     : "bg-slate-100 text-slate-400"
                 }`}
               >
-                {staff.canAccessPos ?? true ? (
+                {Boolean(staff.canAccessPos) ? (
                   <ShieldCheck className="size-4.5" />
                 ) : (
                   <ShieldAlert className="size-4.5" />
@@ -140,7 +140,7 @@ export function StaffViewPanel({
               <div>
                 <h4 className="font-semibold text-slate-900">POS System Terminal Access</h4>
                 <p className="text-[11px] text-slate-500">
-                  {staff.canAccessPos ?? true
+                  {Boolean(staff.canAccessPos)
                     ? "Staff member is authorized to access and operate the salon POS system."
                     : "POS login is currently disabled for this staff account."}
                 </p>
@@ -148,12 +148,12 @@ export function StaffViewPanel({
             </div>
             <span
               className={`rounded-full px-2.5 py-1 text-[11px] font-semibold border ${
-                staff.canAccessPos ?? true
+                Boolean(staff.canAccessPos)
                   ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                   : "bg-slate-100 text-slate-600 border-slate-200"
               }`}
             >
-              {staff.canAccessPos ?? true ? "Authorized" : "Disabled"}
+              {Boolean(staff.canAccessPos) ? "Authorized" : "Disabled"}
             </span>
           </div>
         </div>

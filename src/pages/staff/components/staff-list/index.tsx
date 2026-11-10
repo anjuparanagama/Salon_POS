@@ -69,13 +69,13 @@ export function StaffList({
         <table className="w-full text-left text-xs">
           <thead className="border-b border-slate-100 bg-slate-50/80 font-semibold uppercase tracking-wider text-slate-600">
             <tr>
-              <th scope="col" className="px-5 py-3.5">ID</th>
-              <th scope="col" className="px-5 py-3.5">Name</th>
-              <th scope="col" className="px-5 py-3.5">Role</th>
-              <th scope="col" className="px-5 py-3.5">Phone Number</th>
-              <th scope="col" className="px-5 py-3.5">Email</th>
-              <th scope="col" className="px-5 py-3.5">Status</th>
-              <th scope="col" className="px-5 py-3.5 text-right">Actions</th>
+              <th scope="col" className="px-4 py-2.5 text-[11px]">ID</th>
+              <th scope="col" className="px-4 py-2.5 text-[11px]">Name</th>
+              <th scope="col" className="px-4 py-2.5 text-[11px]">Role</th>
+              <th scope="col" className="px-4 py-2.5 text-[11px]">Phone Number</th>
+              <th scope="col" className="px-4 py-2.5 text-[11px]">Email</th>
+              <th scope="col" className="px-4 py-2.5 text-[11px]">Status</th>
+              <th scope="col" className="px-4 py-2.5 text-[11px] text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -85,22 +85,22 @@ export function StaffList({
               return (
                 <tr key={staff.id} className="transition-colors hover:bg-slate-50/70">
                   {/* ID */}
-                  <td className="whitespace-nowrap px-5 py-4 font-mono font-medium text-slate-600">
-                    <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-700">
+                  <td className="whitespace-nowrap px-4 py-2.5 font-mono font-medium text-slate-600">
+                    <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
                       {formatStaffId(staff.id)}
                     </span>
                   </td>
 
                   {/* Name */}
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-primary font-bold text-xs ring-2 ring-primary/10">
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex size-7.5 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-primary font-bold text-[11px] ring-2 ring-primary/10">
                         {getInitials(staff.name)}
                       </div>
-                      <div>
-                        <div className="font-semibold text-slate-900">{staff.name}</div>
-                        {staff.canAccessPos && (
-                          <div className="flex items-center gap-1 text-[10px] text-emerald-600 mt-0.5 font-medium">
+                      <div className="min-w-0">
+                        <div className="font-medium text-slate-900 leading-tight">{staff.name}</div>
+                        {Boolean(staff.canAccessPos) && (
+                          <div className="flex items-center gap-1 text-[10px] text-emerald-600 mt-0.5 font-medium leading-none">
                             <ShieldCheck className="size-3" />
                             <span>POS Access</span>
                           </div>
@@ -110,14 +110,14 @@ export function StaffList({
                   </td>
 
                   {/* Role */}
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <span className="inline-flex items-center rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                  <td className="whitespace-nowrap px-4 py-2.5">
+                    <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
                       {roleLabels[staff.role] || staff.role}
                     </span>
                   </td>
 
                   {/* Phone Number */}
-                  <td className="whitespace-nowrap px-5 py-4">
+                  <td className="whitespace-nowrap px-4 py-2.5">
                     <span className="inline-flex items-center gap-1.5 font-medium text-slate-700">
                       <Phone className="size-3.5 text-slate-400" />
                       {staff.phone}
@@ -125,7 +125,7 @@ export function StaffList({
                   </td>
 
                   {/* Email */}
-                  <td className="whitespace-nowrap px-5 py-4">
+                  <td className="whitespace-nowrap px-4 py-2.5">
                     <span className="inline-flex items-center gap-1.5 text-slate-600">
                       <Mail className="size-3.5 text-slate-400" />
                       {staff.email}
@@ -133,7 +133,7 @@ export function StaffList({
                   </td>
 
                   {/* Status (Active or Inactive) */}
-                  <td className="whitespace-nowrap px-5 py-4">
+                  <td className="whitespace-nowrap px-4 py-2.5">
                     <button
                       type="button"
                       onClick={() => onToggleStatus(staff.id)}
@@ -154,12 +154,12 @@ export function StaffList({
                   </td>
 
                   {/* Actions: View, Edit, Delete */}
-                  <td className="whitespace-nowrap px-5 py-4 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
+                  <td className="whitespace-nowrap px-4 py-2.5 text-right">
+                    <div className="flex items-center justify-end gap-1">
                       <button
                         type="button"
                         onClick={() => onView(staff)}
-                        className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
+                        className="rounded-lg p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                         title="View Staff Details"
                       >
                         <Eye className="size-4" />
@@ -167,7 +167,7 @@ export function StaffList({
                       <button
                         type="button"
                         onClick={() => onEdit(staff)}
-                        className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
+                        className="rounded-lg p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                         title="Edit Staff Member"
                       >
                         <Edit3 className="size-4" />
@@ -175,7 +175,7 @@ export function StaffList({
                       <button
                         type="button"
                         onClick={() => onDelete(staff.id)}
-                        className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer"
+                        className="rounded-lg p-1 text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer"
                         title="Delete Staff Member"
                       >
                         <Trash2 className="size-4" />
