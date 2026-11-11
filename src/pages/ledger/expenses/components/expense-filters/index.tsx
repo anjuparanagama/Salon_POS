@@ -1,6 +1,8 @@
+import { useState, useEffect, useMemo } from "react";
 import { Search, Calendar, Filter, X } from "lucide-react";
 import type { ExpenseCategory, ExpenseFilterState } from "../../../../../interface/ledger.types";
 import { expenseCategoryFilterOptions } from "../../../../../helpers/ledger.helper";
+import { ledgerService } from "../../../../../services/ledger.service";
 
 export type ExpenseFiltersProps = {
   filters: ExpenseFilterState;
@@ -9,6 +11,31 @@ export type ExpenseFiltersProps = {
 };
 
 export function ExpenseFilters({ filters, onFilterChange, onResetFilters }: ExpenseFiltersProps) {
+  const [categories, setCategories] = useState<Array<{ label: string; value: string }>>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    ledgerService
+      .getExpenseCategories()
+      .then((cats) => {
+        if (isMounted && cats.length > 0) {
+          setCategories(cats);
+        }
+      })
+      .catch((err) => console.error("Failed to load categories for expense filter", err));
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filterOptions = useMemo(() => {
+    if (categories.length === 0) return expenseCategoryFilterOptions;
+    return [
+      { label: "All Categories", value: "all" },
+      ...categories.map((c) => ({ label: c.label, value: c.value })),
+    ];
+  }, [categories]);
+
   const hasActiveFilters =
     Boolean(filters.search) ||
     Boolean(filters.startDate) ||
@@ -42,7 +69,7 @@ export function ExpenseFilters({ filters, onFilterChange, onResetFilters }: Expe
               }
               className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-none transition focus:border-primary focus:bg-white cursor-pointer"
             >
-              {expenseCategoryFilterOptions.map((opt) => (
+              {filterOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>

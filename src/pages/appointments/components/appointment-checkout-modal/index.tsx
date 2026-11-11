@@ -11,7 +11,6 @@ import {
   CalendarPlus,
   AlertCircle,
   Loader2,
-  X,
   Phone,
   User,
   Check,
@@ -263,14 +262,6 @@ export function AppointmentCheckoutModal({
   // Quick Pay Full helper
   const handlePayFull = (method: "cash" | "card" | "bank" = "cash") => {
     setPayments([{ method, amount: grandTotal, reference: "" }]);
-  };
-
-  // Add Payment Row
-  const handleAddPaymentRow = () => {
-    setPayments((prev) => [
-      ...prev,
-      { method: "card", amount: balanceDue > 0 ? balanceDue : 0, reference: "" },
-    ]);
   };
 
   // Submit Checkout
@@ -1041,11 +1032,6 @@ Hotline: +94 11 234 5678`;
                     />
                   </div>
 
-                  <div className="flex justify-between text-slate-600">
-                    <span>Tax / VAT (0%):</span>
-                    <span className="font-mono">Rs. 0.00</span>
-                  </div>
-
                   <div className="border-t border-slate-200 pt-2 flex justify-between items-center text-sm font-bold text-slate-900">
                     <span>Grand Total:</span>
                     <span className="text-primary text-base font-extrabold font-mono">{formatPrice(grandTotal)}</span>
@@ -1074,77 +1060,41 @@ Hotline: +94 11 234 5678`;
                     >
                       Card Full
                     </button>
-                    {balanceDue > 0 && payments[0]?.amount < grandTotal && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPayments((prev) => [
-                            ...prev,
-                            { method: "cash", amount: balanceDue, reference: "" },
-                          ]);
-                        }}
-                        className="rounded-md bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 text-[10px] font-bold hover:bg-blue-100 transition cursor-pointer"
-                      >
-                        + Balance
-                      </button>
-                    )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  {payments.map((p, pIdx) => (
-                    <div key={pIdx} className="flex items-center gap-2">
-                      <select
-                        value={p.method}
-                        onChange={(e) => {
-                          const val = e.target.value as any;
-                          setPayments((prev) =>
-                            prev.map((row, i) => (i === pIdx ? { ...row, method: val } : row))
-                          );
-                        }}
-                        className="rounded-lg border border-slate-200 bg-white py-1.5 px-2 text-xs font-semibold text-slate-700 outline-none shrink-0"
-                      >
-                        <option value="cash">Cash</option>
-                        <option value="card">Card</option>
-                        <option value="bank">Bank Transfer</option>
-                        <option value="digital">Digital / QR</option>
-                      </select>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={payments[0]?.method || "cash"}
+                      onChange={(e) => {
+                        const val = e.target.value as any;
+                        setPayments((prev) => [
+                          { ...(prev[0] || { amount: 0, reference: "" }), method: val },
+                        ]);
+                      }}
+                      className="rounded-lg border border-slate-200 bg-white py-1.5 px-2 text-xs font-semibold text-slate-700 outline-none shrink-0"
+                    >
+                      <option value="cash">Cash</option>
+                      <option value="card">Card</option>
+                      <option value="bank">Bank Transfer</option>
+                      <option value="digital">Digital / QR</option>
+                    </select>
 
-                      <input
-                        type="number"
-                        min={0}
-                        value={p.amount === 0 ? "" : p.amount}
-                        onChange={(e) => {
-                          const val = Number(e.target.value);
-                          setPayments((prev) =>
-                            prev.map((row, i) => (i === pIdx ? { ...row, amount: val } : row))
-                          );
-                        }}
-                        placeholder="Amount"
-                        className="flex-1 min-w-0 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-mono font-semibold text-slate-900 outline-none focus:border-primary text-right"
-                      />
-
-                      {payments.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => setPayments((prev) => prev.filter((_, i) => i !== pIdx))}
-                          className="text-slate-400 hover:text-rose-500 p-1 shrink-0"
-                          title="Remove payment"
-                        >
-                          <X className="size-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-
-                  <button
-                    type="button"
-                    onClick={handleAddPaymentRow}
-                    className="text-[11px] font-semibold text-primary hover:underline inline-flex items-center gap-1 pt-1 cursor-pointer"
-                  >
-                    <Plus className="size-3" />
-                    <span>Split / Add Another Payment</span>
-                  </button>
+                    <input
+                      type="number"
+                      min={0}
+                      value={payments[0]?.amount === 0 ? "" : payments[0]?.amount}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setPayments((prev) => [
+                          { ...(prev[0] || { method: "cash", reference: "" }), amount: val },
+                        ]);
+                      }}
+                      placeholder="Amount"
+                      className="flex-1 min-w-0 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-mono font-semibold text-slate-900 outline-none focus:border-primary text-right"
+                    />
+                  </div>
                 </div>
 
                 {/* Payment balances */}

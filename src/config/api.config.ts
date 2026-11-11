@@ -87,6 +87,7 @@ export const API_ENDPOINTS = {
       STATS: "/api/v1/salon/ledger/expenses/stats",
       SUMMARY: "/api/v1/salon/ledger/expenses/summary",
       CATEGORIES: "/api/v1/salon/ledger/expenses/categories",
+      CATEGORY_BY_ID: (id: string) => `/api/v1/salon/ledger/expenses/categories/${id}`,
       BY_ID: (id: string) => `/api/v1/salon/ledger/expenses/${id}`,
     },
     TRANSACTIONS: {

@@ -6,7 +6,6 @@ import {
   BookOpen,
   CalendarDays,
   ClipboardList,
-  CreditCard,
   Home,
   LayoutDashboard,
   Package,
@@ -40,11 +39,6 @@ function AppContent() {
         label: t("nav.appointments", "Appointments"),
         href: ROUTES.APPOINTMENTS,
         icon: CalendarDays,
-      },
-      {
-        label: t("nav.checkout", "POS Checkout"),
-        href: ROUTES.CHECKOUT,
-        icon: CreditCard,
       },
       {
         label: t("nav.services", "Services"),

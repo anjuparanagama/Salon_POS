@@ -44,7 +44,12 @@ export type ExpenseCategory =
   | "product_purchases"
   | "equipment_maintenance"
   | "internet_telephone"
-  | "other";
+  | "refreshments"
+  | "utilities"
+  | "inventory"
+  | "marketing"
+  | "other"
+  | (string & {});
 
 export type ExpenseItemCategory = Exclude<ExpenseCategory, "all">;
 

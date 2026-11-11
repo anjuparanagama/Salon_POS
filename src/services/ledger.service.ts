@@ -1,5 +1,6 @@
 import { apiClient } from "../lib/axios";
 import { API_ENDPOINTS } from "../config/api.config";
+import type { CategoryItem, CategoryFormData } from "../interface/category.types";
 import type {
   IncomeRecord,
   IncomeStats,
@@ -8,7 +9,6 @@ import type {
   TransactionRecord,
   TransactionStats,
   LedgerSummary,
-  ExpenseItemCategory,
 } from "../interface/ledger.types";
 
 export interface IncomeQueryParams {
@@ -88,9 +88,23 @@ export const ledgerService = {
     return res.data;
   },
 
-  async getExpenseCategories(): Promise<Array<{ label: string; value: ExpenseItemCategory }>> {
+  async getExpenseCategories(): Promise<CategoryItem[]> {
     const res = await apiClient.get(API_ENDPOINTS.LEDGER.EXPENSES.CATEGORIES);
     return Array.isArray(res.data) ? res.data : [];
+  },
+
+  async createExpenseCategory(payload: CategoryFormData): Promise<CategoryItem> {
+    const res = await apiClient.post<CategoryItem>(API_ENDPOINTS.LEDGER.EXPENSES.CATEGORIES, payload);
+    return res.data;
+  },
+
+  async updateExpenseCategory(id: string, payload: Partial<CategoryFormData>): Promise<CategoryItem> {
+    const res = await apiClient.put<CategoryItem>(API_ENDPOINTS.LEDGER.EXPENSES.CATEGORY_BY_ID(id), payload);
+    return res.data;
+  },
+
+  async deleteExpenseCategory(id: string): Promise<void> {
+    await apiClient.delete(API_ENDPOINTS.LEDGER.EXPENSES.CATEGORY_BY_ID(id));
   },
 
   async createExpense(payload: Partial<ExpenseRecord>): Promise<ExpenseRecord> {

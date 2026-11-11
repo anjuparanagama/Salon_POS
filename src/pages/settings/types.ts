@@ -28,6 +28,7 @@ export interface GeneralSettingsState {
   currency: string;
   taxRate: number;
   timeZone: string;
+  language?: string;
   openingTime: string;
   closingTime: string;
 }

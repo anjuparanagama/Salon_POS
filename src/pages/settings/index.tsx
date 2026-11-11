@@ -101,8 +101,8 @@ export function Settings() {
   const staffTab: "roles" | "permissions" | "policies" =
     rawTab === "permissions" || rawTab === "policies" ? rawTab : "roles";
 
-  const categoryTab: "product" | "service" =
-    rawTab === "service" ? "service" : "product";
+  const categoryTab: "product" | "service" | "expense" =
+    rawTab === "service" ? "service" : rawTab === "expense" ? "expense" : "product";
 
   const generalTab: "profile" | "financial" | "operations" =
     rawTab === "financial" || rawTab === "operations" ? rawTab : "profile";
@@ -129,7 +129,7 @@ export function Settings() {
     setSearchParams({ section: "staff", tab });
   };
 
-  const setCategoryTab = (tab: "product" | "service") => {
+  const setCategoryTab = (tab: "product" | "service" | "expense") => {
     setSearchParams({ section: "categories", tab });
   };
 
@@ -208,6 +208,17 @@ export function Settings() {
               >
                 Service Categories
               </button>
+              <button
+                type="button"
+                onClick={() => setCategoryTab("expense")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  categoryTab === "expense"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
+                }`}
+              >
+                Expense Categories
+              </button>
             </div>
           ) : activeSection === "general" ? (
             <div className="flex items-center gap-2">
@@ -231,7 +242,7 @@ export function Settings() {
                     : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
                 }`}
               >
-                Financial Preference
+                Financial & Regional
               </button>
               <button
                 type="button"

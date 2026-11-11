@@ -4,4 +4,5 @@ export {
   defaultExpenseCategories,
   expenseCategoryFilterOptions,
   categoryMeta,
+  getCategoryMeta,
 } from "./ledger.helper";

@@ -292,14 +292,6 @@ export function CheckoutPage() {
     setPayments([{ method, amount: grandTotal, reference: "" }]);
   };
 
-  // Split payment helper
-  const handleAddPaymentRow = () => {
-    setPayments((prev) => [
-      ...prev,
-      { method: "card", amount: balanceDue > 0 ? balanceDue : 0, reference: "" },
-    ]);
-  };
-
   // Submit Checkout
   const handleCompleteCheckout = async () => {
     setErrorMsg(null);
@@ -1157,11 +1149,6 @@ Hotline: +94 11 234 5678`;
                     </div>
                   )}
 
-                  <div className="flex justify-between text-slate-600">
-                    <span>Tax / VAT (0%):</span>
-                    <span className="font-mono">Rs. 0.00</span>
-                  </div>
-
                   <div className="border-t border-slate-200 pt-3 flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-900">Grand Total:</span>
                     <span className="text-2xl font-black text-primary font-mono">{formatPrice(grandTotal)}</span>
@@ -1190,76 +1177,41 @@ Hotline: +94 11 234 5678`;
                     >
                       💳 Card Full
                     </button>
-                    {balanceDue > 0 && payments[0]?.amount < grandTotal && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPayments((prev) => [
-                            ...prev,
-                            { method: "cash", amount: balanceDue, reference: "" },
-                          ]);
-                        }}
-                        className="rounded-lg bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 text-xs font-bold hover:bg-blue-100 transition cursor-pointer"
-                      >
-                        + Pay Balance
-                      </button>
-                    )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  {payments.map((p, pIdx) => (
-                    <div key={pIdx} className="flex items-center gap-2">
-                      <select
-                        value={p.method}
-                        onChange={(e) => {
-                          const val = e.target.value as any;
-                          setPayments((prev) =>
-                            prev.map((row, i) => (i === pIdx ? { ...row, method: val } : row))
-                          );
-                        }}
-                        className="rounded-xl border border-slate-200 bg-white py-2 px-3 text-xs font-semibold text-slate-700 outline-none shrink-0"
-                      >
-                        <option value="cash">Cash</option>
-                        <option value="card">Credit / Debit Card</option>
-                        <option value="bank">Bank Transfer</option>
-                        <option value="digital">Digital / QR</option>
-                      </select>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={payments[0]?.method || "cash"}
+                      onChange={(e) => {
+                        const val = e.target.value as any;
+                        setPayments((prev) => [
+                          { ...(prev[0] || { amount: 0, reference: "" }), method: val },
+                        ]);
+                      }}
+                      className="rounded-xl border border-slate-200 bg-white py-2 px-3 text-xs font-semibold text-slate-700 outline-none shrink-0"
+                    >
+                      <option value="cash">Cash</option>
+                      <option value="card">Credit / Debit Card</option>
+                      <option value="bank">Bank Transfer</option>
+                      <option value="digital">Digital / QR</option>
+                    </select>
 
-                      <input
-                        type="number"
-                        min={0}
-                        value={p.amount === 0 ? "" : p.amount}
-                        onChange={(e) => {
-                          const val = Number(e.target.value);
-                          setPayments((prev) =>
-                            prev.map((row, i) => (i === pIdx ? { ...row, amount: val } : row))
-                          );
-                        }}
-                        placeholder="Amount"
-                        className="flex-1 min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono font-semibold text-slate-900 outline-none focus:border-primary text-right"
-                      />
-
-                      {payments.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => setPayments((prev) => prev.filter((_, i) => i !== pIdx))}
-                          className="text-slate-400 hover:text-rose-500 p-1.5"
-                        >
-                          <Trash2 className="size-4" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-
-                  <button
-                    type="button"
-                    onClick={handleAddPaymentRow}
-                    className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1 pt-1 cursor-pointer"
-                  >
-                    <Plus className="size-3.5" />
-                    <span>Split / Add Another Payment Method</span>
-                  </button>
+                    <input
+                      type="number"
+                      min={0}
+                      value={payments[0]?.amount === 0 ? "" : payments[0]?.amount}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setPayments((prev) => [
+                          { ...(prev[0] || { method: "cash", reference: "" }), amount: val },
+                        ]);
+                      }}
+                      placeholder="Amount"
+                      className="flex-1 min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono font-semibold text-slate-900 outline-none focus:border-primary text-right"
+                    />
+                  </div>
                 </div>
 
                 {/* Balances Summary */}

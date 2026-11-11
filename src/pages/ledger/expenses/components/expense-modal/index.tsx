@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { Upload, X, Tag, CreditCard } from "lucide-react";
 import SidePanel from "../../../../../components/side-panel";
 import type {
@@ -8,12 +8,14 @@ import type {
   ExpensePaymentMethod,
 } from "../../../../../interface/ledger.types";
 import { defaultExpenseCategories } from "../../../../../helpers/ledger.helper";
+import { ledgerService } from "../../../../../services/ledger.service";
 
 export type ExpensePanelProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: ExpenseFormData) => void;
   initialData?: ExpenseRecord | null;
+  categories?: Array<{ label: string; value: string; active?: boolean }>;
 };
 
 export type ExpenseModalProps = ExpensePanelProps;
@@ -22,14 +24,21 @@ type ExpenseFormContentProps = {
   initialValues: ExpenseFormData;
   onSubmit: (data: ExpenseFormData) => void;
   onClose: () => void;
+  categories?: Array<{ label: string; value: string; active?: boolean }>;
 };
 
 function ExpenseFormContent({
   initialValues,
   onSubmit,
   onClose,
+  categories,
 }: ExpenseFormContentProps) {
   const [formData, setFormData] = useState<ExpenseFormData>(initialValues);
+
+  const categoryOptions =
+    categories && categories.length > 0
+      ? categories.filter((c) => c.active !== false || c.value === formData.category)
+      : defaultExpenseCategories;
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -90,7 +99,7 @@ function ExpenseFormContent({
               }
               className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 cursor-pointer"
             >
-              {defaultExpenseCategories.map((cat) => (
+              {categoryOptions.map((cat) => (
                 <option key={cat.value} value={cat.value}>
                   {cat.label}
                 </option>
@@ -215,8 +224,36 @@ function ExpenseFormContent({
   );
 }
 
-export function ExpensePanel({ isOpen, onClose, onSubmit, initialData }: ExpensePanelProps) {
+export function ExpensePanel({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialData,
+  categories: propCategories,
+}: ExpensePanelProps) {
   const isEditing = Boolean(initialData);
+  const [categories, setCategories] = useState<Array<{ label: string; value: string; active?: boolean }>>(
+    propCategories || []
+  );
+
+  useEffect(() => {
+    if (propCategories && propCategories.length > 0) {
+      setCategories(propCategories);
+      return;
+    }
+    let isMounted = true;
+    ledgerService
+      .getExpenseCategories()
+      .then((cats) => {
+        if (isMounted && cats.length > 0) {
+          setCategories(cats);
+        }
+      })
+      .catch((err) => console.error("Failed to load categories for expense panel", err));
+    return () => {
+      isMounted = false;
+    };
+  }, [propCategories]);
 
   const initialValues: ExpenseFormData = initialData
     ? {
@@ -230,7 +267,7 @@ export function ExpensePanel({ isOpen, onClose, onSubmit, initialData }: Expense
       }
     : {
         title: "",
-        category: "electricity",
+        category: (categories[0]?.value as any) || "electricity",
         amount: 0,
         paymentMethod: "cash",
         date: new Date().toISOString().split("T")[0],
@@ -276,6 +313,7 @@ export function ExpensePanel({ isOpen, onClose, onSubmit, initialData }: Expense
         initialValues={initialValues}
         onSubmit={onSubmit}
         onClose={onClose}
+        categories={categories}
       />
     </SidePanel>
   );

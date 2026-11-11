@@ -17,9 +17,10 @@ import {
 import Pagination from "../../../../components/pagination";
 import { productsService } from "../../../../services/products.service";
 import { servicesService } from "../../../../services/services.service";
+import { ledgerService } from "../../../../services/ledger.service";
 import type { CategoryItem, CategoryFormData } from "../../../../interface/category.types";
 
-export type CategoryKind = "product" | "service";
+export type CategoryKind = "product" | "service" | "expense";
 
 export interface CategorySettingsViewProps {
   activeTab?: CategoryKind;
@@ -37,6 +38,10 @@ export default function CategorySettingsView({
   // State for Service Categories
   const [serviceCats, setServiceCats] = useState<CategoryItem[]>([]);
   const [loadingServices, setLoadingServices] = useState(false);
+
+  // State for Expense Categories
+  const [expenseCats, setExpenseCats] = useState<CategoryItem[]>([]);
+  const [loadingExpenses, setLoadingExpenses] = useState(false);
 
   // Grid Controls & Table Preferences matching StoreMate styling
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,13 +100,38 @@ export default function CategorySettingsView({
     }
   };
 
+  // Load expense categories
+  const loadExpenseCategories = async () => {
+    setLoadingExpenses(true);
+    try {
+      const data = await ledgerService.getExpenseCategories();
+      setExpenseCats(data);
+    } catch (err) {
+      console.error("Failed to load expense categories:", err);
+    } finally {
+      setLoadingExpenses(false);
+    }
+  };
+
   useEffect(() => {
     loadProductCategories();
     loadServiceCategories();
+    loadExpenseCategories();
   }, []);
 
-  const activeCategories = activeTab === "product" ? productCats : serviceCats;
-  const isLoading = activeTab === "product" ? loadingProducts : loadingServices;
+  const activeCategories =
+    activeTab === "product"
+      ? productCats
+      : activeTab === "service"
+      ? serviceCats
+      : expenseCats;
+
+  const isLoading =
+    activeTab === "product"
+      ? loadingProducts
+      : activeTab === "service"
+      ? loadingServices
+      : loadingExpenses;
 
   // Compute categories list with clean Category Code (e.g. CAT-01, CAT-02)
   const computedCategoryList = useMemo(() => {
@@ -270,9 +300,14 @@ export default function CategorySettingsView({
           setProductCats((prev) =>
             prev.map((c) => (c.id === editingCategory.id ? updated : c))
           );
-        } else {
+        } else if (activeTab === "service") {
           const updated = await servicesService.updateCategory(editingCategory.id, payload);
           setServiceCats((prev) =>
+            prev.map((c) => (c.id === editingCategory.id ? updated : c))
+          );
+        } else {
+          const updated = await ledgerService.updateExpenseCategory(editingCategory.id, payload);
+          setExpenseCats((prev) =>
             prev.map((c) => (c.id === editingCategory.id ? updated : c))
           );
         }
@@ -280,9 +315,12 @@ export default function CategorySettingsView({
         if (activeTab === "product") {
           const created = await productsService.createCategory(payload);
           setProductCats((prev) => [...prev, created]);
-        } else {
+        } else if (activeTab === "service") {
           const created = await servicesService.createCategory(payload);
           setServiceCats((prev) => [...prev, created]);
+        } else {
+          const created = await ledgerService.createExpenseCategory(payload);
+          setExpenseCats((prev) => [...prev, created]);
         }
       }
       setIsModalOpen(false);
@@ -304,9 +342,14 @@ export default function CategorySettingsView({
         setProductCats((prev) =>
           prev.map((c) => (c.id === cat.id ? { ...c, active: newActive } : c))
         );
-      } else {
+      } else if (activeTab === "service") {
         await servicesService.updateCategory(cat.id, { active: newActive });
         setServiceCats((prev) =>
+          prev.map((c) => (c.id === cat.id ? { ...c, active: newActive } : c))
+        );
+      } else {
+        await ledgerService.updateExpenseCategory(cat.id, { active: newActive });
+        setExpenseCats((prev) =>
           prev.map((c) => (c.id === cat.id ? { ...c, active: newActive } : c))
         );
       }
@@ -323,9 +366,12 @@ export default function CategorySettingsView({
       if (activeTab === "product") {
         await productsService.deleteCategory(deletingCategory.id);
         setProductCats((prev) => prev.filter((c) => c.id !== deletingCategory.id));
-      } else {
+      } else if (activeTab === "service") {
         await servicesService.deleteCategory(deletingCategory.id);
         setServiceCats((prev) => prev.filter((c) => c.id !== deletingCategory.id));
+      } else {
+        await ledgerService.deleteExpenseCategory(deletingCategory.id);
+        setExpenseCats((prev) => prev.filter((c) => c.id !== deletingCategory.id));
       }
       setDeletingCategory(null);
     } catch (err) {
@@ -358,7 +404,7 @@ export default function CategorySettingsView({
           <div className="relative flex-1 flex items-center">
             <input
               type="text"
-              placeholder={`Search ${activeTab === "product" ? "product" : "service"} categories...`}
+              placeholder={`Search ${activeTab === "product" ? "product" : activeTab === "service" ? "service" : "expense"} categories...`}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -461,7 +507,13 @@ export default function CategorySettingsView({
           {/* Refresh Button */}
           <button
             type="button"
-            onClick={activeTab === "product" ? loadProductCategories : loadServiceCategories}
+            onClick={
+              activeTab === "product"
+                ? loadProductCategories
+                : activeTab === "service"
+                ? loadServiceCategories
+                : loadExpenseCategories
+            }
             className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
             title="Refresh categories"
           >
@@ -542,7 +594,7 @@ export default function CategorySettingsView({
                     className="px-4 py-3 text-center min-w-[130px] cursor-pointer hover:bg-slate-200/60 select-none transition"
                   >
                     <div className="flex items-center justify-center gap-1">
-                      <span>ASSIGNED {activeTab === "product" ? "PRODUCTS" : "SERVICES"}</span>
+                      <span>ASSIGNED {activeTab === "product" ? "PRODUCTS" : activeTab === "service" ? "SERVICES" : "EXPENSES"}</span>
                       <ChevronsUpDown className="size-3 text-slate-400" />
                     </div>
                   </th>
@@ -607,7 +659,11 @@ export default function CategorySettingsView({
                         <div className="flex items-center gap-2">
                           <span
                             className={`size-2 rounded-full shrink-0 ${
-                              activeTab === "product" ? "bg-emerald-500" : "bg-purple-500"
+                              activeTab === "product"
+                                ? "bg-emerald-500"
+                                : activeTab === "service"
+                                ? "bg-purple-500"
+                                : "bg-rose-500"
                             }`}
                           />
                           <span className="text-xs">{item.label}</span>
@@ -640,7 +696,12 @@ export default function CategorySettingsView({
                       {visibleColumns.itemCount && (
                         <td className="px-4 py-3.5 text-center">
                           <span className="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-                            {item.itemCount || 0} {activeTab === "product" ? "products" : "services"}
+                            {item.itemCount || 0}{" "}
+                            {activeTab === "product"
+                              ? "products"
+                              : activeTab === "service"
+                              ? "services"
+                              : "expenses"}
                           </span>
                         </td>
                       )}
@@ -728,12 +789,14 @@ export default function CategorySettingsView({
                   <h3 className="text-sm font-bold text-slate-900">
                     {editingCategory
                       ? "Edit Category"
-                      : `Add New ${activeTab === "product" ? "Product" : "Service"} Category`}
+                      : `Add New ${activeTab === "product" ? "Product" : activeTab === "service" ? "Service" : "Expense"} Category`}
                   </h3>
                   <p className="text-[11px] text-slate-500">
                     {activeTab === "product"
                       ? "Retail inventory product classification"
-                      : "Salon service menu classification"}
+                      : activeTab === "service"
+                      ? "Salon service menu classification"
+                      : "Salon operational expense classification"}
                   </p>
                 </div>
               </div>
@@ -868,7 +931,12 @@ export default function CategorySettingsView({
             {(deletingCategory.itemCount || 0) > 0 && (
               <div className="w-full rounded-xl bg-amber-50 border border-amber-200/80 p-2.5 text-[11px] text-amber-800 text-left mb-4">
                 <strong>Notice:</strong> {deletingCategory.itemCount}{" "}
-                {activeTab === "product" ? "product(s)" : "service(s)"} are currently categorized under this item.
+                {activeTab === "product"
+                  ? "product(s)"
+                  : activeTab === "service"
+                  ? "service(s)"
+                  : "expense(s)"}{" "}
+                are currently categorized under this item.
               </div>
             )}
 

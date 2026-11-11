@@ -2,7 +2,6 @@ import { Home, CreditCard } from "lucide-react";
 import type { UserProfile } from "../../interface/user.types";
 import type { BreadcrumbItem } from "../../interface/breadcrumb.types";
 import Breadcrumb from "../breadcrumb";
-import LanguageSwitcher from "../language-switcher";
 import SearchBar from "../search-bar";
 import NotificationButton from "../notification-button";
 import UserProfileDropdown from "../user-profile-dropdown";
@@ -87,9 +86,6 @@ export function TopHeader({
           <CreditCard className="size-3.5" />
           <span className="hidden sm:inline">POS Terminal</span>
         </button>
-
-        {/* Language Switcher */}
-        <LanguageSwitcher />
 
         {/* Notification Button Component */}
         <NotificationButton

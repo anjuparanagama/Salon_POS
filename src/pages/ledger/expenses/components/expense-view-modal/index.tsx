@@ -2,7 +2,7 @@ import { CreditCard, Banknote, Building2, Calendar, Receipt, Tag } from "lucide-
 import Modal from "../../../../../components/modal";
 import type { ExpenseRecord } from "../../../../../interface/ledger.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
-import { categoryMeta } from "../../../../../helpers/ledger.helper";
+import { getCategoryMeta } from "../../../../../helpers/ledger.helper";
 
 export type ExpenseViewModalProps = {
   isOpen: boolean;
@@ -14,7 +14,7 @@ export type ExpenseViewModalProps = {
 export function ExpenseViewModal({ isOpen, onClose, record, onEdit }: ExpenseViewModalProps) {
   if (!record) return null;
 
-  const meta = categoryMeta[record.category] || categoryMeta.other;
+  const meta = getCategoryMeta(record.category);
   const CategoryIcon = meta.icon;
 
   return (

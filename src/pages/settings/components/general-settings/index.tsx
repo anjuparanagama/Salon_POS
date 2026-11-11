@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
-import { Check, RotateCcw, Save } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Check, RotateCcw, Save, Languages } from "lucide-react";
 import type { GeneralSettingsState } from "../../types";
+import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "../../../../interface/i18n.types";
 
 export type GeneralTabType = "profile" | "financial" | "operations";
 
@@ -17,6 +19,7 @@ const defaultGeneral: GeneralSettingsState = {
   currency: "LKR (Rs.)",
   taxRate: 2.5,
   timeZone: "Asia/Colombo (GMT+5:30)",
+  language: "en",
   openingTime: "09:00",
   closingTime: "20:00",
 };
@@ -24,6 +27,9 @@ const defaultGeneral: GeneralSettingsState = {
 export function GeneralSettingsView({
   activeTab: controlledTab,
 }: GeneralSettingsViewProps = {}) {
+  const { i18n } = useTranslation();
+  const currentLang = (i18n.language?.split("-")[0] || "en") as SupportedLanguage;
+
   const [internalTab] = useState<GeneralTabType>("profile");
   const activeTab = controlledTab ?? internalTab;
 
@@ -37,6 +43,12 @@ export function GeneralSettingsView({
   });
 
   const [isSaved, setIsSaved] = useState(false);
+
+  const handleLanguageChange = (code: SupportedLanguage) => {
+    void i18n.changeLanguage(code);
+    localStorage.setItem("salon_pos_lng", code);
+    setFormData((prev) => ({ ...prev, language: code }));
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -52,6 +64,8 @@ export function GeneralSettingsView({
   const handleReset = () => {
     setFormData(defaultGeneral);
     localStorage.removeItem("sribees_general_settings");
+    void i18n.changeLanguage("en");
+    localStorage.setItem("salon_pos_lng", "en");
   };
 
   return (
@@ -111,6 +125,21 @@ export function GeneralSettingsView({
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
               />
             </div>
+
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Display Language (පද්ධති භාෂාව)</label>
+              <select
+                value={currentLang}
+                onChange={(e) => handleLanguageChange(e.target.value as SupportedLanguage)}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer font-medium"
+              >
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.nativeLabel} ({lang.label})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       )}
@@ -123,7 +152,7 @@ export function GeneralSettingsView({
           <div className="border-b border-slate-100 pb-3 mb-4">
             <h3 className="text-sm font-bold text-slate-800">Financial & Regional Preferences</h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Currency formats, time zones, and sales taxes applied at checkout.
+              Currency formats, time zones, display language, and sales taxes applied at checkout.
             </p>
           </div>
 
@@ -167,6 +196,49 @@ export function GeneralSettingsView({
                 <option value="Asia/Singapore (GMT+8:00)">Asia/Singapore (GMT+8:00)</option>
                 <option value="UTC (GMT+0:00)">UTC (GMT+0:00)</option>
               </select>
+            </div>
+          </div>
+
+          {/* Display Language (පද්ධති භාෂාව) */}
+          <div className="mt-6 border-t border-slate-100 pt-5">
+            <div className="flex items-center gap-2 mb-1">
+              <Languages className="size-4 text-primary" />
+              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                System Language / පද්ධති භාෂාව
+              </h4>
+            </div>
+            <p className="text-xs text-slate-500 mb-3.5">
+              Select the interface display language for the salon POS system, navigation, and reports.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {SUPPORTED_LANGUAGES.map((lang) => {
+                const isSelected = currentLang === lang.code;
+                return (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    onClick={() => handleLanguageChange(lang.code)}
+                    className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition cursor-pointer ${
+                      isSelected
+                        ? "border-primary bg-primary-subtle/30 ring-2 ring-primary/20 shadow-2xs"
+                        : "border-slate-200 hover:border-slate-300 bg-slate-50/50"
+                    }`}
+                  >
+                    <div>
+                      <p className={`text-sm font-bold ${isSelected ? "text-primary" : "text-slate-800"}`}>
+                        {lang.nativeLabel}
+                      </p>
+                      <p className="text-[11px] text-slate-500">{lang.label}</p>
+                    </div>
+                    {isSelected && (
+                      <span className="flex size-5 items-center justify-center rounded-full bg-primary text-white">
+                        <Check className="size-3" />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
