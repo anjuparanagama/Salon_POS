@@ -8,7 +8,8 @@ export type ModalProps = {
   title: string;
   description?: string;
   children: ReactNode;
-  size?: "sm" | "md" | "lg" | "xl";
+  footer?: ReactNode;
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
   className?: string;
 };
 
@@ -17,6 +18,9 @@ const sizeClasses = {
   md: "max-w-lg",
   lg: "max-w-2xl",
   xl: "max-w-3xl",
+  "2xl": "max-w-5xl",
+  "3xl": "max-w-6xl",
+  "4xl": "max-w-7xl",
 };
 
 export function Modal({
@@ -25,6 +29,7 @@ export function Modal({
   title,
   description,
   children,
+  footer,
   size = "md",
   className,
 }: ModalProps) {
@@ -86,6 +91,13 @@ export function Modal({
         <div className="overflow-y-auto px-6 py-5 flex-1">
           {children}
         </div>
+
+        {/* Optional Modal Footer */}
+        {footer && (
+          <div className="border-t border-slate-100 bg-slate-50/70 px-6 py-3.5 shrink-0">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

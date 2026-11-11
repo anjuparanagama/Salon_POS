@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react";
-import { Plus, Share2 } from "lucide-react";
+import { useNavigate } from "react-router";
+import { Plus, Share2, ShoppingBag } from "lucide-react";
+import { ROUTES } from "../../routes/sidebar.routes";
 import type {
   Product,
   ProductFilterState,
@@ -17,6 +19,7 @@ import ProductPanel from "./components/product-panel";
 import ProductViewPanel from "./components/product-view-panel";
 import StockModal, { type StockModalMode } from "./components/stock-modal";
 import ShareProductsModal from "./components/share-products-modal";
+import AppointmentCheckoutModal from "../appointments/components/appointment-checkout-modal";
 import Header from "../../components/header";
 import Tooltip from "../../components/tooltip";
 
@@ -32,6 +35,7 @@ const defaultCategories = [
 ];
 
 export function Products() {
+  const navigate = useNavigate();
   const {
     products,
     categories: apiCategories,
@@ -63,6 +67,7 @@ export function Products() {
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
   const [stockModalProduct, setStockModalProduct] = useState<Product | null>(null);
   const [stockModalMode, setStockModalMode] = useState<StockModalMode>("stock_in");
+  const [isPosCheckoutOpen, setIsPosCheckoutOpen] = useState(false);
 
   // Filters State
   const [filters, setFilters] = useState<ProductFilterState>({
@@ -269,14 +274,24 @@ export function Products() {
           </Tooltip>
         }
         actions={
-          <button
-            type="button"
-            onClick={handleOpenAdd}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
-          >
-            <Plus className="size-4" />
-            <span>Add Product</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => navigate(ROUTES.CHECKOUT)}
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
+            >
+              <ShoppingBag className="size-3.5 text-primary" />
+              <span>Direct POS Sale</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleOpenAdd}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
+            >
+              <Plus className="size-4" />
+              <span>Add Product</span>
+            </button>
+          </div>
         }
       />
 
@@ -348,6 +363,13 @@ export function Products() {
       <ShareProductsModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
+      />
+
+      {/* 9. Direct POS Sale Modal */}
+      <AppointmentCheckoutModal
+        isOpen={isPosCheckoutOpen}
+        onClose={() => setIsPosCheckoutOpen(false)}
+        appointment={null}
       />
     </div>
   );

@@ -6,6 +6,7 @@ import {
   BookOpen,
   CalendarDays,
   ClipboardList,
+  CreditCard,
   Home,
   LayoutDashboard,
   Package,
@@ -39,6 +40,11 @@ function AppContent() {
         label: t("nav.appointments", "Appointments"),
         href: ROUTES.APPOINTMENTS,
         icon: CalendarDays,
+      },
+      {
+        label: t("nav.checkout", "POS Checkout"),
+        href: ROUTES.CHECKOUT,
+        icon: CreditCard,
       },
       {
         label: t("nav.services", "Services"),
@@ -93,6 +99,12 @@ function AppContent() {
           { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
           { label: t("nav.salonManagement", "Salon Management") },
           { label: t("nav.appointments", "Appointments"), href: ROUTES.APPOINTMENTS, isCurrent: true },
+        ];
+      case ROUTES.CHECKOUT:
+        return [
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: t("nav.appointments", "Appointments"), href: ROUTES.APPOINTMENTS },
+          { label: "POS Checkout", href: ROUTES.CHECKOUT, isCurrent: true },
         ];
       case ROUTES.SERVICES:
         return [
@@ -197,6 +209,7 @@ function AppContent() {
           if (item.href) navigate(item.href);
         },
         onLogoutClick: handleLogout,
+        onPosClick: () => navigate(ROUTES.CHECKOUT, { state: { fresh: true, timestamp: Date.now() } }),
       }}
     >
       <AppRoutes />

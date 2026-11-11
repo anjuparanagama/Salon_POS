@@ -15,7 +15,10 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'https://sribees-gkbeajd5dzatf3gc.southeastasia-01.azurewebsites.net',
+        target:
+          process.env.VITE_BACKEND_TARGET ||
+          process.env.VITE_API_URL ||
+          'https://sribees-gkbeajd5dzatf3gc.southeastasia-01.azurewebsites.net',
         changeOrigin: true,
         secure: false,
       },

@@ -1,4 +1,4 @@
-import { Home } from "lucide-react";
+import { Home, CreditCard } from "lucide-react";
 import type { UserProfile } from "../../interface/user.types";
 import type { BreadcrumbItem } from "../../interface/breadcrumb.types";
 import Breadcrumb from "../breadcrumb";
@@ -23,6 +23,7 @@ export type TopHeaderProps = {
   onSettingsClick?: () => void;
   onLogoutClick?: () => void;
   onBreadcrumbClick?: (item: BreadcrumbItem) => void;
+  onPosClick?: () => void;
   className?: string;
 };
 
@@ -53,6 +54,7 @@ export function TopHeader({
   onSettingsClick,
   onLogoutClick,
   onBreadcrumbClick,
+  onPosClick,
   className = "",
 }: TopHeaderProps) {
   return (
@@ -74,6 +76,17 @@ export function TopHeader({
           onSubmit={onSearchSubmit}
           onClick={onSearchClick}
         />
+
+        {/* POS Terminal Direct Button */}
+        <button
+          type="button"
+          onClick={onPosClick}
+          className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#7a053c] px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:opacity-95 transition-all cursor-pointer shrink-0 active:scale-98"
+          title="Open POS Terminal (Walk-in Sales & Direct Billing)"
+        >
+          <CreditCard className="size-3.5" />
+          <span className="hidden sm:inline">POS Terminal</span>
+        </button>
 
         {/* Language Switcher */}
         <LanguageSwitcher />

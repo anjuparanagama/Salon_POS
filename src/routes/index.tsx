@@ -11,6 +11,7 @@ import LedgerIncome from "../pages/ledger/income";
 import LedgerExpenses from "../pages/ledger/expenses";
 import LedgerTransactions from "../pages/ledger/transactions";
 import Settings from "../pages/settings";
+import CheckoutPage from "../pages/checkout";
 import { ROUTES } from "./sidebar.routes";
 import { useAuth } from "../context/use-auth";
 
@@ -110,6 +111,22 @@ export function AppRoutes() {
         element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.CHECKOUT}
+        element={
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/checkout/:appointmentId"
+        element={
+          <ProtectedRoute>
+            <CheckoutPage />
           </ProtectedRoute>
         }
       />

@@ -1,4 +1,4 @@
-import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown, Loader2 } from "lucide-react";
+import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown, Loader2, CreditCard } from "lucide-react";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { formatAppointmentId } from "../../../../helpers/format-id.helper";
@@ -10,6 +10,7 @@ export type AppointmentListProps = {
   onView?: (appointment: Appointment) => void;
   onEdit?: (appointment: Appointment) => void;
   onPrintInvoice?: (appointment: Appointment) => void;
+  onCheckout?: (appointment: Appointment) => void;
   isLoading?: boolean;
 };
 
@@ -78,6 +79,7 @@ export function AppointmentList({
   onView,
   onEdit,
   onPrintInvoice,
+  onCheckout,
   isLoading = false,
 }: AppointmentListProps) {
   if (isLoading && appointments.length === 0) {
@@ -240,9 +242,20 @@ export function AppointmentList({
                         </button>
                       )}
 
-                      {/* 2. Approved Appointments (Confirmed & In Progress) -> View & Edit (Icons Only, No Border) */}
+                      {/* 2. Approved Appointments (Confirmed & In Progress) -> Checkout, View & Edit */}
                       {(apt.status === "confirmed" || apt.status === "in_progress") && (
                         <>
+                          <button
+                            type="button"
+                            onClick={() => onCheckout?.(apt)}
+                            title="Unified POS Checkout"
+                            aria-label="Unified POS Checkout"
+                            className="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-xs font-semibold text-white shadow-2xs hover:bg-primary-dark transition cursor-pointer"
+                          >
+                            <CreditCard className="size-3" />
+                            <span>Checkout</span>
+                          </button>
+
                           <button
                             type="button"
                             onClick={() => onView?.(apt)}

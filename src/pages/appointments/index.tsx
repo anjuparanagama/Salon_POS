@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
+import { Plus, ShoppingBag } from "lucide-react";
+import { ROUTES } from "../../routes/sidebar.routes";
 import type {
   Appointment,
   AppointmentFilterState,
@@ -18,15 +20,18 @@ import AppointmentList from "./components/appointment-list";
 import AppointmentModal from "./components/appointment-modal";
 import AppointmentViewModal from "./components/appointment-view-modal";
 import AppointmentInvoiceModal from "./components/appointment-invoice-modal";
+import AppointmentCheckoutModal from "./components/appointment-checkout-modal";
 import Header from "../../components/header";
 
 export function Appointments() {
+  const navigate = useNavigate();
   const { t } = useTranslation(["appointments", "common"]);
   const {
     appointments,
     createAppointment,
     updateAppointment,
     updateStatus,
+    refetch,
     isLoading,
   } = useAppointments();
 
@@ -124,6 +129,8 @@ export function Appointments() {
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [viewingAppointment, setViewingAppointment] = useState<Appointment | null>(null);
   const [invoicingAppointment, setInvoicingAppointment] = useState<Appointment | null>(null);
+  const [checkoutAppointment, setCheckoutAppointment] = useState<Appointment | null>(null);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
 
@@ -217,17 +224,27 @@ export function Appointments() {
         description={t("appointments:subtitle", "Manage bookings, schedule clients, and assign salon staff.")}
         isLoading={isLoading}
         actions={
-          <button
-            type="button"
-            onClick={() => {
-              setEditingAppointment(null);
-              setIsModalOpen(true);
-            }}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
-          >
-            <Plus className="size-4" />
-            <span>{t("appointments:newAppointment", "New Appointment")}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => navigate(ROUTES.CHECKOUT)}
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
+            >
+              <ShoppingBag className="size-3.5 text-primary" />
+              <span>Direct POS Sale</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEditingAppointment(null);
+                setIsModalOpen(true);
+              }}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
+            >
+              <Plus className="size-4" />
+              <span>{t("appointments:newAppointment", "New Appointment")}</span>
+            </button>
+          </div>
         }
       />
 
@@ -250,6 +267,9 @@ export function Appointments() {
         onView={handleViewAppointment}
         onEdit={handleEditAppointment}
         onPrintInvoice={handlePrintInvoice}
+        onCheckout={(apt) => {
+          navigate(`${ROUTES.CHECKOUT}?appointmentId=${apt.id}`, { state: { appointment: apt } });
+        }}
       />
 
       {/* New / Edit Appointment Modal */}
@@ -274,6 +294,10 @@ export function Appointments() {
         appointment={viewingAppointment}
         onEdit={handleEditAppointment}
         onPrintInvoice={handlePrintInvoice}
+        onCheckout={(apt) => {
+          setViewingAppointment(null);
+          navigate(`${ROUTES.CHECKOUT}?appointmentId=${apt.id}`, { state: { appointment: apt } });
+        }}
       />
 
       {/* Print Invoice Modal */}
@@ -281,6 +305,23 @@ export function Appointments() {
         isOpen={Boolean(invoicingAppointment)}
         onClose={() => setInvoicingAppointment(null)}
         appointment={invoicingAppointment}
+      />
+
+      {/* Unified POS Checkout Modal */}
+      <AppointmentCheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => {
+          setIsCheckoutOpen(false);
+          setCheckoutAppointment(null);
+        }}
+        appointment={checkoutAppointment}
+        onCheckoutSuccess={() => {
+          refetch();
+        }}
+        onBookNextAppointment={(prefill) => {
+          setEditingAppointment(prefill as any);
+          setIsModalOpen(true);
+        }}
       />
     </div>
   );

@@ -55,7 +55,15 @@ export const API_ENDPOINTS = {
     CANCEL: (id: string) => `/api/v1/salon/appointments/${id}/cancel`,
     HISTORY: (id: string) => `/api/v1/salon/appointments/${id}/history`,
     INVOICE: (id: string) => `/api/v1/salon/appointments/${id}/invoice`,
+    CHECKOUT: (id: string) => `/api/v1/salon/appointments/${id}/checkout`,
     PAYMENTS: (invoiceId: string) => `/api/v1/salon/appointments/invoices/${invoiceId}/payments`,
+  },
+  INVOICES: {
+    CHECKOUT: "/api/v1/salon/invoices/checkout",
+    BY_ID: (id: string) => `/api/v1/salon/invoices/${id}`,
+    PDF: (id: string, download = false) => `/api/v1/salon/invoices/${id}/pdf${download ? "?download=true" : ""}`,
+    WHATSAPP: (id: string) => `/api/v1/salon/invoices/${id}/whatsapp`,
+    WHATSAPP_HISTORY: (id: string) => `/api/v1/salon/invoices/${id}/whatsapp/history`,
   },
   STAFF: {
     BASE: "/api/v1/salon/staff",

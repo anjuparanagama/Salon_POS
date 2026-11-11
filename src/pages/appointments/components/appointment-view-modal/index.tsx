@@ -13,6 +13,7 @@ export type AppointmentViewModalProps = {
   appointment: Appointment | null;
   onEdit?: (appointment: Appointment) => void;
   onPrintInvoice?: (appointment: Appointment) => void;
+  onCheckout?: (appointment: Appointment) => void;
 };
 
 const statusDetails: Record<
@@ -47,6 +48,7 @@ export function AppointmentViewModal({
   appointment,
   onEdit,
   onPrintInvoice,
+  onCheckout,
 }: AppointmentViewModalProps) {
   if (!appointment) return null;
 
@@ -119,19 +121,34 @@ export function AppointmentViewModal({
           </button>
 
           {(appointment.status === "confirmed" ||
-            appointment.status === "in_progress") &&
-            onEdit && (
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  onEdit(appointment);
-                }}
-                className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
-              >
-                Edit Appointment
-              </button>
-            )}
+            appointment.status === "in_progress") && (
+            <>
+              {onCheckout && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onCheckout(appointment);
+                  }}
+                  className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
+                >
+                  Checkout & Bill
+                </button>
+              )}
+              {onEdit && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onEdit(appointment);
+                  }}
+                  className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                >
+                  Edit Appointment
+                </button>
+              )}
+            </>
+          )}
 
           {appointment.status === "completed" && onPrintInvoice && (
             <button
