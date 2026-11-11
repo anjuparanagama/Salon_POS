@@ -2,6 +2,13 @@ import { useState, type FormEvent } from "react";
 import { Check, RotateCcw, Save } from "lucide-react";
 import type { GeneralSettingsState } from "../../types";
 
+export type GeneralTabType = "profile" | "financial" | "operations";
+
+export interface GeneralSettingsViewProps {
+  activeTab?: GeneralTabType;
+  onTabChange?: (tab: GeneralTabType) => void;
+}
+
 const defaultGeneral: GeneralSettingsState = {
   salonName: "Sribees Luxury Salon & Spa",
   phone: "+94 77 123 4567",
@@ -14,7 +21,12 @@ const defaultGeneral: GeneralSettingsState = {
   closingTime: "20:00",
 };
 
-export function GeneralSettingsView() {
+export function GeneralSettingsView({
+  activeTab: controlledTab,
+}: GeneralSettingsViewProps = {}) {
+  const [internalTab] = useState<GeneralTabType>("profile");
+  const activeTab = controlledTab ?? internalTab;
+
   const [formData, setFormData] = useState<GeneralSettingsState>(() => {
     try {
       const saved = localStorage.getItem("sribees_general_settings");
@@ -43,143 +55,161 @@ export function GeneralSettingsView() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-slate-900">
-      {/* Salon Profile Card */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-800">Salon Profile Information</h3>
-        <p className="text-xs text-slate-500 mt-0.5">
-          These details appear on customer invoices, appointment reminders, and receipts.
-        </p>
-
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Salon Business Name</label>
-            <input
-              type="text"
-              required
-              value={formData.salonName}
-              onChange={(e) => setFormData({ ...formData, salonName: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-slate-900">
+      {/* ========================================================= */}
+      {/* TAB 1: SALON PROFILE INFORMATION                          */}
+      {/* ========================================================= */}
+      {activeTab === "profile" && (
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs animate-in fade-in duration-150">
+          <div className="border-b border-slate-100 pb-3 mb-4">
+            <h3 className="text-sm font-bold text-slate-800">Salon Profile Information</h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              These details appear on customer invoices, appointment reminders, and receipts.
+            </p>
           </div>
 
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Official Phone Number</label>
-            <input
-              type="tel"
-              required
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Salon Business Name</label>
+              <input
+                type="text"
+                required
+                value={formData.salonName}
+                onChange={(e) => setFormData({ ...formData, salonName: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
+              />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Contact Email</label>
-            <input
-              type="email"
-              required
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
-          </div>
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Official Phone Number</label>
+              <input
+                type="tel"
+                required
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
+              />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Physical Address / Branch</label>
-            <input
-              type="text"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
-          </div>
-        </div>
-      </div>
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Contact Email</label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
+              />
+            </div>
 
-      {/* Financial & Regional Card */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-800">Financial & Regional Preferences</h3>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Currency formats, time zones, and sales taxes applied at checkout.
-        </p>
-
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Operating Currency</label>
-            <select
-              value={formData.currency}
-              onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer"
-            >
-              <option value="LKR (Rs.)">LKR (Rs.) - Sri Lankan Rupee</option>
-              <option value="USD ($)">USD ($) - US Dollar</option>
-              <option value="EUR (€)">EUR (€) - Euro</option>
-              <option value="GBP (£)">GBP (£) - British Pound</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Default Service Tax (%)</label>
-            <input
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={formData.taxRate}
-              onChange={(e) => setFormData({ ...formData, taxRate: Number(e.target.value) })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Time Zone</label>
-            <select
-              value={formData.timeZone}
-              onChange={(e) => setFormData({ ...formData, timeZone: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer"
-            >
-              <option value="Asia/Colombo (GMT+5:30)">Asia/Colombo (GMT+5:30)</option>
-              <option value="Asia/Dubai (GMT+4:00)">Asia/Dubai (GMT+4:00)</option>
-              <option value="Asia/Singapore (GMT+8:00)">Asia/Singapore (GMT+8:00)</option>
-              <option value="UTC (GMT+0:00)">UTC (GMT+0:00)</option>
-            </select>
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Physical Address / Branch</label>
+              <input
+                type="text"
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Operating Hours Card */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-800">Salon Daily Operating Hours</h3>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Controls the appointment scheduling grid range and booking limits.
-        </p>
-
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Opening Time</label>
-            <input
-              type="time"
-              value={formData.openingTime}
-              onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
+      {/* ========================================================= */}
+      {/* TAB 2: FINANCIAL & REGIONAL PREFERENCES                   */}
+      {/* ========================================================= */}
+      {activeTab === "financial" && (
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs animate-in fade-in duration-150">
+          <div className="border-b border-slate-100 pb-3 mb-4">
+            <h3 className="text-sm font-bold text-slate-800">Financial & Regional Preferences</h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Currency formats, time zones, and sales taxes applied at checkout.
+            </p>
           </div>
 
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Closing Time</label>
-            <input
-              type="time"
-              value={formData.closingTime}
-              onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Operating Currency</label>
+              <select
+                value={formData.currency}
+                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer"
+              >
+                <option value="LKR (Rs.)">LKR (Rs.) - Sri Lankan Rupee</option>
+                <option value="USD ($)">USD ($) - US Dollar</option>
+                <option value="EUR (€)">EUR (€) - Euro</option>
+                <option value="GBP (£)">GBP (£) - British Pound</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Default Service Tax (%)</label>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+                value={formData.taxRate}
+                onChange={(e) => setFormData({ ...formData, taxRate: Number(e.target.value) })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Time Zone</label>
+              <select
+                value={formData.timeZone}
+                onChange={(e) => setFormData({ ...formData, timeZone: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer"
+              >
+                <option value="Asia/Colombo (GMT+5:30)">Asia/Colombo (GMT+5:30)</option>
+                <option value="Asia/Dubai (GMT+4:00)">Asia/Dubai (GMT+4:00)</option>
+                <option value="Asia/Singapore (GMT+8:00)">Asia/Singapore (GMT+8:00)</option>
+                <option value="UTC (GMT+0:00)">UTC (GMT+0:00)</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* TAB 3: SALON DAILY OPERATING HOURS                         */}
+      {/* ========================================================= */}
+      {activeTab === "operations" && (
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs animate-in fade-in duration-150">
+          <div className="border-b border-slate-100 pb-3 mb-4">
+            <h3 className="text-sm font-bold text-slate-800">Salon Daily Operating Hours</h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Controls the appointment scheduling grid range and booking limits.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Opening Time</label>
+              <input
+                type="time"
+                value={formData.openingTime}
+                onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium text-slate-700">Closing Time</label>
+              <input
+                type="time"
+                value={formData.closingTime}
+                onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Actions bottom bar */}
-      <div className="flex items-center justify-between gap-3 pt-2">
+      <div className="flex items-center justify-between gap-3 pt-1">
         <button
           type="button"
           onClick={handleReset}
@@ -205,7 +235,13 @@ export function GeneralSettingsView() {
           ) : (
             <>
               <Save className="size-4" />
-              <span>Save General Settings</span>
+              <span>
+                {activeTab === "profile"
+                  ? "Save Salon Profile"
+                  : activeTab === "financial"
+                  ? "Save Financial Preferences"
+                  : "Save Operating Hours"}
+              </span>
             </>
           )}
         </button>
@@ -215,4 +251,3 @@ export function GeneralSettingsView() {
 }
 
 export default GeneralSettingsView;
-

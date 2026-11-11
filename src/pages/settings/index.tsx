@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useSearchParams } from "react-router";
 import {
   ArrowLeft,
   BellRing,
@@ -88,16 +88,53 @@ export const SETTINGS_ITEMS: SettingsCardItem[] = [
 ];
 
 export function Settings() {
-  const [activeSection, setActiveSection] = useState<SettingsSectionId | null>(null);
-  const [staffTab, setStaffTab] = useState<"roles" | "permissions" | "policies">("roles");
-  const [categoryTab, setCategoryTab] = useState<"product" | "service">("product");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Read section from query params (?section=categories / staff / general / etc.)
+  const rawSection = searchParams.get("section") as SettingsSectionId | null;
+  const isValidSection = rawSection && SETTINGS_ITEMS.some((item) => item.id === rawSection);
+  const activeSection: SettingsSectionId | null = isValidSection ? rawSection : null;
+
+  // Read active tab from query params (?tab=...)
+  const rawTab = searchParams.get("tab");
+
+  const staffTab: "roles" | "permissions" | "policies" =
+    rawTab === "permissions" || rawTab === "policies" ? rawTab : "roles";
+
+  const categoryTab: "product" | "service" =
+    rawTab === "service" ? "service" : "product";
+
+  const generalTab: "profile" | "financial" | "operations" =
+    rawTab === "financial" || rawTab === "operations" ? rawTab : "profile";
 
   const activeItem = SETTINGS_ITEMS.find((item) => item.id === activeSection);
 
+  const handleSelectSection = (id: SettingsSectionId) => {
+    if (id === "categories") {
+      setSearchParams({ section: id, tab: categoryTab });
+    } else if (id === "staff") {
+      setSearchParams({ section: id, tab: staffTab });
+    } else if (id === "general") {
+      setSearchParams({ section: id, tab: generalTab });
+    } else {
+      setSearchParams({ section: id });
+    }
+  };
+
   const handleBackToSettings = () => {
-    setActiveSection(null);
-    setStaffTab("roles");
-    setCategoryTab("product");
+    setSearchParams({});
+  };
+
+  const setStaffTab = (tab: "roles" | "permissions" | "policies") => {
+    setSearchParams({ section: "staff", tab });
+  };
+
+  const setCategoryTab = (tab: "product" | "service") => {
+    setSearchParams({ section: "categories", tab });
+  };
+
+  const setGeneralTab = (tab: "profile" | "financial" | "operations") => {
+    setSearchParams({ section: "general", tab });
   };
 
   return (
@@ -118,8 +155,8 @@ export function Settings() {
                 onClick={() => setStaffTab("roles")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
                   staffTab === "roles"
-                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
-                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
                 }`}
               >
                 Staff Roles
@@ -129,8 +166,8 @@ export function Settings() {
                 onClick={() => setStaffTab("permissions")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
                   staffTab === "permissions"
-                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
-                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
                 }`}
               >
                 Permission Matrix
@@ -140,8 +177,8 @@ export function Settings() {
                 onClick={() => setStaffTab("policies")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
                   staffTab === "policies"
-                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
-                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
                 }`}
               >
                 Login & Shift Policies
@@ -154,8 +191,8 @@ export function Settings() {
                 onClick={() => setCategoryTab("product")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
                   categoryTab === "product"
-                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
-                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
                 }`}
               >
                 Product Categories
@@ -165,11 +202,47 @@ export function Settings() {
                 onClick={() => setCategoryTab("service")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
                   categoryTab === "service"
-                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
-                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
                 }`}
               >
                 Service Categories
+              </button>
+            </div>
+          ) : activeSection === "general" ? (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setGeneralTab("profile")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  generalTab === "profile"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
+                }`}
+              >
+                Salon Profile
+              </button>
+              <button
+                type="button"
+                onClick={() => setGeneralTab("financial")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  generalTab === "financial"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
+                }`}
+              >
+                Financial Preference
+              </button>
+              <button
+                type="button"
+                onClick={() => setGeneralTab("operations")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  generalTab === "operations"
+                    ? "border border-primary text-primary bg-primary-subtle/50 shadow-2xs font-semibold ring-1 ring-primary/20"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary bg-white"
+                }`}
+              >
+                Daily Operations
               </button>
             </div>
           ) : undefined
@@ -196,7 +269,7 @@ export function Settings() {
             <SettingsCard
               key={item.id}
               item={item}
-              onClick={(id) => setActiveSection(id)}
+              onClick={(id) => handleSelectSection(id)}
             />
           ))}
         </div>
@@ -204,7 +277,9 @@ export function Settings() {
         /* Detail View */
         <div className="flex flex-col gap-5">
           {/* Active Settings Detail Form */}
-          {activeSection === "general" && <GeneralSettingsView />}
+          {activeSection === "general" && (
+            <GeneralSettingsView activeTab={generalTab} onTabChange={setGeneralTab} />
+          )}
           {activeSection === "appointments" && <AppointmentsSettingsView />}
           {activeSection === "staff" && (
             <StaffSettingsView activeTab={staffTab} onTabChange={setStaffTab} />

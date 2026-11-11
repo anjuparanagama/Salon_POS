@@ -137,12 +137,31 @@ function AppContent() {
           { label: t("nav.financialLedger", "Financial Ledger") },
           { label: t("nav.transactions", "Transactions & Refunds"), href: ROUTES.LEDGER_TRANSACTIONS, isCurrent: true },
         ];
-      case ROUTES.SETTINGS:
+      case ROUTES.SETTINGS: {
+        const params = new URLSearchParams(location.search);
+        const section = params.get("section");
+        const sectionTitles: Record<string, string> = {
+          general: "General Settings",
+          appointments: "Appointments Settings",
+          staff: "Staff Settings",
+          layout: "Layout Settings",
+          notifications: "Notification Settings",
+          categories: "Category Settings",
+        };
+        if (section && sectionTitles[section]) {
+          return [
+            { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+            { label: t("nav.system", "System") },
+            { label: t("nav.settings", "Settings"), href: ROUTES.SETTINGS },
+            { label: sectionTitles[section], href: `${ROUTES.SETTINGS}?section=${section}`, isCurrent: true },
+          ];
+        }
         return [
           { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
           { label: t("nav.system", "System") },
           { label: t("nav.settings", "Settings"), href: ROUTES.SETTINGS, isCurrent: true },
         ];
+      }
       case ROUTES.DASHBOARD:
       default:
         return [

@@ -340,7 +340,7 @@ export default function CategorySettingsView({
       {/* Integrated Toolbar matching StoreMate reference */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         {/* Left: Combined Search input with dropdown prefix [ Category Name ▾ | Search... 🔍 ] */}
-        <div className="flex items-center rounded-lg border border-slate-200 bg-white shadow-2xs focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition w-full sm:w-96">
+        <div className="flex items-center rounded-lg border border-slate-200 bg-white shadow-2xs focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition w-full sm:w-96">
           <div className="relative border-r border-slate-200 shrink-0">
             <select
               value={searchField}
@@ -382,7 +382,7 @@ export default function CategorySettingsView({
                   setPageSize(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="appearance-none rounded-lg border border-slate-200 bg-white pl-2.5 pr-6 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
+                className="appearance-none rounded-lg border border-slate-200 bg-white pl-2.5 pr-6 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-primary cursor-pointer shadow-2xs"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -414,7 +414,7 @@ export default function CategorySettingsView({
                     type="checkbox"
                     checked={visibleColumns.catId}
                     onChange={() => setVisibleColumns((p) => ({ ...p, catId: !p.catId }))}
-                    className="rounded accent-blue-600"
+                    className="rounded accent-primary"
                   />
                   <span>Category ID</span>
                 </label>
@@ -423,7 +423,7 @@ export default function CategorySettingsView({
                     type="checkbox"
                     checked={visibleColumns.slug}
                     onChange={() => setVisibleColumns((p) => ({ ...p, slug: !p.slug }))}
-                    className="rounded accent-blue-600"
+                    className="rounded accent-primary"
                   />
                   <span>Code / Slug</span>
                 </label>
@@ -432,7 +432,7 @@ export default function CategorySettingsView({
                     type="checkbox"
                     checked={visibleColumns.description}
                     onChange={() => setVisibleColumns((p) => ({ ...p, description: !p.description }))}
-                    className="rounded accent-blue-600"
+                    className="rounded accent-primary"
                   />
                   <span>Description</span>
                 </label>
@@ -441,7 +441,7 @@ export default function CategorySettingsView({
                     type="checkbox"
                     checked={visibleColumns.itemCount}
                     onChange={() => setVisibleColumns((p) => ({ ...p, itemCount: !p.itemCount }))}
-                    className="rounded accent-blue-600"
+                    className="rounded accent-primary"
                   />
                   <span>Item Count</span>
                 </label>
@@ -450,7 +450,7 @@ export default function CategorySettingsView({
                     type="checkbox"
                     checked={visibleColumns.status}
                     onChange={() => setVisibleColumns((p) => ({ ...p, status: !p.status }))}
-                    className="rounded accent-blue-600"
+                    className="rounded accent-primary"
                   />
                   <span>Status</span>
                 </label>
@@ -478,11 +478,11 @@ export default function CategorySettingsView({
             <Download className="size-4" />
           </button>
 
-          {/* Primary Navy Button: + Add Category */}
+          {/* Primary Action Button: + Add Category */}
           <button
             type="button"
             onClick={handleOpenCreate}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[#003b73] hover:bg-[#002f5e] text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
           >
             <Plus className="size-4" />
             <span>Add Category</span>
@@ -570,7 +570,7 @@ export default function CategorySettingsView({
               {isLoading ? (
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-slate-400">
-                    <Loader2 className="size-6 animate-spin mx-auto text-[#003b73] mb-2" />
+                    <Loader2 className="size-6 animate-spin mx-auto text-primary mb-2" />
                     <span>Loading categories...</span>
                   </td>
                 </tr>
@@ -639,7 +639,7 @@ export default function CategorySettingsView({
                       {/* Count of Products / Services */}
                       {visibleColumns.itemCount && (
                         <td className="px-4 py-3.5 text-center">
-                          <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
+                          <span className="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
                             {item.itemCount || 0} {activeTab === "product" ? "products" : "services"}
                           </span>
                         </td>
@@ -668,14 +668,14 @@ export default function CategorySettingsView({
                         </td>
                       )}
 
-                      {/* Actions: Blue Pencil Edit & Delete */}
+                      {/* Actions: Edit & Delete */}
                       <td className="px-4 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
-                          {/* Blue Pencil Edit Icon */}
+                          {/* Pencil Edit Icon */}
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(item)}
-                            className="rounded-lg p-1.5 text-[#00458e] hover:bg-blue-50 hover:text-blue-800 transition cursor-pointer"
+                            className="rounded-lg p-1.5 text-slate-500 hover:bg-rose-50 hover:text-primary transition cursor-pointer"
                             title="Edit Category"
                           >
                             <Pencil className="size-4" />
@@ -767,7 +767,7 @@ export default function CategorySettingsView({
                     placeholder="e.g. Hair Treatments, Facial & Skin"
                     value={formName}
                     onChange={(e) => handleNameChange(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
@@ -781,7 +781,7 @@ export default function CategorySettingsView({
                     placeholder="e.g. hair_treatments"
                     value={formCode}
                     onChange={(e) => setFormCode(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                   <p className="mt-1 text-[10px] text-slate-400">
                     Used internally and in URL/API filters. Auto-generated from name.
@@ -798,7 +798,7 @@ export default function CategorySettingsView({
                     placeholder="Brief description of what belongs in this category..."
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
                   />
                 </div>
 
@@ -840,7 +840,7 @@ export default function CategorySettingsView({
                 <button
                   type="submit"
                   disabled={isSaving || !formName.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#003b73] hover:bg-[#002f5e] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary hover:bg-primary-dark px-4 py-2 text-xs font-semibold text-white shadow-2xs transition disabled:opacity-50 cursor-pointer"
                 >
                   {isSaving && <Loader2 className="size-3.5 animate-spin" />}
                   <span>{editingCategory ? "Update Category" : "Create Category"}</span>

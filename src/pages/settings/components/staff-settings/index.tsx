@@ -668,7 +668,7 @@ export function StaffSettingsView({
           {/* Integrated Toolbar matching reference image */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             {/* Left: Combined Search input with dropdown prefix [ Role Name ▾ | Search... 🔍 ] */}
-            <div className="flex items-center rounded-lg border border-slate-200 bg-white shadow-2xs focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition w-full sm:w-96">
+            <div className="flex items-center rounded-lg border border-slate-200 bg-white shadow-2xs focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition w-full sm:w-96">
               <div className="relative border-r border-slate-200 shrink-0">
                 <select
                   value={searchField}
@@ -710,7 +710,7 @@ export function StaffSettingsView({
                       setPageSize(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="appearance-none rounded-lg border border-slate-200 bg-white pl-2.5 pr-6 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
+                    className="appearance-none rounded-lg border border-slate-200 bg-white pl-2.5 pr-6 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-primary cursor-pointer shadow-2xs"
                   >
                     <option value={5}>5</option>
                     <option value={10}>10</option>
@@ -742,7 +742,7 @@ export function StaffSettingsView({
                         type="checkbox"
                         checked={visibleColumns.roleId}
                         onChange={() => setVisibleColumns((p) => ({ ...p, roleId: !p.roleId }))}
-                        className="rounded accent-blue-600"
+                        className="rounded accent-primary"
                       />
                       <span>Role ID</span>
                     </label>
@@ -751,7 +751,7 @@ export function StaffSettingsView({
                         type="checkbox"
                         checked={visibleColumns.identifier}
                         onChange={() => setVisibleColumns((p) => ({ ...p, identifier: !p.identifier }))}
-                        className="rounded accent-blue-600"
+                        className="rounded accent-primary"
                       />
                       <span>Identifier / Slug</span>
                     </label>
@@ -760,7 +760,7 @@ export function StaffSettingsView({
                         type="checkbox"
                         checked={visibleColumns.description}
                         onChange={() => setVisibleColumns((p) => ({ ...p, description: !p.description }))}
-                        className="rounded accent-blue-600"
+                        className="rounded accent-primary"
                       />
                       <span>Description</span>
                     </label>
@@ -769,7 +769,7 @@ export function StaffSettingsView({
                         type="checkbox"
                         checked={visibleColumns.staffCount}
                         onChange={() => setVisibleColumns((p) => ({ ...p, staffCount: !p.staffCount }))}
-                        className="rounded accent-blue-600"
+                        className="rounded accent-primary"
                       />
                       <span>Assigned Staff</span>
                     </label>
@@ -778,7 +778,7 @@ export function StaffSettingsView({
                         type="checkbox"
                         checked={visibleColumns.status}
                         onChange={() => setVisibleColumns((p) => ({ ...p, status: !p.status }))}
-                        className="rounded accent-blue-600"
+                        className="rounded accent-primary"
                       />
                       <span>Status</span>
                     </label>
@@ -806,11 +806,11 @@ export function StaffSettingsView({
                 <Download className="size-4" />
               </button>
 
-              {/* Primary Navy Button: + Add New Role */}
+              {/* Primary Action Button: + Add New Role */}
               <button
                 type="button"
                 onClick={handleOpenAddRole}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#003b73] hover:bg-[#002f5e] text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
               >
                 <Plus className="size-4" />
                 <span>Add New Role</span>
@@ -898,7 +898,7 @@ export function StaffSettingsView({
                   {isLoadingRoles ? (
                     <tr>
                       <td colSpan={7} className="py-12 text-center text-slate-400">
-                        <Loader2 className="size-6 animate-spin mx-auto text-[#003b73] mb-2" />
+                        <Loader2 className="size-6 animate-spin mx-auto text-primary mb-2" />
                         <span>Loading staff roles...</span>
                       </td>
                     </tr>
@@ -971,7 +971,7 @@ export function StaffSettingsView({
                           {/* Staff Count */}
                           {visibleColumns.staffCount && (
                             <td className="px-4 py-3.5 text-center">
-                              <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
+                              <span className="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
                                 {role.staffCount} staff
                               </span>
                             </td>
@@ -1000,7 +1000,7 @@ export function StaffSettingsView({
                             </td>
                           )}
 
-                          {/* Actions: Blue Pencil Edit icon, Permissions, Delete */}
+                          {/* Actions: Pencil Edit icon, Permissions, Delete */}
                           <td className="px-4 py-3.5 text-right">
                             <div className="flex items-center justify-end gap-2">
                               {/* Manage Permissions Shortcut */}
@@ -1016,11 +1016,11 @@ export function StaffSettingsView({
                                 <ShieldCheck className="size-4" />
                               </button>
 
-                              {/* Blue Pencil Edit Icon matching reference image */}
+                              {/* Pencil Edit Icon */}
                               <button
                                 type="button"
                                 onClick={() => handleOpenEditRole(roleItemObj)}
-                                className="rounded-lg p-1.5 text-[#00458e] hover:bg-blue-50 hover:text-blue-800 transition cursor-pointer"
+                                className="rounded-lg p-1.5 text-slate-500 hover:bg-rose-50 hover:text-primary transition cursor-pointer"
                                 title="Edit Role"
                               >
                                 <Pencil className="size-4" />
