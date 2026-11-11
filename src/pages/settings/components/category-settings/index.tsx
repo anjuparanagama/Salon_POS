@@ -1,26 +1,34 @@
 import { useState, useEffect, useMemo, type FormEvent } from "react";
 import {
-  Boxes,
-  Scissors,
   Plus,
   Search,
-  Edit2,
   Trash2,
-  CheckCircle2,
   AlertCircle,
   X,
   Loader2,
   RefreshCw,
   FolderTree,
+  ChevronDown,
+  ChevronsUpDown,
+  Download,
+  Columns3,
+  Pencil,
 } from "lucide-react";
+import Pagination from "../../../../components/pagination";
 import { productsService } from "../../../../services/products.service";
 import { servicesService } from "../../../../services/services.service";
 import type { CategoryItem, CategoryFormData } from "../../../../interface/category.types";
 
-type CategoryKind = "product" | "service";
+export type CategoryKind = "product" | "service";
 
-export default function CategorySettingsView() {
-  const [activeTab, setActiveTab] = useState<CategoryKind>("product");
+export interface CategorySettingsViewProps {
+  activeTab?: CategoryKind;
+  onTabChange?: (tab: CategoryKind) => void;
+}
+
+export default function CategorySettingsView({
+  activeTab = "product",
+}: CategorySettingsViewProps = {}) {
 
   // State for Product Categories
   const [productCats, setProductCats] = useState<CategoryItem[]>([]);
@@ -30,9 +38,22 @@ export default function CategorySettingsView() {
   const [serviceCats, setServiceCats] = useState<CategoryItem[]>([]);
   const [loadingServices, setLoadingServices] = useState(false);
 
-  // Filters
+  // Grid Controls & Table Preferences matching StoreMate styling
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [searchField, setSearchField] = useState<"name" | "slug" | "id" | "all">("name");
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [sortField, setSortField] = useState<"catCode" | "label" | "value" | "itemCount" | "active">("catCode");
+  const [sortAsc, setSortAsc] = useState<boolean>(true);
+  const [showColumnMenu, setShowColumnMenu] = useState<boolean>(false);
+  const [visibleColumns, setVisibleColumns] = useState({
+    catId: true,
+    name: true,
+    slug: true,
+    description: true,
+    itemCount: true,
+    status: true,
+  });
 
   // Modal State for Add / Edit
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,35 +103,109 @@ export default function CategorySettingsView() {
   const activeCategories = activeTab === "product" ? productCats : serviceCats;
   const isLoading = activeTab === "product" ? loadingProducts : loadingServices;
 
-  // Filtered categories
-  const filteredCategories = useMemo(() => {
-    return activeCategories.filter((cat) => {
-      // Exclude special synthetic pseudo-categories like "all"
-      if (cat.value === "all") return false;
+  // Compute categories list with clean Category Code (e.g. CAT-01, CAT-02)
+  const computedCategoryList = useMemo(() => {
+    return activeCategories
+      .filter((c) => c.value !== "all")
+      .map((c, idx) => ({
+        ...c,
+        catCode: `CAT-${String(idx + 1).padStart(2, "0")}`,
+      }));
+  }, [activeCategories]);
 
-      // Status filter
-      const isActive = cat.active !== false;
-      if (statusFilter === "active" && !isActive) return false;
-      if (statusFilter === "inactive" && isActive) return false;
-
-      // Search filter
+  // Filtered and sorted categories
+  const filteredAndSorted = useMemo(() => {
+    const list = computedCategoryList.filter((cat) => {
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const matchName = cat.label.toLowerCase().includes(q);
-        const matchCode = cat.value.toLowerCase().includes(q);
-        const matchDesc = (cat.description || "").toLowerCase().includes(q);
-        return matchName || matchCode || matchDesc;
+        if (searchField === "name") {
+          return cat.label.toLowerCase().includes(q);
+        } else if (searchField === "slug") {
+          return cat.value.toLowerCase().includes(q);
+        } else if (searchField === "id") {
+          return cat.catCode.toLowerCase().includes(q) || cat.id.toLowerCase().includes(q);
+        } else {
+          return (
+            cat.label.toLowerCase().includes(q) ||
+            cat.value.toLowerCase().includes(q) ||
+            cat.catCode.toLowerCase().includes(q) ||
+            (cat.description || "").toLowerCase().includes(q)
+          );
+        }
       }
       return true;
     });
-  }, [activeCategories, statusFilter, searchQuery]);
 
-  // Statistics
-  const totalCount = activeCategories.filter((c) => c.value !== "all").length;
-  const activeCount = activeCategories.filter((c) => c.value !== "all" && c.active !== false).length;
-  const totalItemsCount = activeCategories
-    .filter((c) => c.value !== "all")
-    .reduce((sum, c) => sum + (c.itemCount || 0), 0);
+    list.sort((a, b) => {
+      let valA: string | number = "";
+      let valB: string | number = "";
+      if (sortField === "catCode") {
+        valA = a.catCode;
+        valB = b.catCode;
+      } else if (sortField === "label") {
+        valA = a.label.toLowerCase();
+        valB = b.label.toLowerCase();
+      } else if (sortField === "value") {
+        valA = a.value.toLowerCase();
+        valB = b.value.toLowerCase();
+      } else if (sortField === "itemCount") {
+        valA = a.itemCount || 0;
+        valB = b.itemCount || 0;
+      } else if (sortField === "active") {
+        valA = a.active !== false ? 1 : 0;
+        valB = b.active !== false ? 1 : 0;
+      }
+      if (valA < valB) return sortAsc ? -1 : 1;
+      if (valA > valB) return sortAsc ? 1 : -1;
+      return 0;
+    });
+
+    return list;
+  }, [computedCategoryList, searchQuery, searchField, sortField, sortAsc]);
+
+  const totalItems = filteredAndSorted.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const paginatedCategories = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredAndSorted.slice(start, start + pageSize);
+  }, [filteredAndSorted, currentPage, pageSize]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const handleSort = (field: "catCode" | "label" | "value" | "itemCount" | "active") => {
+    if (sortField === field) {
+      setSortAsc((prev) => !prev);
+    } else {
+      setSortField(field);
+      setSortAsc(true);
+    }
+  };
+
+  // CSV Export for Download button
+  const handleExportCSV = () => {
+    const headers = ["CATEGORY ID", "CATEGORY NAME", "SLUG / CODE", "DESCRIPTION", "ITEM COUNT", "STATUS"];
+    const rows = filteredAndSorted.map((c) => [
+      c.catCode,
+      `"${c.label.replace(/"/g, '""')}"`,
+      c.value,
+      `"${(c.description || "").replace(/"/g, '""')}"`,
+      c.itemCount || 0,
+      c.active !== false ? "Active" : "Inactive",
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${activeTab}_categories_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Open modal for Create
   const handleOpenCreate = () => {
@@ -134,59 +229,57 @@ export default function CategorySettingsView() {
     setIsModalOpen(true);
   };
 
-  // Auto-generate slug from name if creating
   const handleNameChange = (val: string) => {
     setFormName(val);
     if (!editingCategory) {
-      const generated = val
+      const generatedCode = val
         .trim()
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "_")
         .replace(/^_+|_+$/g, "");
-      setFormCode(generated);
+      setFormCode(generatedCode);
     }
   };
 
-  // Save (Create or Update)
+  // Submit Add / Edit Form
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const trimmedName = formName.trim();
-    if (!trimmedName) {
-      setErrorMessage("Please enter a category name");
+    if (!formName.trim()) {
+      setErrorMessage("Category name is required.");
       return;
     }
 
-    const trimmedCode =
+    const finalCode =
       formCode.trim().toLowerCase().replace(/[^a-z0-9_]+/g, "_") ||
-      trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-
-    setIsSaving(true);
-    setErrorMessage(null);
+      formName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_");
 
     const payload: CategoryFormData = {
-      label: trimmedName,
-      value: trimmedCode,
+      label: formName.trim(),
+      value: finalCode,
       description: formDescription.trim() || undefined,
       active: formActive,
     };
 
+    setIsSaving(true);
+    setErrorMessage(null);
+
     try {
-      if (activeTab === "product") {
-        if (editingCategory) {
+      if (editingCategory) {
+        if (activeTab === "product") {
           const updated = await productsService.updateCategory(editingCategory.id, payload);
           setProductCats((prev) =>
-            prev.map((c) => (c.id === editingCategory.id ? { ...c, ...updated } : c))
+            prev.map((c) => (c.id === editingCategory.id ? updated : c))
           );
         } else {
-          const created = await productsService.createCategory(payload);
-          setProductCats((prev) => [...prev, created]);
-        }
-      } else {
-        if (editingCategory) {
           const updated = await servicesService.updateCategory(editingCategory.id, payload);
           setServiceCats((prev) =>
-            prev.map((c) => (c.id === editingCategory.id ? { ...c, ...updated } : c))
+            prev.map((c) => (c.id === editingCategory.id ? updated : c))
           );
+        }
+      } else {
+        if (activeTab === "product") {
+          const created = await productsService.createCategory(payload);
+          setProductCats((prev) => [...prev, created]);
         } else {
           const created = await servicesService.createCategory(payload);
           setServiceCats((prev) => [...prev, created]);
@@ -243,261 +336,359 @@ export default function CategorySettingsView() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Category Type Switcher (Tabs) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
-        <div className="inline-flex rounded-xl bg-slate-100 p-1.5 shadow-inner">
-          <button
-            type="button"
-            onClick={() => setActiveTab("product")}
-            className={[
-              "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all cursor-pointer",
-              activeTab === "product"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900",
-            ].join(" ")}
-          >
-            <Boxes className="size-4 text-emerald-600" />
-            <span>Product Categories</span>
-            <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                activeTab === "product"
-                  ? "bg-emerald-100 text-emerald-800"
-                  : "bg-slate-200 text-slate-600"
-              }`}
+    <div className="flex flex-col gap-4 text-slate-900 animate-in fade-in duration-150">
+      {/* Integrated Toolbar matching StoreMate reference */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        {/* Left: Combined Search input with dropdown prefix [ Category Name ▾ | Search... 🔍 ] */}
+        <div className="flex items-center rounded-lg border border-slate-200 bg-white shadow-2xs focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition w-full sm:w-96">
+          <div className="relative border-r border-slate-200 shrink-0">
+            <select
+              value={searchField}
+              onChange={(e) => setSearchField(e.target.value as "name" | "slug" | "id" | "all")}
+              className="appearance-none bg-transparent pl-3 pr-7 py-2 text-xs font-medium text-slate-700 focus:outline-none cursor-pointer"
             >
-              {productCats.filter((c) => c.value !== "all").length}
-            </span>
-          </button>
+              <option value="name">Category Name</option>
+              <option value="slug">Code / Slug</option>
+              <option value="id">Category ID</option>
+              <option value="all">All Fields</option>
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-3 text-slate-400" />
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("service")}
-            className={[
-              "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all cursor-pointer",
-              activeTab === "service"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900",
-            ].join(" ")}
-          >
-            <Scissors className="size-4 text-primary" />
-            <span>Service Categories</span>
-            <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                activeTab === "service"
-                  ? "bg-rose-100 text-primary"
-                  : "bg-slate-200 text-slate-600"
-              }`}
-            >
-              {serviceCats.filter((c) => c.value !== "all").length}
-            </span>
-          </button>
+          <div className="relative flex-1 flex items-center">
+            <input
+              type="text"
+              placeholder={`Search ${activeTab === "product" ? "product" : "service"} categories...`}
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full bg-transparent pl-3 pr-8 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
+            />
+            <Search className="pointer-events-none absolute right-2.5 size-4 text-slate-400" />
+          </div>
         </div>
 
-        {/* Action Button: Add New Category */}
-        <div className="flex items-center gap-2.5">
+        {/* Right: Page Size, Column Toggle, Refresh, Export CSV, + Add Category */}
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-end">
+          {/* Page size selector */}
+          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+            <span>Page size</span>
+            <div className="relative">
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="appearance-none rounded-lg border border-slate-200 bg-white pl-2.5 pr-6 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer shadow-2xs"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 size-3 text-slate-400" />
+            </div>
+          </div>
+
+          {/* Column toggle button */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowColumnMenu((p) => !p)}
+              className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
+              title="Toggle visible columns"
+            >
+              <Columns3 className="size-4" />
+            </button>
+
+            {showColumnMenu && (
+              <div className="absolute right-0 top-full mt-1.5 z-40 w-44 rounded-xl border border-slate-200 bg-white p-2.5 shadow-xl text-xs flex flex-col gap-1.5">
+                <div className="font-semibold text-slate-700 pb-1 border-b border-slate-100">
+                  Visible Columns
+                </div>
+                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.catId}
+                    onChange={() => setVisibleColumns((p) => ({ ...p, catId: !p.catId }))}
+                    className="rounded accent-blue-600"
+                  />
+                  <span>Category ID</span>
+                </label>
+                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.slug}
+                    onChange={() => setVisibleColumns((p) => ({ ...p, slug: !p.slug }))}
+                    className="rounded accent-blue-600"
+                  />
+                  <span>Code / Slug</span>
+                </label>
+                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.description}
+                    onChange={() => setVisibleColumns((p) => ({ ...p, description: !p.description }))}
+                    className="rounded accent-blue-600"
+                  />
+                  <span>Description</span>
+                </label>
+                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.itemCount}
+                    onChange={() => setVisibleColumns((p) => ({ ...p, itemCount: !p.itemCount }))}
+                    className="rounded accent-blue-600"
+                  />
+                  <span>Item Count</span>
+                </label>
+                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.status}
+                    onChange={() => setVisibleColumns((p) => ({ ...p, status: !p.status }))}
+                    className="rounded accent-blue-600"
+                  />
+                  <span>Status</span>
+                </label>
+              </div>
+            )}
+          </div>
+
+          {/* Refresh Button */}
           <button
             type="button"
             onClick={activeTab === "product" ? loadProductCategories : loadServiceCategories}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-50 transition cursor-pointer"
+            className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
             title="Refresh categories"
           >
-            <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-            <span className="hidden sm:inline">Refresh</span>
+            <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
           </button>
 
+          {/* Export / Download CSV */}
+          <button
+            type="button"
+            onClick={handleExportCSV}
+            className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
+            title="Download categories as CSV"
+          >
+            <Download className="size-4" />
+          </button>
+
+          {/* Primary Navy Button: + Add Category */}
           <button
             type="button"
             onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary/95 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#003b73] hover:bg-[#002f5e] text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
           >
             <Plus className="size-4" />
-            <span>
-              Add {activeTab === "product" ? "Product" : "Service"} Category
-            </span>
+            <span>Add Category</span>
           </button>
         </div>
       </div>
 
-      {/* Summary KPI Badges */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-2xs">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-            <FolderTree className="size-5" />
-          </div>
-          <div>
-            <div className="text-[11px] font-medium text-slate-500">Total Categories</div>
-            <div className="text-lg font-bold text-slate-900">{totalCount}</div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-2xs">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-            <CheckCircle2 className="size-5" />
-          </div>
-          <div>
-            <div className="text-[11px] font-medium text-slate-500">Active Categories</div>
-            <div className="text-lg font-bold text-emerald-700">{activeCount}</div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-2xs">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-            {activeTab === "product" ? <Boxes className="size-5" /> : <Scissors className="size-5" />}
-          </div>
-          <div>
-            <div className="text-[11px] font-medium text-slate-500">
-              Assigned {activeTab === "product" ? "Products" : "Services"}
-            </div>
-            <div className="text-lg font-bold text-slate-900">{totalItemsCount}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder={`Search ${activeTab === "product" ? "product" : "service"} categories...`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-slate-200 bg-slate-50/50 pl-9 pr-3.5 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
-
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-[11px] font-medium text-slate-500">Status:</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as "all" | "active" | "inactive")}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-          >
-            <option value="all">All Statuses</option>
-            <option value="active">Active Only</option>
-            <option value="inactive">Inactive Only</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Categories Table */}
+      {/* Clean Data Table Container */}
       <div className="overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-2xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                <th className="px-4 py-3 min-w-[200px]">Category Name</th>
-                <th className="px-4 py-3 min-w-[130px]">Code / Slug</th>
-                <th className="px-4 py-3 min-w-[220px]">Description</th>
-                <th className="px-4 py-3 text-center min-w-[130px]">
-                  {activeTab === "product" ? "Products" : "Services"} Count
+              <tr className="border-b border-slate-200 bg-[#f4f7fb] text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                {visibleColumns.catId && (
+                  <th
+                    onClick={() => handleSort("catCode")}
+                    className="px-4 py-3 min-w-[110px] cursor-pointer hover:bg-slate-200/60 select-none transition"
+                  >
+                    <div className="flex items-center gap-1">
+                      <span>CATEGORY ID</span>
+                      <ChevronsUpDown className="size-3 text-slate-400" />
+                    </div>
+                  </th>
+                )}
+
+                <th
+                  onClick={() => handleSort("label")}
+                  className="px-4 py-3 min-w-[200px] cursor-pointer hover:bg-slate-200/60 select-none transition"
+                >
+                  <div className="flex items-center gap-1">
+                    <span>CATEGORY NAME</span>
+                    <ChevronsUpDown className="size-3 text-slate-400" />
+                  </div>
                 </th>
-                <th className="px-4 py-3 text-center min-w-[110px]">Status</th>
-                <th className="px-4 py-3 text-right min-w-[100px]">Actions</th>
+
+                {visibleColumns.slug && (
+                  <th
+                    onClick={() => handleSort("value")}
+                    className="px-4 py-3 min-w-[140px] cursor-pointer hover:bg-slate-200/60 select-none transition"
+                  >
+                    <div className="flex items-center gap-1">
+                      <span>CODE / SLUG</span>
+                      <ChevronsUpDown className="size-3 text-slate-400" />
+                    </div>
+                  </th>
+                )}
+
+                {visibleColumns.description && (
+                  <th className="px-4 py-3 min-w-[240px]">
+                    <span>DESCRIPTION</span>
+                  </th>
+                )}
+
+                {visibleColumns.itemCount && (
+                  <th
+                    onClick={() => handleSort("itemCount")}
+                    className="px-4 py-3 text-center min-w-[130px] cursor-pointer hover:bg-slate-200/60 select-none transition"
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <span>ASSIGNED {activeTab === "product" ? "PRODUCTS" : "SERVICES"}</span>
+                      <ChevronsUpDown className="size-3 text-slate-400" />
+                    </div>
+                  </th>
+                )}
+
+                {visibleColumns.status && (
+                  <th
+                    onClick={() => handleSort("active")}
+                    className="px-4 py-3 text-center min-w-[110px] cursor-pointer hover:bg-slate-200/60 select-none transition"
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <span>STATUS</span>
+                      <ChevronsUpDown className="size-3 text-slate-400" />
+                    </div>
+                  </th>
+                )}
+
+                <th className="px-4 py-3 text-right min-w-[100px]">
+                  <span>ACTIONS</span>
+                </th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
-                    <Loader2 className="size-6 animate-spin mx-auto text-primary mb-2" />
+                  <td colSpan={7} className="py-12 text-center text-slate-400">
+                    <Loader2 className="size-6 animate-spin mx-auto text-[#003b73] mb-2" />
                     <span>Loading categories...</span>
                   </td>
                 </tr>
-              ) : filteredCategories.length === 0 ? (
+              ) : paginatedCategories.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500">
+                  <td colSpan={7} className="py-12 text-center text-slate-500">
                     <FolderTree className="size-8 mx-auto text-slate-300 mb-2" />
                     <p className="font-semibold text-slate-700">No categories found</p>
                     <p className="text-[11px] text-slate-400 mt-0.5">
                       {searchQuery
                         ? "Try clearing your search query"
-                        : `Click "Add ${activeTab === "product" ? "Product" : "Service"} Category" to create your first category.`}
+                        : `Click "+ Add Category" to create your first ${activeTab} category.`}
                     </p>
                   </td>
                 </tr>
               ) : (
-                filteredCategories.map((item) => {
+                paginatedCategories.map((item) => {
                   const isActive = item.active !== false;
 
                   return (
                     <tr
                       key={item.id}
-                      className="hover:bg-slate-50/80 transition group"
+                      className="hover:bg-slate-50/70 transition group"
                     >
+                      {/* Category ID */}
+                      {visibleColumns.catId && (
+                        <td className="px-4 py-3.5 font-mono text-xs font-semibold text-slate-700">
+                          {item.catCode}
+                        </td>
+                      )}
+
                       {/* Name */}
-                      <td className="px-4 py-3 font-semibold text-slate-900">
+                      <td className="px-4 py-3.5 font-semibold text-slate-900">
                         <div className="flex items-center gap-2">
-                          <span className="size-2 rounded-full bg-emerald-500 shrink-0" />
-                          <span>{item.label}</span>
+                          <span
+                            className={`size-2 rounded-full shrink-0 ${
+                              activeTab === "product" ? "bg-emerald-500" : "bg-purple-500"
+                            }`}
+                          />
+                          <span className="text-xs">{item.label}</span>
                         </div>
                       </td>
 
                       {/* Code / Slug */}
-                      <td className="px-4 py-3 font-mono text-[11px] text-slate-500">
-                        <span className="rounded bg-slate-100 px-2 py-0.5 font-medium text-slate-700">
-                          {item.value}
-                        </span>
-                      </td>
+                      {visibleColumns.slug && (
+                        <td className="px-4 py-3.5 font-mono text-[11px] text-slate-500">
+                          <span className="rounded bg-slate-100 px-2 py-0.5 font-medium text-slate-700">
+                            {item.value}
+                          </span>
+                        </td>
+                      )}
 
                       {/* Description */}
-                      <td className="px-4 py-3 text-slate-600 max-w-[280px]">
-                        {item.description && item.description.trim() ? (
-                          <span className="truncate block" title={item.description}>
-                            {item.description}
-                          </span>
-                        ) : (
-                          <span className="text-slate-400 font-medium">-</span>
-                        )}
-                      </td>
+                      {visibleColumns.description && (
+                        <td className="px-4 py-3.5 text-slate-600 max-w-[280px]">
+                          {item.description && item.description.trim() ? (
+                            <span className="truncate block" title={item.description}>
+                              {item.description}
+                            </span>
+                          ) : (
+                            <span className="text-slate-400 font-medium">-</span>
+                          )}
+                        </td>
+                      )}
 
                       {/* Count of Products / Services */}
-                      <td className="px-4 py-3 text-center">
-                        <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
-                          {item.itemCount || 0} {activeTab === "product" ? "products" : "services"}
-                        </span>
-                      </td>
+                      {visibleColumns.itemCount && (
+                        <td className="px-4 py-3.5 text-center">
+                          <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
+                            {item.itemCount || 0} {activeTab === "product" ? "products" : "services"}
+                          </span>
+                        </td>
+                      )}
 
                       {/* Status Toggle */}
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          type="button"
-                          onClick={() => handleQuickToggle(item)}
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium transition cursor-pointer ${
-                            isActive
-                              ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                              : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                          }`}
-                          title="Click to toggle status"
-                        >
-                          <span
-                            className={`size-1.5 rounded-full ${
-                              isActive ? "bg-emerald-500" : "bg-slate-400"
+                      {visibleColumns.status && (
+                        <td className="px-4 py-3.5 text-center">
+                          <button
+                            type="button"
+                            onClick={() => handleQuickToggle(item)}
+                            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium transition cursor-pointer ${
+                              isActive
+                                ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                                : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                             }`}
-                          />
-                          <span>{isActive ? "Active" : "Inactive"}</span>
-                        </button>
-                      </td>
+                            title="Click to toggle status"
+                          >
+                            <span
+                              className={`size-1.5 rounded-full ${
+                                isActive ? "bg-emerald-500" : "bg-slate-400"
+                              }`}
+                            />
+                            <span>{isActive ? "Active" : "Inactive"}</span>
+                          </button>
+                        </td>
+                      )}
 
-                      {/* Actions */}
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1">
+                      {/* Actions: Blue Pencil Edit & Delete */}
+                      <td className="px-4 py-3.5 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* Blue Pencil Edit Icon */}
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(item)}
-                            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-primary transition cursor-pointer"
+                            className="rounded-lg p-1.5 text-[#00458e] hover:bg-blue-50 hover:text-blue-800 transition cursor-pointer"
                             title="Edit Category"
                           >
-                            <Edit2 className="size-3.5" />
+                            <Pencil className="size-4" />
                           </button>
+
+                          {/* Delete Button */}
                           <button
                             type="button"
                             onClick={() => setDeletingCategory(item)}
                             className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer"
                             title="Delete Category"
                           >
-                            <Trash2 className="size-3.5" />
+                            <Trash2 className="size-4" />
                           </button>
                         </div>
                       </td>
@@ -509,6 +700,19 @@ export default function CategorySettingsView() {
           </table>
         </div>
       </div>
+
+      {/* Pagination Component Separated Below Table */}
+      {filteredAndSorted.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          itemLabel="entries"
+          className="mt-1"
+        />
+      )}
 
       {/* Add / Edit Category Modal */}
       {isModalOpen && (
@@ -522,10 +726,14 @@ export default function CategorySettingsView() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
-                    {editingCategory ? "Edit Category" : `Add New ${activeTab === "product" ? "Product" : "Service"} Category`}
+                    {editingCategory
+                      ? "Edit Category"
+                      : `Add New ${activeTab === "product" ? "Product" : "Service"} Category`}
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    {activeTab === "product" ? "Retail inventory product classification" : "Salon service menu classification"}
+                    {activeTab === "product"
+                      ? "Retail inventory product classification"
+                      : "Salon service menu classification"}
                   </p>
                 </div>
               </div>
@@ -559,7 +767,7 @@ export default function CategorySettingsView() {
                     placeholder="e.g. Hair Treatments, Facial & Skin"
                     value={formName}
                     onChange={(e) => handleNameChange(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
 
@@ -573,7 +781,7 @@ export default function CategorySettingsView() {
                     placeholder="e.g. hair_treatments"
                     value={formCode}
                     onChange={(e) => setFormCode(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-mono text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <p className="mt-1 text-[10px] text-slate-400">
                     Used internally and in URL/API filters. Auto-generated from name.
@@ -590,7 +798,7 @@ export default function CategorySettingsView() {
                     placeholder="Brief description of what belongs in this category..."
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
                   />
                 </div>
 
@@ -632,7 +840,7 @@ export default function CategorySettingsView() {
                 <button
                   type="submit"
                   disabled={isSaving || !formName.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-primary/95 transition disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#003b73] hover:bg-[#002f5e] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition disabled:opacity-50 cursor-pointer"
                 >
                   {isSaving && <Loader2 className="size-3.5 animate-spin" />}
                   <span>{editingCategory ? "Update Category" : "Create Category"}</span>
@@ -688,4 +896,3 @@ export default function CategorySettingsView() {
     </div>
   );
 }
-

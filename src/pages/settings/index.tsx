@@ -89,8 +89,16 @@ export const SETTINGS_ITEMS: SettingsCardItem[] = [
 
 export function Settings() {
   const [activeSection, setActiveSection] = useState<SettingsSectionId | null>(null);
+  const [staffTab, setStaffTab] = useState<"roles" | "permissions" | "policies">("roles");
+  const [categoryTab, setCategoryTab] = useState<"product" | "service">("product");
 
   const activeItem = SETTINGS_ITEMS.find((item) => item.id === activeSection);
+
+  const handleBackToSettings = () => {
+    setActiveSection(null);
+    setStaffTab("roles");
+    setCategoryTab("product");
+  };
 
   return (
     <div className="flex flex-col gap-5 text-slate-900">
@@ -102,11 +110,75 @@ export function Settings() {
             ? activeItem.description
             : "Manage your salon configurations, appointments, staff policies, layouts, and notifications."
         }
+        centerContent={
+          activeSection === "staff" ? (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setStaffTab("roles")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  staffTab === "roles"
+                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
+                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                }`}
+              >
+                Staff Roles
+              </button>
+              <button
+                type="button"
+                onClick={() => setStaffTab("permissions")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  staffTab === "permissions"
+                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
+                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                }`}
+              >
+                Permission Matrix
+              </button>
+              <button
+                type="button"
+                onClick={() => setStaffTab("policies")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  staffTab === "policies"
+                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
+                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                }`}
+              >
+                Login & Shift Policies
+              </button>
+            </div>
+          ) : activeSection === "categories" ? (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCategoryTab("product")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  categoryTab === "product"
+                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
+                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                }`}
+              >
+                Product Categories
+              </button>
+              <button
+                type="button"
+                onClick={() => setCategoryTab("service")}
+                className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
+                  categoryTab === "service"
+                    ? "border border-blue-600 text-blue-600 bg-white shadow-2xs font-semibold ring-1 ring-blue-600/10"
+                    : "border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 bg-white"
+                }`}
+              >
+                Service Categories
+              </button>
+            </div>
+          ) : undefined
+        }
         actions={
           activeSection ? (
             <button
               type="button"
-              onClick={() => setActiveSection(null)}
+              onClick={handleBackToSettings}
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition cursor-pointer"
             >
               <ArrowLeft className="size-3.5" />
@@ -129,40 +201,19 @@ export function Settings() {
           ))}
         </div>
       ) : (
-        /* Detail View with Quick Navigation Tabs */
+        /* Detail View */
         <div className="flex flex-col gap-5">
-          {/* Quick Tabs to toggle between the 5 settings */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-200/80">
-            {SETTINGS_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const isActive = item.id === activeSection;
-
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveSection(item.id)}
-                  className={[
-                    "inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-medium whitespace-nowrap transition-colors cursor-pointer",
-                    isActive
-                      ? "bg-primary text-white font-semibold shadow-xs"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
-                  ].join(" ")}
-                >
-                  <Icon className="size-3.5" />
-                  <span>{item.title}</span>
-                </button>
-              );
-            })}
-          </div>
-
           {/* Active Settings Detail Form */}
           {activeSection === "general" && <GeneralSettingsView />}
           {activeSection === "appointments" && <AppointmentsSettingsView />}
-          {activeSection === "staff" && <StaffSettingsView />}
+          {activeSection === "staff" && (
+            <StaffSettingsView activeTab={staffTab} onTabChange={setStaffTab} />
+          )}
           {activeSection === "layout" && <LayoutSettingsView />}
           {activeSection === "notifications" && <NotificationSettingsView />}
-          {activeSection === "categories" && <CategorySettingsView />}
+          {activeSection === "categories" && (
+            <CategorySettingsView activeTab={categoryTab} onTabChange={setCategoryTab} />
+          )}
         </div>
       )}
     </div>

@@ -10,6 +10,7 @@ export type HeaderProps = {
   tooltipPlacement?: TooltipPlacement;
   onInfoClick?: () => void;
   titleSuffix?: ReactNode;
+  centerContent?: ReactNode;
   actions?: ReactNode;
   children?: ReactNode;
   className?: string;
@@ -24,6 +25,7 @@ export function Header({
   tooltipPlacement = "right",
   onInfoClick,
   titleSuffix,
+  centerContent,
   actions,
   children,
   className = "",
@@ -39,7 +41,7 @@ export function Header({
       ].join(" ")}
     >
       {/* Title & Info with Tooltip on Left (No icon) */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 shrink-0">
         <h1
           title={typeof tooltipText === "string" ? tooltipText : undefined}
           className="text-xl font-bold tracking-tight text-slate-900"
@@ -69,6 +71,13 @@ export function Header({
 
         {titleSuffix}
       </div>
+
+      {/* Center Content if any */}
+      {centerContent && (
+        <div className="flex items-center justify-center flex-1 overflow-x-auto">
+          {centerContent}
+        </div>
+      )}
 
       {/* Right side optional action buttons / children */}
       {(actions || children) && (
