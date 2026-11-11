@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
+import { staffService } from "../../../../services/staff.service";
 import type {
   StaffMember,
   StaffFormData,
@@ -62,6 +63,33 @@ function StaffForm({
     initialValues.specialties.join(", "),
   );
   const [showPassword, setShowPassword] = useState(false);
+
+  const [dynamicRoles, setDynamicRoles] = useState<{ value: StaffRole; label: string }[]>(roleOptions);
+
+  useEffect(() => {
+    let isMounted = true;
+    staffService
+      .getRoles()
+      .then((roles) => {
+        if (!isMounted || !Array.isArray(roles) || roles.length === 0) return;
+        const activeRoles = roles
+          .filter((r) => r.active !== false)
+          .map((r) => ({ value: r.value as StaffRole, label: r.label }));
+        if (activeRoles.length > 0) {
+          if (formData.role && !activeRoles.some((r) => r.value === formData.role)) {
+            activeRoles.unshift({
+              value: formData.role,
+              label: formData.role.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+            });
+          }
+          setDynamicRoles(activeRoles);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [formData.role]);
 
   const handleCommissionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -139,7 +167,7 @@ function StaffForm({
             }
             className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           >
-            {roleOptions.map((opt) => (
+            {dynamicRoles.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>

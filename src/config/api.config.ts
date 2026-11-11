@@ -63,6 +63,7 @@ export const API_ENDPOINTS = {
     STATS: "/api/v1/salon/staff/stats",
     SUMMARY: "/api/v1/salon/staff/summary",
     ROLES: "/api/v1/salon/staff/roles",
+    ROLE_BY_ID: (id: string) => `/api/v1/salon/staff/roles/${id}`,
     BY_ID: (id: string) => `/api/v1/salon/staff/${id}`,
     TOGGLE_STATUS: (id: string) => `/api/v1/salon/staff/${id}/toggle-status`,
   },

@@ -112,7 +112,7 @@ export function StaffList({
                   {/* Role */}
                   <td className="whitespace-nowrap px-4 py-2.5">
                     <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
-                      {roleLabels[staff.role] || staff.role}
+                      {roleLabels[staff.role] || staff.role.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
                     </span>
                   </td>
 

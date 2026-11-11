@@ -5,6 +5,7 @@ import type {
   StaffStats,
   StaffFormData,
   StaffRole,
+  StaffRoleItem,
 } from "../interface/staff.types";
 
 export interface StaffQueryParams {
@@ -82,9 +83,38 @@ export const staffService = {
     return res.data;
   },
 
-  async getRoles(): Promise<Array<{ label: string; value: StaffRole }>> {
+  async getRoles(): Promise<StaffRoleItem[]> {
     const res = await apiClient.get(API_ENDPOINTS.STAFF.ROLES);
     return Array.isArray(res.data) ? res.data : [];
+  },
+
+  async createRole(payload: {
+    label: string;
+    value?: string;
+    description?: string;
+    permissions?: Record<string, boolean>;
+    active?: boolean;
+  }): Promise<StaffRoleItem> {
+    const res = await apiClient.post<StaffRoleItem>(API_ENDPOINTS.STAFF.ROLES, payload);
+    return res.data;
+  },
+
+  async updateRole(
+    id: string,
+    payload: {
+      label?: string;
+      value?: string;
+      description?: string;
+      permissions?: Record<string, boolean>;
+      active?: boolean;
+    }
+  ): Promise<StaffRoleItem> {
+    const res = await apiClient.put<StaffRoleItem>(API_ENDPOINTS.STAFF.ROLE_BY_ID(id), payload);
+    return res.data;
+  },
+
+  async deleteRole(id: string): Promise<void> {
+    await apiClient.delete(API_ENDPOINTS.STAFF.ROLE_BY_ID(id));
   },
 
   async getStaffById(id: string): Promise<StaffMember> {

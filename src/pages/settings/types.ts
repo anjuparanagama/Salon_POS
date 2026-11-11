@@ -47,7 +47,8 @@ export type StaffRoleType =
   | "receptionist"
   | "senior_stylist"
   | "stylist"
-  | "cashier";
+  | "cashier"
+  | (string & {});
 
 export interface RolePermissions {
   // Appointments
@@ -72,8 +73,8 @@ export interface RolePermissions {
 }
 
 export interface StaffSettingsState {
-  selectedRole: StaffRoleType;
-  rolesPermissions: Record<StaffRoleType, RolePermissions>;
+  selectedRole: string;
+  rolesPermissions: Record<string, RolePermissions>;
   requirePinForCheckout: boolean;
   autoLogoutMinutes: number;
   restrictLoginToWorkingHours: boolean;

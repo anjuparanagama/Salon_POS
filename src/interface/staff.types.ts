@@ -6,7 +6,18 @@ export type StaffRole =
   | "nail_technician"
   | "barber"
   | "receptionist"
-  | "salon_manager";
+  | "salon_manager"
+  | (string & {});
+
+export interface StaffRoleItem {
+  id?: string;
+  label: string;
+  value: string;
+  description?: string;
+  permissions?: Record<string, boolean>;
+  active?: boolean;
+  staffCount?: number;
+}
 
 export type StaffStatus = "active" | "inactive" | "on_leave" | "break";
 
