@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   CalendarDays,
   DollarSign,
@@ -138,462 +139,185 @@ export function mapSummaryDtoToCards(
 }
 
 /**
- * Hook to fetch and manage Dashboard Summary Cards
+ * Hook to fetch and manage Dashboard Summary Cards with caching
  */
 export function useDashboardSummary(filter: SummaryFilterOption = "today") {
-  const [data, setData] = useState<DashboardSummaryDto | null>(null);
-  const [cards, setCards] = useState<SummaryMetricCard[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["dashboard", "summary", filter],
+    queryFn: () => dashboardService.getSummary(resolveFilterToApiParams(filter)),
+  });
 
-  const fetchSummary = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const params = resolveFilterToApiParams(filter);
-      const res = await dashboardService.getSummary(params);
-      setData(res);
-      setCards(mapSummaryDtoToCards(res, filter));
-      setError(null);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to load summary";
-      setError(msg);
-      setCards(mapSummaryDtoToCards(EMPTY_SUMMARY_DTO, filter));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [filter]);
+  const cards = useMemo(() => {
+    return mapSummaryDtoToCards(data || EMPTY_SUMMARY_DTO, filter);
+  }, [data, filter]);
 
-  useEffect(() => {
-    let ignore = false;
-
-    async function loadData() {
-      try {
-        const params = resolveFilterToApiParams(filter);
-        const res = await dashboardService.getSummary(params);
-        if (!ignore) {
-          setData(res);
-          setCards(mapSummaryDtoToCards(res, filter));
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          const msg = err instanceof Error ? err.message : "Failed to load summary";
-          setError(msg);
-          setCards(mapSummaryDtoToCards(EMPTY_SUMMARY_DTO, filter));
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadData();
-
-    return () => {
-      ignore = true;
-    };
-  }, [filter]);
-
-  return { data, cards, isLoading, isError: Boolean(error), error, refetch: fetchSummary };
+  return {
+    data: data ?? null,
+    cards,
+    isLoading,
+    isError,
+    error: error ? (error instanceof Error ? error.message : "Failed to load summary") : null,
+    refetch,
+  };
 }
 
 /**
- * Hook to fetch orders trend based on services
+ * Hook to fetch orders trend based on services with caching
  */
 export function useServiceOrdersTrend(filter: ChartTimeFilter = "7d") {
-  const [data, setData] = useState<TrendChartPoint[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: rawData, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["dashboard", "service-orders", filter],
+    queryFn: () => dashboardService.getServiceOrders(resolveFilterToApiParams(filter)),
+  });
 
-  const fetchServiceOrders = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const params = resolveFilterToApiParams(filter);
-      const res = await dashboardService.getServiceOrders(params);
-      if (res.data && res.data.length > 0) {
-        setData(
-          res.data.map((item) => ({
-            label: formatDateLabel(item.date),
-            orders: item.orders,
-          }))
-        );
-      } else {
-        setData([]);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load service orders");
-      setData([]);
-    } finally {
-      setIsLoading(false);
+  const data = useMemo<TrendChartPoint[]>(() => {
+    if (rawData?.data && rawData.data.length > 0) {
+      return rawData.data.map((item) => ({
+        label: formatDateLabel(item.date),
+        orders: item.orders,
+      }));
     }
-  }, [filter]);
+    return [];
+  }, [rawData]);
 
-  useEffect(() => {
-    let ignore = false;
+  const totalOrders = useMemo(() => data.reduce((acc, curr) => acc + curr.orders, 0), [data]);
 
-    async function loadData() {
-      try {
-        const params = resolveFilterToApiParams(filter);
-        const res = await dashboardService.getServiceOrders(params);
-        if (!ignore) {
-          if (res.data && res.data.length > 0) {
-            setData(
-              res.data.map((item) => ({
-                label: formatDateLabel(item.date),
-                orders: item.orders,
-              }))
-            );
-          } else {
-            setData([]);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load service orders");
-          setData([]);
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadData();
-
-    return () => {
-      ignore = true;
-    };
-  }, [filter]);
-
-  const totalOrders = data.reduce((acc, curr) => acc + curr.orders, 0);
-
-  return { data, totalOrders, isLoading, isError: Boolean(error), error, refetch: fetchServiceOrders };
+  return {
+    data,
+    totalOrders,
+    isLoading,
+    isError,
+    error: error ? (error instanceof Error ? error.message : "Failed to load service orders") : null,
+    refetch,
+  };
 }
 
 /**
- * Hook to fetch orders trend based on products
+ * Hook to fetch orders trend based on products with caching
  */
 export function useProductOrdersTrend(filter: ChartTimeFilter = "7d") {
-  const [data, setData] = useState<TrendChartPoint[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: rawData, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["dashboard", "product-orders", filter],
+    queryFn: () => dashboardService.getProductOrders(resolveFilterToApiParams(filter)),
+  });
 
-  const fetchProductOrders = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const params = resolveFilterToApiParams(filter);
-      const res = await dashboardService.getProductOrders(params);
-      if (res.data && res.data.length > 0) {
-        setData(
-          res.data.map((item) => ({
-            label: formatDateLabel(item.date),
-            orders: item.orders,
-          }))
-        );
-      } else {
-        setData([]);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load product orders");
-      setData([]);
-    } finally {
-      setIsLoading(false);
+  const data = useMemo<TrendChartPoint[]>(() => {
+    if (rawData?.data && rawData.data.length > 0) {
+      return rawData.data.map((item) => ({
+        label: formatDateLabel(item.date),
+        orders: item.orders,
+      }));
     }
-  }, [filter]);
+    return [];
+  }, [rawData]);
 
-  useEffect(() => {
-    let ignore = false;
+  const totalOrders = useMemo(() => data.reduce((acc, curr) => acc + curr.orders, 0), [data]);
 
-    async function loadData() {
-      try {
-        const params = resolveFilterToApiParams(filter);
-        const res = await dashboardService.getProductOrders(params);
-        if (!ignore) {
-          if (res.data && res.data.length > 0) {
-            setData(
-              res.data.map((item) => ({
-                label: formatDateLabel(item.date),
-                orders: item.orders,
-              }))
-            );
-          } else {
-            setData([]);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load product orders");
-          setData([]);
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadData();
-
-    return () => {
-      ignore = true;
-    };
-  }, [filter]);
-
-  const totalOrders = data.reduce((acc, curr) => acc + curr.orders, 0);
-
-  return { data, totalOrders, isLoading, isError: Boolean(error), error, refetch: fetchProductOrders };
+  return {
+    data,
+    totalOrders,
+    isLoading,
+    isError,
+    error: error ? (error instanceof Error ? error.message : "Failed to load product orders") : null,
+    refetch,
+  };
 }
 
 /**
- * Hook to fetch top selling products
+ * Hook to fetch top selling products with caching
  */
 export function useTopProducts(filter: ChartTimeFilter = "30d", limit = 5) {
-  const [data, setData] = useState<TopProductItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: rawData, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["dashboard", "top-products", filter, limit],
+    queryFn: () => dashboardService.getTopProducts(resolveFilterToApiParams(filter, limit)),
+  });
 
-  const fetchTopProducts = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const params = resolveFilterToApiParams(filter, limit);
-      const res = await dashboardService.getTopProducts(params);
-      if (res.data && res.data.length > 0) {
-        const totalQty = res.data.reduce((sum, item) => sum + item.quantity, 0) || 1;
-        setData(
-          res.data.map((item) => ({
-            name: item.name,
-            sales: item.quantity,
-            revenue: item.quantity * 2500,
-            percentage: Math.round((item.quantity / totalQty) * 100),
-            category: "Salon Products",
-          }))
-        );
-      } else {
-        setData([]);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load top products");
-      setData([]);
-    } finally {
-      setIsLoading(false);
+  const data = useMemo<TopProductItem[]>(() => {
+    if (rawData?.data && rawData.data.length > 0) {
+      const totalQty = rawData.data.reduce((sum, item) => sum + item.quantity, 0) || 1;
+      return rawData.data.map((item) => ({
+        name: item.name,
+        sales: item.quantity,
+        revenue: item.quantity * 2500,
+        percentage: Math.round((item.quantity / totalQty) * 100),
+        category: "Salon Products",
+      }));
     }
-  }, [filter, limit]);
+    return [];
+  }, [rawData]);
 
-  useEffect(() => {
-    let ignore = false;
-
-    async function loadData() {
-      try {
-        const params = resolveFilterToApiParams(filter, limit);
-        const res = await dashboardService.getTopProducts(params);
-        if (!ignore) {
-          if (res.data && res.data.length > 0) {
-            const totalQty = res.data.reduce((sum, item) => sum + item.quantity, 0) || 1;
-            setData(
-              res.data.map((item) => ({
-                name: item.name,
-                sales: item.quantity,
-                revenue: item.quantity * 2500,
-                percentage: Math.round((item.quantity / totalQty) * 100),
-                category: "Salon Products",
-              }))
-            );
-          } else {
-            setData([]);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load top products");
-          setData([]);
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadData();
-
-    return () => {
-      ignore = true;
-    };
-  }, [filter, limit]);
-
-  return { data, isLoading, isError: Boolean(error), error, refetch: fetchTopProducts };
+  return {
+    data,
+    isLoading,
+    isError,
+    error: error ? (error instanceof Error ? error.message : "Failed to load top products") : null,
+    refetch,
+  };
 }
 
 /**
- * Hook to fetch top requested services
+ * Hook to fetch top requested services with caching
  */
 export function useTopServices(filter: ChartTimeFilter = "30d", limit = 5) {
-  const [data, setData] = useState<TopServiceItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: rawData, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["dashboard", "top-services", filter, limit],
+    queryFn: () => dashboardService.getTopServices(resolveFilterToApiParams(filter, limit)),
+  });
 
-  const fetchTopServices = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const params = resolveFilterToApiParams(filter, limit);
-      const res = await dashboardService.getTopServices(params);
-      if (res.data && res.data.length > 0) {
-        const totalOrders = res.data.reduce((sum, item) => sum + item.orders, 0) || 1;
-        setData(
-          res.data.map((item) => ({
-            name: item.name,
-            bookings: item.orders,
-            revenue: item.orders * 3500,
-            percentage: Math.round((item.orders / totalOrders) * 100),
-            category: "Hair & Beauty",
-          }))
-        );
-      } else {
-        setData([]);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load top services");
-      setData([]);
-    } finally {
-      setIsLoading(false);
+  const data = useMemo<TopServiceItem[]>(() => {
+    if (rawData?.data && rawData.data.length > 0) {
+      const totalOrders = rawData.data.reduce((sum, item) => sum + item.orders, 0) || 1;
+      return rawData.data.map((item) => ({
+        name: item.name,
+        bookings: item.orders,
+        revenue: item.orders * 3500,
+        percentage: Math.round((item.orders / totalOrders) * 100),
+        category: "Hair & Beauty",
+      }));
     }
-  }, [filter, limit]);
+    return [];
+  }, [rawData]);
 
-  useEffect(() => {
-    let ignore = false;
-
-    async function loadData() {
-      try {
-        const params = resolveFilterToApiParams(filter, limit);
-        const res = await dashboardService.getTopServices(params);
-        if (!ignore) {
-          if (res.data && res.data.length > 0) {
-            const totalOrders = res.data.reduce((sum, item) => sum + item.orders, 0) || 1;
-            setData(
-              res.data.map((item) => ({
-                name: item.name,
-                bookings: item.orders,
-                revenue: item.orders * 3500,
-                percentage: Math.round((item.orders / totalOrders) * 100),
-                category: "Hair & Beauty",
-              }))
-            );
-          } else {
-            setData([]);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load top services");
-          setData([]);
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadData();
-
-    return () => {
-      ignore = true;
-    };
-  }, [filter, limit]);
-
-  return { data, isLoading, isError: Boolean(error), error, refetch: fetchTopServices };
+  return {
+    data,
+    isLoading,
+    isError,
+    error: error ? (error instanceof Error ? error.message : "Failed to load top services") : null,
+    refetch,
+  };
 }
 
 /**
- * Hook to fetch payment types distribution
+ * Hook to fetch payment types distribution with caching
  */
 export function usePaymentTypes(filter: ChartTimeFilter = "30d") {
-  const [data, setData] = useState<PaymentTypeItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: rawData, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["dashboard", "payment-types", filter],
+    queryFn: () => dashboardService.getPaymentTypes(resolveFilterToApiParams(filter)),
+  });
 
-  const fetchPaymentTypes = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const params = resolveFilterToApiParams(filter);
-      const res = await dashboardService.getPaymentTypes(params);
-      if (res.data && res.data.length > 0) {
-        const totalAmt = res.data.reduce((sum, item) => sum + item.amount, 0) || 1;
-        setData(
-          res.data.map((item, index) => ({
-            name: item.type,
-            count: 1,
-            value: item.amount,
-            percentage: Math.round((item.amount / totalAmt) * 100),
-            color: PAYMENT_COLORS[index % PAYMENT_COLORS.length],
-          }))
-        );
-      } else {
-        setData([]);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load payment types");
-      setData([]);
-    } finally {
-      setIsLoading(false);
+  const data = useMemo<PaymentTypeItem[]>(() => {
+    if (rawData?.data && rawData.data.length > 0) {
+      const totalAmt = rawData.data.reduce((sum, item) => sum + item.amount, 0) || 1;
+      return rawData.data.map((item, index) => ({
+        name: item.type,
+        count: 1,
+        value: item.amount,
+        percentage: Math.round((item.amount / totalAmt) * 100),
+        color: PAYMENT_COLORS[index % PAYMENT_COLORS.length],
+      }));
     }
-  }, [filter]);
+    return [];
+  }, [rawData]);
 
-  useEffect(() => {
-    let ignore = false;
+  const totalAmount = useMemo(() => data.reduce((acc, curr) => acc + curr.value, 0), [data]);
 
-    async function loadData() {
-      try {
-        const params = resolveFilterToApiParams(filter);
-        const res = await dashboardService.getPaymentTypes(params);
-        if (!ignore) {
-          if (res.data && res.data.length > 0) {
-            const totalAmt = res.data.reduce((sum, item) => sum + item.amount, 0) || 1;
-            setData(
-              res.data.map((item, index) => ({
-                name: item.type,
-                count: 1,
-                value: item.amount,
-                percentage: Math.round((item.amount / totalAmt) * 100),
-                color: PAYMENT_COLORS[index % PAYMENT_COLORS.length],
-              }))
-            );
-          } else {
-            setData([]);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load payment types");
-          setData([]);
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadData();
-
-    return () => {
-      ignore = true;
-    };
-  }, [filter]);
-
-  const totalAmount = data.reduce((acc, curr) => acc + curr.value, 0);
-
-  return { data, totalAmount, isLoading, isError: Boolean(error), error, refetch: fetchPaymentTypes };
+  return {
+    data,
+    totalAmount,
+    isLoading,
+    isError,
+    error: error ? (error instanceof Error ? error.message : "Failed to load payment types") : null,
+    refetch,
+  };
 }

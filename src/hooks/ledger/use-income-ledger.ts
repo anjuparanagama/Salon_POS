@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ledgerService,
   type IncomeQueryParams,
@@ -8,84 +9,55 @@ import type {
   IncomeStats,
 } from "../../interface/ledger.types";
 
+const defaultStats: IncomeStats = {
+  totalIncome: 0,
+  serviceIncome: 0,
+  productIncome: 0,
+};
+
 export function useIncomeLedger(
   params?: IncomeQueryParams,
   initialRecords?: IncomeRecord[]
 ) {
-  const [records, setRecords] = useState<IncomeRecord[]>(initialRecords ?? []);
-  const [stats, setStats] = useState<IncomeStats>({
-    totalIncome: 0,
-    serviceIncome: 0,
-    productIncome: 0,
+  const queryClient = useQueryClient();
+
+  const incomeQuery = useQuery({
+    queryKey: ["ledger", "income", "list", params],
+    queryFn: () => ledgerService.getIncome(params),
+    initialData: initialRecords
+      ? { items: initialRecords, total: initialRecords.length }
+      : undefined,
   });
-  const [total, setTotal] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const statsQuery = useQuery({
+    queryKey: ["ledger", "income", "stats"],
+    queryFn: () => ledgerService.getIncomeStats(),
+  });
+
+  const records: IncomeRecord[] = incomeQuery.data?.items ?? [];
+  const stats: IncomeStats = statsQuery.data ?? defaultStats;
+  const total: number = incomeQuery.data?.total ?? records.length;
+  const isLoading = incomeQuery.isLoading || statsQuery.isLoading;
+
+  const error = incomeQuery.error
+    ? incomeQuery.error instanceof Error
+      ? incomeQuery.error.message
+      : "Failed to load income ledger"
+    : null;
 
   const fetchAll = useCallback(async () => {
-    try {
-      const [dataRes, statsRes] = await Promise.allSettled([
-        ledgerService.getIncome(params),
-        ledgerService.getIncomeStats(),
-      ]);
-
-      if (dataRes.status === "fulfilled") {
-        setRecords(dataRes.value.items);
-        setTotal(dataRes.value.total);
-      }
-      if (statsRes.status === "fulfilled") {
-        setStats(statsRes.value);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load income ledger");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function load() {
-      try {
-        const [dataRes, statsRes] = await Promise.allSettled([
-          ledgerService.getIncome(params),
-          ledgerService.getIncomeStats(),
-        ]);
-
-        if (!ignore) {
-          if (dataRes.status === "fulfilled") {
-            setRecords(dataRes.value.items);
-            setTotal(dataRes.value.total);
-          }
-          if (statsRes.status === "fulfilled") {
-            setStats(statsRes.value);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load income ledger");
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void load();
-
-    return () => {
-      ignore = true;
-    };
-  }, [params]);
+    await Promise.allSettled([
+      incomeQuery.refetch(),
+      statsQuery.refetch(),
+    ]);
+  }, [incomeQuery, statsQuery]);
 
   const createIncome = async (data: Partial<IncomeRecord>) => {
     try {
       const created = await ledgerService.createIncome(data);
-      setRecords((prev) => [created, ...prev]);
+      await queryClient.invalidateQueries({ queryKey: ["ledger", "income"] });
+      void queryClient.invalidateQueries({ queryKey: ["ledger", "summary"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return created;
     } catch {
       const fallback: IncomeRecord = {
@@ -98,7 +70,13 @@ export function useIncomeLedger(
         date: data.date || new Date().toISOString().split("T")[0],
         description: data.description,
       };
-      setRecords((prev) => [fallback, ...prev]);
+      queryClient.setQueryData(
+        ["ledger", "income", "list", params],
+        (old: { items: IncomeRecord[]; total: number } | undefined) => {
+          if (!old) return { items: [fallback], total: 1 };
+          return { ...old, items: [fallback, ...old.items], total: old.total + 1 };
+        }
+      );
       return fallback;
     }
   };
@@ -115,4 +93,3 @@ export function useIncomeLedger(
 }
 
 export default useIncomeLedger;
-

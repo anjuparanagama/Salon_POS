@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ledgerService,
   type TransactionQueryParams,
@@ -12,80 +13,49 @@ export function useTransactionsLedger(
   params?: TransactionQueryParams,
   initialRecords?: TransactionRecord[]
 ) {
-  const [records, setRecords] = useState<TransactionRecord[]>(initialRecords ?? []);
-  const [stats, setStats] = useState<TransactionStats>({
+  const queryClient = useQueryClient();
+
+  const transactionsQuery = useQuery({
+    queryKey: ["ledger", "transactions", "list", params],
+    queryFn: () => ledgerService.getTransactions(params),
+    initialData: initialRecords
+      ? { items: initialRecords, total: initialRecords.length }
+      : undefined,
+  });
+
+  const statsQuery = useQuery({
+    queryKey: ["ledger", "transactions", "stats"],
+    queryFn: () => ledgerService.getTransactionStats(),
+  });
+
+  const records: TransactionRecord[] = transactionsQuery.data?.items ?? [];
+  const stats: TransactionStats = statsQuery.data ?? {
     totalTransactions: 0,
     totalReceived: 0,
     totalRefunded: 0,
-  });
-  const [total, setTotal] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  };
+  const total: number = transactionsQuery.data?.total ?? records.length;
+  const isLoading = transactionsQuery.isLoading || statsQuery.isLoading;
+
+  const error = transactionsQuery.error
+    ? transactionsQuery.error instanceof Error
+      ? transactionsQuery.error.message
+      : "Failed to load transactions"
+    : null;
 
   const fetchAll = useCallback(async () => {
-    try {
-      const [dataRes, statsRes] = await Promise.allSettled([
-        ledgerService.getTransactions(params),
-        ledgerService.getTransactionStats(),
-      ]);
-
-      if (dataRes.status === "fulfilled") {
-        setRecords(dataRes.value.items);
-        setTotal(dataRes.value.total);
-      }
-      if (statsRes.status === "fulfilled") {
-        setStats(statsRes.value);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load transactions");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function load() {
-      try {
-        const [dataRes, statsRes] = await Promise.allSettled([
-          ledgerService.getTransactions(params),
-          ledgerService.getTransactionStats(),
-        ]);
-
-        if (!ignore) {
-          if (dataRes.status === "fulfilled") {
-            setRecords(dataRes.value.items);
-            setTotal(dataRes.value.total);
-          }
-          if (statsRes.status === "fulfilled") {
-            setStats(statsRes.value);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load transactions");
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void load();
-
-    return () => {
-      ignore = true;
-    };
-  }, [params]);
+    await Promise.allSettled([
+      transactionsQuery.refetch(),
+      statsQuery.refetch(),
+    ]);
+  }, [transactionsQuery, statsQuery]);
 
   const createTransaction = async (data: Partial<TransactionRecord>) => {
     try {
       const created = await ledgerService.createTransaction(data);
-      setRecords((prev) => [created, ...prev]);
+      await queryClient.invalidateQueries({ queryKey: ["ledger", "transactions"] });
+      void queryClient.invalidateQueries({ queryKey: ["ledger", "summary"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return created;
     } catch {
       const fallback: TransactionRecord = {
@@ -99,7 +69,13 @@ export function useTransactionsLedger(
         date: data.date || new Date().toISOString().split("T")[0],
         notes: data.notes,
       };
-      setRecords((prev) => [fallback, ...prev]);
+      queryClient.setQueryData(
+        ["ledger", "transactions", "list", params],
+        (old: { items: TransactionRecord[]; total: number } | undefined) => {
+          if (!old) return { items: [fallback], total: 1 };
+          return { ...old, items: [fallback, ...old.items], total: old.total + 1 };
+        }
+      );
       return fallback;
     }
   };
@@ -116,4 +92,3 @@ export function useTransactionsLedger(
 }
 
 export default useTransactionsLedger;
-

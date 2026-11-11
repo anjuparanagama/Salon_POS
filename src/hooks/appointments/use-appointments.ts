@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   appointmentsService,
   type AppointmentQueryParams,
@@ -24,78 +25,43 @@ export function useAppointments(
   params?: AppointmentQueryParams,
   initialAppointmentsList?: Appointment[]
 ) {
-  const [appointments, setAppointments] = useState<Appointment[]>(
-    initialAppointmentsList ?? []
-  );
-  const [stats, setStats] = useState<AppointmentStats>(defaultStats);
-  const [total, setTotal] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const appointmentsQuery = useQuery({
+    queryKey: ["appointments", "list", params],
+    queryFn: () => appointmentsService.getAppointments(params),
+    initialData: initialAppointmentsList
+      ? { items: initialAppointmentsList, total: initialAppointmentsList.length }
+      : undefined,
+  });
+
+  const statsQuery = useQuery({
+    queryKey: ["appointments", "stats"],
+    queryFn: () => appointmentsService.getSummary(),
+  });
+
+  const appointments: Appointment[] = appointmentsQuery.data?.items ?? [];
+  const total: number = appointmentsQuery.data?.total ?? appointments.length;
+  const stats: AppointmentStats = statsQuery.data ?? defaultStats;
+  const isLoading = appointmentsQuery.isLoading || statsQuery.isLoading;
+  const error = appointmentsQuery.error
+    ? appointmentsQuery.error instanceof Error
+      ? appointmentsQuery.error.message
+      : "Failed to load appointments"
+    : null;
 
   const fetchAll = useCallback(async () => {
-    try {
-      const [aptRes, statsRes] = await Promise.allSettled([
-        appointmentsService.getAppointments(params),
-        appointmentsService.getSummary(),
-      ]);
-
-      if (aptRes.status === "fulfilled") {
-        setAppointments(aptRes.value.items);
-        setTotal(aptRes.value.total);
-      }
-      if (statsRes.status === "fulfilled") {
-        setStats(statsRes.value);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load appointments");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function load() {
-      try {
-        const [aptRes, statsRes] = await Promise.allSettled([
-          appointmentsService.getAppointments(params),
-          appointmentsService.getSummary(),
-        ]);
-
-        if (!ignore) {
-          if (aptRes.status === "fulfilled") {
-            setAppointments(aptRes.value.items);
-            setTotal(aptRes.value.total);
-          }
-          if (statsRes.status === "fulfilled") {
-            setStats(statsRes.value);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load appointments");
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void load();
-
-    return () => {
-      ignore = true;
-    };
-  }, [params]);
+    await Promise.allSettled([
+      appointmentsQuery.refetch(),
+      statsQuery.refetch(),
+    ]);
+  }, [appointmentsQuery, statsQuery]);
 
   const createAppointment = async (data: AppointmentFormData) => {
     try {
       const created = await appointmentsService.createAppointment(data);
-      setAppointments((prev) => [created, ...prev]);
+      await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return created;
     } catch {
       const fallback: Appointment = {
@@ -105,7 +71,14 @@ export function useAppointments(
         staffId: `st-${Date.now()}`,
         status: "pending",
       };
-      setAppointments((prev) => [fallback, ...prev]);
+      // Optimistically insert into current query cache
+      queryClient.setQueryData(
+        ["appointments", "list", params],
+        (old: { items: Appointment[]; total: number } | undefined) => {
+          if (!old) return { items: [fallback], total: 1 };
+          return { ...old, items: [fallback, ...old.items], total: old.total + 1 };
+        }
+      );
       return fallback;
     }
   };
@@ -113,42 +86,66 @@ export function useAppointments(
   const updateAppointment = async (id: string, data: Partial<AppointmentFormData>) => {
     try {
       const updated = await appointmentsService.updateAppointment(id, data);
-      setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, ...updated } : a)));
+      await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return updated;
     } catch {
-      setAppointments((prev) => prev.map((a) => (a.id === id ? { ...a, ...data } : a)));
+      queryClient.setQueryData(
+        ["appointments", "list", params],
+        (old: { items: Appointment[]; total: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((a) => (a.id === id ? { ...a, ...data } : a)),
+          };
+        }
+      );
     }
   };
 
   const updateStatus = async (id: string, status: AppointmentStatus, reason?: string) => {
-    // 1. Optimistically update row status immediately
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status } : a))
+    // 1. Optimistically update row status immediately in cache
+    queryClient.setQueryData(
+      ["appointments", "list", params],
+      (old: { items: Appointment[]; total: number } | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((a) => (a.id === id ? { ...a, status } : a)),
+        };
+      }
     );
 
     try {
       const updated = await appointmentsService.updateStatus(id, status, reason);
       if (updated) {
-        setAppointments((prev) =>
-          prev.map((a) => {
-            if (a.id !== id) return a;
+        queryClient.setQueryData(
+          ["appointments", "list", params],
+          (old: { items: Appointment[]; total: number } | undefined) => {
+            if (!old) return old;
             return {
-              ...a,
-              status: updated.status || status,
-              ...(updated.clientName && updated.clientName !== "Walk-in Client"
-                ? { clientName: updated.clientName }
-                : {}),
-              ...(updated.clientPhone && updated.clientPhone !== "+1 (555) 000-0000"
-                ? { clientPhone: updated.clientPhone }
-                : {}),
-              ...(updated.serviceName ? { serviceName: updated.serviceName } : {}),
-              ...(updated.staffName ? { staffName: updated.staffName } : {}),
+              ...old,
+              items: old.items.map((a) => {
+                if (a.id !== id) return a;
+                return {
+                  ...a,
+                  status: updated.status || status,
+                  ...(updated.clientName && updated.clientName !== "Walk-in Client"
+                    ? { clientName: updated.clientName }
+                    : {}),
+                  ...(updated.clientPhone && updated.clientPhone !== "+1 (555) 000-0000"
+                    ? { clientPhone: updated.clientPhone }
+                    : {}),
+                  ...(updated.serviceName ? { serviceName: updated.serviceName } : {}),
+                  ...(updated.staffName ? { staffName: updated.staffName } : {}),
+                };
+              }),
             };
-          })
+          }
         );
       }
-      // 2. Refresh the table and stats from the server
-      await fetchAll();
+      await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     } catch (err) {
       console.error("Failed to update status on server:", err);
       await fetchAll();
@@ -156,12 +153,22 @@ export function useAppointments(
   };
 
   const cancelAppointment = async (id: string, reason?: string) => {
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "cancelled" } : a))
+    // Optimistic update
+    queryClient.setQueryData(
+      ["appointments", "list", params],
+      (old: { items: Appointment[]; total: number } | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((a) => (a.id === id ? { ...a, status: "cancelled" } : a)),
+        };
+      }
     );
+
     try {
       await appointmentsService.cancelAppointment(id, reason);
-      await fetchAll();
+      await queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     } catch (err) {
       console.error("Failed to cancel appointment on server:", err);
       await fetchAll();
@@ -172,7 +179,11 @@ export function useAppointments(
     invoiceId: string,
     payload: { amount: number; method: string; reference?: string }
   ) => {
-    return await appointmentsService.addPayment(invoiceId, payload);
+    const res = await appointmentsService.addPayment(invoiceId, payload);
+    void queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    void queryClient.invalidateQueries({ queryKey: ["ledger"] });
+    void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    return res;
   };
 
   return {
@@ -191,4 +202,3 @@ export function useAppointments(
 }
 
 export default useAppointments;
-

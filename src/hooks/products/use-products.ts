@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { productsService, type ProductQueryParams } from "../../services/products.service";
 import type {
   Product,
@@ -22,96 +23,63 @@ export function useProducts(
   initialProductsList?: Product[],
   initialCategories?: Array<{ label: string; value: string }>
 ) {
-  const [products, setProducts] = useState<Product[]>(initialProductsList ?? []);
-  const [stats, setStats] = useState<ProductStats>(defaultStats);
-  const [categories, setCategories] = useState<Array<{ label: string; value: string }>>(
-    initialCategories ?? []
-  );
-  const [brands, setBrands] = useState<string[]>([]);
-  const [total, setTotal] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const productsQuery = useQuery({
+    queryKey: ["products", "list", params],
+    queryFn: () => productsService.getProducts(params),
+    initialData: initialProductsList
+      ? { items: initialProductsList, total: initialProductsList.length }
+      : undefined,
+  });
+
+  const statsQuery = useQuery({
+    queryKey: ["products", "stats"],
+    queryFn: () => productsService.getStats(),
+  });
+
+  const categoriesQuery = useQuery({
+    queryKey: ["products", "categories"],
+    queryFn: () => productsService.getCategories(),
+    initialData: initialCategories,
+  });
+
+  const brandsQuery = useQuery({
+    queryKey: ["products", "brands"],
+    queryFn: () => productsService.getBrands(),
+  });
+
+  const products: Product[] = productsQuery.data?.items ?? [];
+  const stats: ProductStats = statsQuery.data ?? defaultStats;
+  const categories: Array<{ label: string; value: string }> = categoriesQuery.data ?? [];
+  const brands: string[] = brandsQuery.data ?? [];
+  const total: number = productsQuery.data?.total ?? products.length;
+  const isLoading =
+    productsQuery.isLoading ||
+    statsQuery.isLoading ||
+    categoriesQuery.isLoading ||
+    brandsQuery.isLoading;
+
+  const error = productsQuery.error
+    ? productsQuery.error instanceof Error
+      ? productsQuery.error.message
+      : "Failed to load products"
+    : null;
 
   const fetchAll = useCallback(async () => {
-    try {
-      const [prodRes, statsRes, catRes, brandRes] = await Promise.allSettled([
-        productsService.getProducts(params),
-        productsService.getStats(),
-        productsService.getCategories(),
-        productsService.getBrands(),
-      ]);
-
-      if (prodRes.status === "fulfilled") {
-        setProducts(prodRes.value.items);
-        setTotal(prodRes.value.total);
-      }
-      if (statsRes.status === "fulfilled") {
-        setStats(statsRes.value);
-      }
-      if (catRes.status === "fulfilled") {
-        setCategories(catRes.value);
-      }
-      if (brandRes.status === "fulfilled") {
-        setBrands(brandRes.value);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load products");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function load() {
-      try {
-        const [prodRes, statsRes, catRes, brandRes] = await Promise.allSettled([
-          productsService.getProducts(params),
-          productsService.getStats(),
-          productsService.getCategories(),
-          productsService.getBrands(),
-        ]);
-
-        if (!ignore) {
-          if (prodRes.status === "fulfilled") {
-            setProducts(prodRes.value.items);
-            setTotal(prodRes.value.total);
-          }
-          if (statsRes.status === "fulfilled") {
-            setStats(statsRes.value);
-          }
-          if (catRes.status === "fulfilled") {
-            setCategories(catRes.value);
-          }
-          if (brandRes.status === "fulfilled") {
-            setBrands(brandRes.value);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load products");
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void load();
-
-    return () => {
-      ignore = true;
-    };
-  }, [params]);
+    await Promise.allSettled([
+      productsQuery.refetch(),
+      statsQuery.refetch(),
+      categoriesQuery.refetch(),
+      brandsQuery.refetch(),
+    ]);
+  }, [productsQuery, statsQuery, categoriesQuery, brandsQuery]);
 
   const createProduct = async (data: ProductFormData) => {
     try {
       const created = await productsService.createProduct(data);
-      setProducts((prev) => [created, ...prev]);
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return created;
     } catch {
       const fallback: Product = {
@@ -122,7 +90,13 @@ export function useProducts(
         stockMovements: [],
         createdAt: new Date().toISOString().split("T")[0],
       };
-      setProducts((prev) => [fallback, ...prev]);
+      queryClient.setQueryData(
+        ["products", "list", params],
+        (old: { items: Product[]; total: number } | undefined) => {
+          if (!old) return { items: [fallback], total: 1 };
+          return { ...old, items: [fallback, ...old.items], total: old.total + 1 };
+        }
+      );
       return fallback;
     }
   };
@@ -130,10 +104,20 @@ export function useProducts(
   const updateProduct = async (id: string, data: Partial<ProductFormData>) => {
     try {
       const updated = await productsService.updateProduct(id, data);
-      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...updated } : p)));
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return updated;
     } catch {
-      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...data } : p)));
+      queryClient.setQueryData(
+        ["products", "list", params],
+        (old: { items: Product[]; total: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((p) => (p.id === id ? { ...p, ...data } : p)),
+          };
+        }
+      );
     }
   };
 
@@ -141,33 +125,62 @@ export function useProducts(
     try {
       await productsService.deleteProduct(id);
     } finally {
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     }
   };
 
   const toggleStatus = async (id: string) => {
+    queryClient.setQueryData(
+      ["products", "list", params],
+      (old: { items: Product[]; total: number } | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((p) =>
+            p.id === id ? { ...p, status: p.status === "active" ? "inactive" : "active" } : p
+          ),
+        };
+      }
+    );
+
     try {
       const res = await productsService.toggleStatus(id);
-      setProducts((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: res.status as Product["status"] } : p))
+      queryClient.setQueryData(
+        ["products", "list", params],
+        (old: { items: Product[]; total: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((p) =>
+              p.id === id ? { ...p, status: res.status as Product["status"] } : p
+            ),
+          };
+        }
       );
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
     } catch {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, status: p.status === "active" ? "inactive" : "active" } : p
-        )
-      );
+      await fetchAll();
     }
   };
 
   const stockIn = async (id: string, payload: StockInPayload) => {
     try {
       const updated = await productsService.stockIn(id, payload);
-      setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       return updated;
     } catch {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, stock: p.stock + payload.quantity } : p))
+      queryClient.setQueryData(
+        ["products", "list", params],
+        (old: { items: Product[]; total: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((p) =>
+              p.id === id ? { ...p, stock: p.stock + payload.quantity } : p
+            ),
+          };
+        }
       );
     }
   };
@@ -175,11 +188,20 @@ export function useProducts(
   const adjustStock = async (id: string, payload: StockAdjustmentPayload) => {
     try {
       const updated = await productsService.adjustStock(id, payload);
-      setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       return updated;
     } catch {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, stock: Math.max(0, p.stock + payload.quantity) } : p))
+      queryClient.setQueryData(
+        ["products", "list", params],
+        (old: { items: Product[]; total: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((p) =>
+              p.id === id ? { ...p, stock: Math.max(0, p.stock + payload.quantity) } : p
+            ),
+          };
+        }
       );
     }
   };
@@ -187,19 +209,27 @@ export function useProducts(
   const recordSale = async (id: string, payload: StockSalePayload) => {
     try {
       const updated = await productsService.recordSale(id, payload);
-      setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return updated;
     } catch {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === id
-            ? {
-                ...p,
-                stock: Math.max(0, p.stock - payload.quantity),
-                totalSold: p.totalSold + payload.quantity,
-              }
-            : p
-        )
+      queryClient.setQueryData(
+        ["products", "list", params],
+        (old: { items: Product[]; total: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((p) =>
+              p.id === id
+                ? {
+                    ...p,
+                    stock: Math.max(0, p.stock - payload.quantity),
+                    totalSold: p.totalSold + payload.quantity,
+                  }
+                : p
+            ),
+          };
+        }
       );
     }
   };
@@ -224,4 +254,3 @@ export function useProducts(
 }
 
 export default useProducts;
-

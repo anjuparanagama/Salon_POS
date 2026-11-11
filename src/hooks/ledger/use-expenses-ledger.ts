@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ledgerService,
   type ExpenseQueryParams,
@@ -14,91 +15,61 @@ export function useExpensesLedger(
   initialRecords?: ExpenseRecord[],
   initialCategories?: Array<{ label: string; value: ExpenseItemCategory }>
 ) {
-  const [records, setRecords] = useState<ExpenseRecord[]>(initialRecords ?? []);
-  const [categories, setCategories] = useState<
-    Array<{ label: string; value: ExpenseItemCategory }>
-  >(initialCategories ?? []);
-  const [stats, setStats] = useState<ExpenseStats>({
+  const queryClient = useQueryClient();
+
+  const expensesQuery = useQuery({
+    queryKey: ["ledger", "expenses", "list", params],
+    queryFn: () => ledgerService.getExpenses(params),
+    initialData: initialRecords
+      ? { items: initialRecords, total: initialRecords.length }
+      : undefined,
+  });
+
+  const statsQuery = useQuery({
+    queryKey: ["ledger", "expenses", "stats"],
+    queryFn: () => ledgerService.getExpenseStats(),
+  });
+
+  const categoriesQuery = useQuery({
+    queryKey: ["ledger", "expenses", "categories"],
+    queryFn: () => ledgerService.getExpenseCategories(),
+    initialData: initialCategories,
+  });
+
+  const records: ExpenseRecord[] = expensesQuery.data?.items ?? [];
+  const stats: ExpenseStats = statsQuery.data ?? {
     totalExpenses: 0,
     thisMonth: 0,
     expenseCategoriesCount: 0,
-  });
-  const [total, setTotal] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  };
+  const categories: Array<{ label: string; value: ExpenseItemCategory }> =
+    categoriesQuery.data && categoriesQuery.data.length > 0
+      ? categoriesQuery.data
+      : initialCategories ?? [];
+  const total: number = expensesQuery.data?.total ?? records.length;
+  const isLoading =
+    expensesQuery.isLoading || statsQuery.isLoading || categoriesQuery.isLoading;
+
+  const error = expensesQuery.error
+    ? expensesQuery.error instanceof Error
+      ? expensesQuery.error.message
+      : "Failed to load expenses"
+    : null;
 
   const fetchAll = useCallback(async () => {
-    try {
-      const [dataRes, statsRes, catRes] = await Promise.allSettled([
-        ledgerService.getExpenses(params),
-        ledgerService.getExpenseStats(),
-        ledgerService.getExpenseCategories(),
-      ]);
-
-      if (dataRes.status === "fulfilled") {
-        setRecords(dataRes.value.items);
-        setTotal(dataRes.value.total);
-      }
-      if (statsRes.status === "fulfilled") {
-        setStats(statsRes.value);
-      }
-      if (catRes.status === "fulfilled" && catRes.value.length > 0) {
-        setCategories(catRes.value);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load expenses");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function load() {
-      try {
-        const [dataRes, statsRes, catRes] = await Promise.allSettled([
-          ledgerService.getExpenses(params),
-          ledgerService.getExpenseStats(),
-          ledgerService.getExpenseCategories(),
-        ]);
-
-        if (!ignore) {
-          if (dataRes.status === "fulfilled") {
-            setRecords(dataRes.value.items);
-            setTotal(dataRes.value.total);
-          }
-          if (statsRes.status === "fulfilled") {
-            setStats(statsRes.value);
-          }
-          if (catRes.status === "fulfilled" && catRes.value.length > 0) {
-            setCategories(catRes.value);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load expenses");
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void load();
-
-    return () => {
-      ignore = true;
-    };
-  }, [params]);
+    await Promise.allSettled([
+      expensesQuery.refetch(),
+      statsQuery.refetch(),
+      categoriesQuery.refetch(),
+    ]);
+  }, [expensesQuery, statsQuery, categoriesQuery]);
 
   const createExpense = async (data: Partial<ExpenseRecord>) => {
     try {
       const created = await ledgerService.createExpense(data);
-      setRecords((prev) => [created, ...prev]);
+      await queryClient.invalidateQueries({ queryKey: ["ledger", "expenses"] });
+      void queryClient.invalidateQueries({ queryKey: ["ledger", "summary"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return created;
     } catch {
       const fallback: ExpenseRecord = {
@@ -110,7 +81,13 @@ export function useExpensesLedger(
         date: data.date || new Date().toISOString().split("T")[0],
         description: data.description,
       };
-      setRecords((prev) => [fallback, ...prev]);
+      queryClient.setQueryData(
+        ["ledger", "expenses", "list", params],
+        (old: { items: ExpenseRecord[]; total: number } | undefined) => {
+          if (!old) return { items: [fallback], total: 1 };
+          return { ...old, items: [fallback, ...old.items], total: old.total + 1 };
+        }
+      );
       return fallback;
     }
   };
@@ -118,10 +95,21 @@ export function useExpensesLedger(
   const updateExpense = async (id: string, data: Partial<ExpenseRecord>) => {
     try {
       const updated = await ledgerService.updateExpense(id, data);
-      setRecords((prev) => prev.map((e) => (e.id === id ? { ...e, ...updated } : e)));
+      await queryClient.invalidateQueries({ queryKey: ["ledger", "expenses"] });
+      void queryClient.invalidateQueries({ queryKey: ["ledger", "summary"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       return updated;
     } catch {
-      setRecords((prev) => prev.map((e) => (e.id === id ? { ...e, ...data } : e)));
+      queryClient.setQueryData(
+        ["ledger", "expenses", "list", params],
+        (old: { items: ExpenseRecord[]; total: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((e) => (e.id === id ? { ...e, ...data } : e)),
+          };
+        }
+      );
     }
   };
 
@@ -129,7 +117,9 @@ export function useExpensesLedger(
     try {
       await ledgerService.deleteExpense(id);
     } finally {
-      setRecords((prev) => prev.filter((e) => e.id !== id));
+      await queryClient.invalidateQueries({ queryKey: ["ledger", "expenses"] });
+      void queryClient.invalidateQueries({ queryKey: ["ledger", "summary"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     }
   };
 
@@ -148,4 +138,3 @@ export function useExpensesLedger(
 }
 
 export default useExpensesLedger;
-

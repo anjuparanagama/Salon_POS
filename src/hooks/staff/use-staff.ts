@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { staffService, type StaffQueryParams } from "../../services/staff.service";
 import type {
   StaffMember,
@@ -19,85 +20,50 @@ export function useStaff(
   params?: StaffQueryParams,
   initialStaffList?: StaffMember[]
 ) {
-  const [staff, setStaff] = useState<StaffMember[]>(initialStaffList ?? []);
-  const [roles, setRoles] = useState<Array<{ label: string; value: StaffRole }>>([]);
-  const [stats, setStats] = useState<StaffStats>(defaultStats);
-  const [total, setTotal] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const staffQuery = useQuery({
+    queryKey: ["staff", "list", params],
+    queryFn: () => staffService.getStaff(params),
+    initialData: initialStaffList
+      ? { items: initialStaffList, total: initialStaffList.length }
+      : undefined,
+  });
+
+  const statsQuery = useQuery({
+    queryKey: ["staff", "stats"],
+    queryFn: () => staffService.getStats(),
+  });
+
+  const rolesQuery = useQuery({
+    queryKey: ["staff", "roles"],
+    queryFn: () => staffService.getRoles(),
+  });
+
+  const staff: StaffMember[] = staffQuery.data?.items ?? [];
+  const roles: Array<{ label: string; value: StaffRole }> = rolesQuery.data ?? [];
+  const stats: StaffStats = statsQuery.data ?? defaultStats;
+  const total: number = staffQuery.data?.total ?? staff.length;
+  const isLoading = staffQuery.isLoading || statsQuery.isLoading || rolesQuery.isLoading;
+
+  const error = staffQuery.error
+    ? staffQuery.error instanceof Error
+      ? staffQuery.error.message
+      : "Failed to load staff"
+    : null;
 
   const fetchAll = useCallback(async () => {
-    try {
-      const [staffRes, statsRes, rolesRes] = await Promise.allSettled([
-        staffService.getStaff(params),
-        staffService.getStats(),
-        staffService.getRoles(),
-      ]);
-
-      if (staffRes.status === "fulfilled") {
-        setStaff(staffRes.value.items);
-        setTotal(staffRes.value.total);
-      }
-      if (statsRes.status === "fulfilled") {
-        setStats(statsRes.value);
-      }
-      if (rolesRes.status === "fulfilled") {
-        setRoles(rolesRes.value);
-      }
-      setError(null);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load staff");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function load() {
-      try {
-        const [staffRes, statsRes, rolesRes] = await Promise.allSettled([
-          staffService.getStaff(params),
-          staffService.getStats(),
-          staffService.getRoles(),
-        ]);
-
-        if (!ignore) {
-          if (staffRes.status === "fulfilled") {
-            setStaff(staffRes.value.items);
-            setTotal(staffRes.value.total);
-          }
-          if (statsRes.status === "fulfilled") {
-            setStats(statsRes.value);
-          }
-          if (rolesRes.status === "fulfilled") {
-            setRoles(rolesRes.value);
-          }
-          setError(null);
-        }
-      } catch (err: unknown) {
-        if (!ignore) {
-          setError(err instanceof Error ? err.message : "Failed to load staff");
-        }
-      } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void load();
-
-    return () => {
-      ignore = true;
-    };
-  }, [params]);
+    await Promise.allSettled([
+      staffQuery.refetch(),
+      statsQuery.refetch(),
+      rolesQuery.refetch(),
+    ]);
+  }, [staffQuery, statsQuery, rolesQuery]);
 
   const createStaff = async (data: StaffFormData) => {
     try {
       const created = await staffService.createStaff(data);
-      setStaff((prev) => [created, ...prev]);
+      await queryClient.invalidateQueries({ queryKey: ["staff"] });
       return created;
     } catch {
       const fallback: StaffMember = {
@@ -111,7 +77,13 @@ export function useStaff(
         rating: 5.0,
         reviewsCount: 0,
       };
-      setStaff((prev) => [fallback, ...prev]);
+      queryClient.setQueryData(
+        ["staff", "list", params],
+        (old: { items: StaffMember[]; total: number } | undefined) => {
+          if (!old) return { items: [fallback], total: 1 };
+          return { ...old, items: [fallback, ...old.items], total: old.total + 1 };
+        }
+      );
       return fallback;
     }
   };
@@ -119,10 +91,19 @@ export function useStaff(
   const updateStaff = async (id: string, data: Partial<StaffFormData>) => {
     try {
       const updated = await staffService.updateStaff(id, data);
-      setStaff((prev) => prev.map((s) => (s.id === id ? { ...s, ...updated } : s)));
+      await queryClient.invalidateQueries({ queryKey: ["staff"] });
       return updated;
     } catch {
-      setStaff((prev) => prev.map((s) => (s.id === id ? { ...s, ...data } : s)));
+      queryClient.setQueryData(
+        ["staff", "list", params],
+        (old: { items: StaffMember[]; total: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((s) => (s.id === id ? { ...s, ...data } : s)),
+          };
+        }
+      );
     }
   };
 
@@ -130,26 +111,43 @@ export function useStaff(
     try {
       await staffService.deleteStaff(id);
     } finally {
-      setStaff((prev) => prev.filter((s) => s.id !== id));
+      await queryClient.invalidateQueries({ queryKey: ["staff"] });
     }
   };
 
   const toggleStatus = async (id: string) => {
+    queryClient.setQueryData(
+      ["staff", "list", params],
+      (old: { items: StaffMember[]; total: number; page: number; pageSize: number } | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((s) =>
+            s.id === id
+              ? { ...s, status: s.status === "active" ? "inactive" : "active" }
+              : s
+          ),
+        };
+      }
+    );
+
     try {
       const res = await staffService.toggleStatus(id);
-      setStaff((prev) =>
-        prev.map((s) =>
-          s.id === id ? { ...s, status: res.status as StaffMember["status"] } : s
-        )
+      queryClient.setQueryData(
+        ["staff", "list", params],
+        (old: { items: StaffMember[]; total: number; page: number; pageSize: number } | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((s) =>
+              s.id === id ? { ...s, status: res.status as StaffMember["status"] } : s
+            ),
+          };
+        }
       );
+      await queryClient.invalidateQueries({ queryKey: ["staff"] });
     } catch {
-      setStaff((prev) =>
-        prev.map((s) =>
-          s.id === id
-            ? { ...s, status: s.status === "active" ? "inactive" : "active" }
-            : s
-        )
-      );
+      await fetchAll();
     }
   };
 
@@ -169,4 +167,3 @@ export function useStaff(
 }
 
 export default useStaff;
-
