@@ -1,52 +1,20 @@
-import { Edit3, Trash2, Phone, Mail, Crown, AlertCircle, Calendar, UserCheck } from "lucide-react";
-import type { Customer, MembershipTier, CustomerStatus } from "../../../../interface/customer.types";
+import { Edit3, Trash2, Phone, Mail, AlertCircle, Calendar, History, Loader2 } from "lucide-react";
+import type { Customer, CustomerGender } from "../../../../interface/customer.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 
 export type CustomerListProps = {
   customers: Customer[];
   onEdit: (customer: Customer) => void;
   onDelete: (customerId: string) => void;
+  onViewHistory: (customer: Customer) => void;
+  isLoading?: boolean;
 };
 
-const tierStyles: Record<MembershipTier, { bg: string; text: string; label: string }> = {
-  platinum: {
-    bg: "bg-purple-50 text-purple-700 border-purple-200",
-    text: "text-purple-700",
-    label: "Platinum",
-  },
-  gold: {
-    bg: "bg-amber-50 text-amber-700 border-amber-200",
-    text: "text-amber-700",
-    label: "Gold VIP",
-  },
-  silver: {
-    bg: "bg-slate-100 text-slate-700 border-slate-200",
-    text: "text-slate-700",
-    label: "Silver",
-  },
-  regular: {
-    bg: "bg-slate-50 text-slate-600 border-slate-200",
-    text: "text-slate-600",
-    label: "Standard",
-  },
-};
-
-const statusStyles: Record<CustomerStatus, { bg: string; dot: string; label: string }> = {
-  active: {
-    bg: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    dot: "bg-emerald-500",
-    label: "Active",
-  },
-  vip: {
-    bg: "bg-amber-50 text-amber-700 border-amber-200",
-    dot: "bg-amber-500",
-    label: "VIP",
-  },
-  inactive: {
-    bg: "bg-slate-100 text-slate-600 border-slate-200",
-    dot: "bg-slate-400",
-    label: "Inactive",
-  },
+const genderLabels: Record<CustomerGender, { label: string; bg: string }> = {
+  female: { label: "Female", bg: "bg-pink-50 text-pink-700 border-pink-200" },
+  male: { label: "Male", bg: "bg-blue-50 text-blue-700 border-blue-200" },
+  other: { label: "Other", bg: "bg-purple-50 text-purple-700 border-purple-200" },
+  prefer_not_to_say: { label: "Not specified", bg: "bg-slate-50 text-slate-600 border-slate-200" },
 };
 
 function getInitials(name: string): string {
@@ -59,7 +27,22 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps) {
+export function CustomerList({
+  customers,
+  onEdit,
+  onDelete,
+  onViewHistory,
+  isLoading = false,
+}: CustomerListProps) {
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-white p-12 text-center shadow-xs">
+        <Loader2 className="size-7 animate-spin text-primary" />
+        <p className="mt-3 text-xs font-medium text-slate-600">Loading customers...</p>
+      </div>
+    );
+  }
+
   if (customers.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
@@ -80,19 +63,17 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
         <table className="w-full text-left text-xs">
           <thead className="border-b border-slate-100 bg-slate-50 font-semibold uppercase tracking-wider text-slate-600">
             <tr>
-              <th scope="col" className="px-5 py-3.5">Customer</th>
-              <th scope="col" className="px-5 py-3.5">Contact Information</th>
-              <th scope="col" className="px-5 py-3.5">Tier & Status</th>
-              <th scope="col" className="px-5 py-3.5">Visits & Spend</th>
+              <th scope="col" className="px-5 py-3.5">Customer Name & Gender</th>
+              <th scope="col" className="px-5 py-3.5">Contact Number & Email</th>
               <th scope="col" className="px-5 py-3.5">Last Visit</th>
-              <th scope="col" className="px-5 py-3.5">Preferred Stylist</th>
+              <th scope="col" className="px-5 py-3.5">Visits & Spends</th>
+              <th scope="col" className="px-5 py-3.5 text-center">Service History</th>
               <th scope="col" className="px-5 py-3.5 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {customers.map((customer) => {
-              const tier = tierStyles[customer.membershipTier];
-              const status = statusStyles[customer.status];
+              const genderTag = genderLabels[customer.gender] || genderLabels.prefer_not_to_say;
 
               return (
                 <tr key={customer.id} className="transition-colors hover:bg-slate-50/70">
@@ -105,18 +86,14 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
                       <div>
                         <div className="font-semibold text-slate-900 flex items-center gap-1.5">
                           <span>{customer.name}</span>
-                          {customer.membershipTier === "platinum" && (
-                            <Crown className="size-3.5 text-purple-600" />
-                          )}
-                          {customer.membershipTier === "gold" && (
-                            <Crown className="size-3.5 text-amber-500" />
-                          )}
                         </div>
-                        {customer.notes && (
-                          <div className="mt-0.5 max-w-[200px] truncate text-[11px] text-slate-400">
-                            {customer.notes}
-                          </div>
-                        )}
+                        <div className="mt-0.5">
+                          <span
+                            className={`inline-flex items-center rounded-full border px-2 py-0.2 text-[10px] font-medium ${genderTag.bg}`}
+                          >
+                            {genderTag.label}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -124,62 +101,52 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
                   {/* Contact Info */}
                   <td className="whitespace-nowrap px-5 py-4">
                     <div className="flex flex-col gap-1 text-[11px] text-slate-600">
-                      <span className="flex items-center gap-1.5 font-medium text-slate-700">
+                      <span className="flex items-center gap-1.5 font-medium text-slate-800">
                         <Phone className="size-3 text-slate-400" />
                         {customer.phone}
                       </span>
-                      <span className="flex items-center gap-1.5 text-slate-500">
-                        <Mail className="size-3 text-slate-400" />
-                        {customer.email}
-                      </span>
-                    </div>
-                  </td>
-
-                  {/* Tier & Status */}
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <div className="flex flex-col items-start gap-1.5">
-                      <span
-                        className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${tier.bg}`}
-                      >
-                        {tier.label}
-                      </span>
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium ${status.bg}`}
-                      >
-                        <span className={`size-1.5 rounded-full ${status.dot}`} />
-                        {status.label}
-                      </span>
-                    </div>
-                  </td>
-
-                  {/* Visits & Spend */}
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <div className="font-bold text-slate-900">
-                      {formatPrice(customer.totalSpent)}
-                    </div>
-                    <div className="text-[11px] text-slate-500">
-                      {customer.totalVisits} {customer.totalVisits === 1 ? "visit" : "visits"}
+                      {customer.email ? (
+                        <span className="flex items-center gap-1.5 text-slate-500">
+                          <Mail className="size-3 text-slate-400" />
+                          {customer.email}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 italic text-[10px]">No email</span>
+                      )}
                     </div>
                   </td>
 
                   {/* Last Visit */}
                   <td className="whitespace-nowrap px-5 py-4 text-slate-600">
-                    <div className="flex items-center gap-1.5 text-slate-700">
+                    <div className="flex items-center gap-1.5">
                       <Calendar className="size-3.5 text-slate-400" />
-                      <span>{customer.lastVisit || "Never"}</span>
+                      <span className={customer.lastVisit ? "font-medium text-slate-800" : "text-slate-400 italic"}>
+                        {customer.lastVisit || "Never"}
+                      </span>
                     </div>
                   </td>
 
-                  {/* Preferred Stylist */}
-                  <td className="whitespace-nowrap px-5 py-4 text-slate-600">
-                    {customer.preferredStaff ? (
-                      <div className="flex items-center gap-1.5 text-slate-700 font-medium">
-                        <UserCheck className="size-3.5 text-primary" />
-                        <span>{customer.preferredStaff}</span>
-                      </div>
-                    ) : (
-                      <span className="text-slate-400 italic">No preference</span>
-                    )}
+                  {/* Visits & Spends */}
+                  <td className="whitespace-nowrap px-5 py-4">
+                    <div className="font-bold text-slate-900 text-sm">
+                      {formatPrice(customer.totalSpent)}
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-0.5">
+                      <span className="font-semibold text-primary">{customer.totalVisits}</span>{" "}
+                      {customer.totalVisits === 1 ? "visit" : "visits"}
+                    </div>
+                  </td>
+
+                  {/* Service History */}
+                  <td className="whitespace-nowrap px-5 py-4 text-center">
+                    <button
+                      type="button"
+                      onClick={() => onViewHistory(customer)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-slate-700 shadow-2xs transition hover:border-primary hover:bg-primary-lighter hover:text-primary cursor-pointer"
+                    >
+                      <History className="size-3.5 text-slate-500 group-hover:text-primary" />
+                      <span>View Services</span>
+                    </button>
                   </td>
 
                   {/* Actions */}
@@ -188,7 +155,7 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
                       <button
                         type="button"
                         onClick={() => onEdit(customer)}
-                        className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition"
+                        className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                         title="Edit Customer"
                       >
                         <Edit3 className="size-4" />
@@ -196,7 +163,7 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
                       <button
                         type="button"
                         onClick={() => onDelete(customer.id)}
-                        className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition"
+                        className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer"
                         title="Delete Customer"
                       >
                         <Trash2 className="size-4" />
@@ -214,4 +181,3 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
 }
 
 export default CustomerList;
-

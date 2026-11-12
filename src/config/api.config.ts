@@ -80,6 +80,13 @@ export const API_ENDPOINTS = {
     BY_ID: (id: string) => `/api/v1/salon/staff/${id}`,
     TOGGLE_STATUS: (id: string) => `/api/v1/salon/staff/${id}/toggle-status`,
   },
+  CUSTOMERS: {
+    BASE: "/api/v1/salon/customers",
+    STATS: "/api/v1/salon/customers/stats",
+    SUMMARY: "/api/v1/salon/customers/summary",
+    BY_ID: (id: string) => `/api/v1/salon/customers/${id}`,
+    HISTORY: (id: string) => `/api/v1/salon/customers/${id}/history`,
+  },
   LEDGER: {
     SUMMARY: "/api/v1/salon/ledger/summary",
     INCOME: {

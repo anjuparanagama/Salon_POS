@@ -1,40 +1,43 @@
-export type CustomerStatus = "active" | "inactive" | "vip";
-
 export type CustomerGender = "female" | "male" | "other" | "prefer_not_to_say";
 
-export type MembershipTier = "regular" | "silver" | "gold" | "platinum";
+export type ServiceHistoryItem = {
+  id: string;
+  appointmentId?: string | null;
+  invoiceId?: string | null;
+  appointmentNumber?: string | null;
+  invoiceNumber?: string | null;
+  date: string; // YYYY-MM-DD
+  serviceName: string;
+  staffName?: string | null;
+  price: number;
+  durationMinutes?: number;
+  status: string;
+};
 
 export type Customer = {
   id: string;
   name: string;
   phone: string;
   email: string;
-  avatar?: string;
   gender: CustomerGender;
-  membershipTier: MembershipTier;
-  status: CustomerStatus;
   totalVisits: number;
   totalSpent: number;
-  lastVisit: string; // YYYY-MM-DD
-  preferredStaff?: string;
-  notes?: string;
-  tags?: string[];
+  lastVisit: string | null; // YYYY-MM-DD
+  serviceHistory?: ServiceHistoryItem[];
   createdAt: string;
 };
 
 export type CustomerStats = {
   totalCustomers: number;
-  activeCustomers: number;
-  vipCustomers: number;
+  totalVisits: number;
   totalRevenue: number;
   avgSpendPerCustomer: number;
 };
 
 export type CustomerFilterState = {
   search: string;
-  status: "all" | CustomerStatus;
-  membershipTier: "all" | MembershipTier;
-  sortBy: "name" | "visits" | "spent" | "recent";
+  gender: "all" | CustomerGender;
+  sortBy: "recent" | "visits" | "spent" | "name";
 };
 
 export type CustomerFormData = {
@@ -42,9 +45,4 @@ export type CustomerFormData = {
   phone: string;
   email: string;
   gender: CustomerGender;
-  membershipTier: MembershipTier;
-  status: CustomerStatus;
-  preferredStaff: string;
-  notes?: string;
 };
-

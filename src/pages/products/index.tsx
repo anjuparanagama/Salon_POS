@@ -1,13 +1,10 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router";
 import {
   Plus,
   Share2,
-  ShoppingBag,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { ROUTES } from "../../routes/sidebar.routes";
 import type {
   Product,
   ProductFilterState,
@@ -41,7 +38,6 @@ const defaultCategories = [
 ];
 
 export function Products() {
-  const navigate = useNavigate();
   const {
     products,
     categories: apiCategories,

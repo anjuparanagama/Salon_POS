@@ -1,4 +1,4 @@
-import { Users, UserCheck, Crown, DollarSign } from "lucide-react";
+import { Users, CalendarCheck, DollarSign, TrendingUp } from "lucide-react";
 import type { CustomerStats as CustomerStatsType } from "../../../../interface/customer.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 
@@ -14,31 +14,31 @@ export function CustomerStats({ stats }: CustomerStatsProps) {
       icon: Users,
       color: "text-primary",
       bg: "bg-primary-lighter",
-      subtext: "All-time customer base",
+      subtext: "Tracked customer base",
     },
     {
-      label: "Active Salon Clients",
-      value: stats.activeCustomers,
-      icon: UserCheck,
+      label: "Total Visits",
+      value: stats.totalVisits,
+      icon: CalendarCheck,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
-      subtext: "Visited within 90 days",
-    },
-    {
-      label: "VIP Tier Members",
-      value: stats.vipCustomers,
-      icon: Crown,
-      color: "text-amber-600",
-      bg: "bg-amber-50",
-      subtext: "Exclusive rewards tier",
+      subtext: "Total salon visits recorded",
     },
     {
       label: "Total Customer Spend",
       value: formatPrice(stats.totalRevenue),
       icon: DollarSign,
-      color: "text-primary-dark",
-      bg: "bg-primary-lighter",
-      subtext: `Avg. ${formatPrice(stats.avgSpendPerCustomer)} / client`,
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      subtext: "All-time customer revenue",
+    },
+    {
+      label: "Avg Spend / Customer",
+      value: formatPrice(stats.avgSpendPerCustomer),
+      icon: TrendingUp,
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      subtext: "Average client value",
     },
   ];
 
@@ -71,4 +71,3 @@ export function CustomerStats({ stats }: CustomerStatsProps) {
 }
 
 export default CustomerStats;
-
