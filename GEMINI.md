@@ -9,6 +9,7 @@ You are working on the **Salon POS** project. Always follow the project structur
 Follow these strict location and file naming conventions:
 
 ### A. Reusable / Shared UI Components
+
 - **Location:** `src/components/`
 - **Pattern:** `src/components/<component-name>/index.tsx`
 - **Rule:** Only generic, globally shared components (e.g., buttons, tables, modals, form inputs) belong here.
@@ -18,6 +19,7 @@ Follow these strict location and file naming conventions:
   - `src/components/modal/index.tsx`
 
 ### B. Pages / Route Views
+
 - **Location:** `src/pages/`
 - **Pattern:** `src/pages/<page-name>/index.tsx`
 - **Rule:** Every page or top-level route view must have its main entry point in its own directory with an `index.tsx`.
@@ -27,6 +29,7 @@ Follow these strict location and file naming conventions:
   - `src/pages/services/index.tsx`
 
 ### C. Page-Specific Components & Sub-Parts
+
 - **Location:** `src/pages/<page-name>/components/<component-name>/index.tsx`
 - **Rule:** Components or sections that are specific to a single page MUST NOT be placed in `src/components/`. Keep them localized inside the corresponding page's `components/` directory with an `index.tsx` entry point.
 - **Example:**
@@ -35,6 +38,7 @@ Follow these strict location and file naming conventions:
   - `src/pages/services/components/service-card/index.tsx`
 
 ### D. Data Types & Interfaces
+
 - **Location:** `src/interface/`
 - **Pattern:** `src/interface/<page-or-feature>.types.ts`
 - **Rule:** All TypeScript types, interfaces, and data models related to pages and domain entities MUST be defined in `src/interface/` and imported where needed. Do NOT declare major data types inline inside page or component files.
@@ -45,6 +49,7 @@ Follow these strict location and file naming conventions:
   - `src/interface/routes.types.ts`
 
 ### E. Routing Configuration
+
 - **Location:** `src/routes/`
 - **Files:**
   - `src/routes/sidebar.routes.ts`: Centralizes `ROUTES` path constants and `sidebarRoutes` navigation list.
@@ -98,8 +103,7 @@ Whenever adding a new page to the project, agents MUST strictly follow this flow
    - If the page belongs in the main Sidebar navigation, add its item to `sidebarRoutes` with an appropriate Lucide icon:
      ```ts
      export const sidebarRoutes: SidebarItem[] = [
-       ...
-       { label: "Feature", href: ROUTES.FEATURE, icon: FeatureIcon },
+       ...{ label: "Feature", href: ROUTES.FEATURE, icon: FeatureIcon },
      ];
      ```
 4. **Step 4: Register Route in AppRoutes**
@@ -135,7 +139,7 @@ Whenever adding a new page to the project, agents MUST strictly follow this flow
      ```css
      @theme {
        --color-primary-light: #c71585;
-       --color-primary: #D9145A;
+       --color-primary: #d9145a;
        --color-primary-dark: #800b55;
        --color-primary-lighter: #fce7f3;
      }
@@ -147,3 +151,6 @@ Whenever adding a new page to the project, agents MUST strictly follow this flow
      - Borders: `border-primary-light`, `border-primary`
      - Ring / Focus: `ring-primary-light`, `focus:ring-primary`
      - Hover & Active states: `hover:bg-primary-light`, `hover:text-primary`
+
+Email: admin@gmail.com
+Password: admin123

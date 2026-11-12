@@ -26,6 +26,19 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response && error.response.status === 401) {
+      const isAuthRoute =
+        window.location.pathname === "/" ||
+        window.location.pathname === "/login" ||
+        window.location.pathname === "/register";
+      if (!isAuthRoute) {
+        localStorage.removeItem("salon_pos_token");
+        localStorage.removeItem("salon_pos_user");
+        sessionStorage.removeItem("salon_pos_token");
+        sessionStorage.removeItem("salon_pos_user");
+        window.location.href = "/";
+      }
+    }
     return Promise.reject(error);
   }
 );
