@@ -92,7 +92,7 @@ export function Login() {
           salonId: response.salon_id,
         },
         response.access_token,
-        passwordForm.rememberMe
+        passwordForm.rememberMe,
       );
 
       setStatus("success");
@@ -161,7 +161,7 @@ export function Login() {
             onSubmit={handlePasswordSubmit}
             status={status}
             errors={errors}
-            onRegisterClick={() => setIsRegisterOpen(true)}
+            onRegisterClick={() => navigate(ROUTES.REGISTER)}
           />
         </div>
       </div>

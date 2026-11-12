@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Routes, Route, Navigate } from "react-router";
 import Login from "../pages/login";
+import Register from "../pages/register";
 import Dashboard from "../pages/dashboard";
 import Appointments from "../pages/appointments";
 import Services from "../pages/services";
@@ -30,6 +31,7 @@ export function AppRoutes() {
     <Routes>
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route path="/login" element={<Navigate to={ROUTES.LOGIN} replace />} />
+      <Route path={ROUTES.REGISTER} element={<Register />} />
       <Route
         path={ROUTES.DASHBOARD}
         element={

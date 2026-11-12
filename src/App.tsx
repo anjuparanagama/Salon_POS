@@ -182,8 +182,14 @@ function AppContent() {
     navigate(ROUTES.LOGIN, { replace: true });
   };
 
-  // If user is not authenticated or currently on the login page, render AppRoutes directly
-  if (!isAuthenticated || location.pathname === ROUTES.LOGIN || location.pathname === "/login") {
+  // If user is not authenticated or currently on the login/register page, render AppRoutes directly
+  if (
+    !isAuthenticated ||
+    location.pathname === ROUTES.LOGIN ||
+    location.pathname === "/login" ||
+    location.pathname === ROUTES.REGISTER ||
+    location.pathname === "/register"
+  ) {
     return <AppRoutes />;
   }
 

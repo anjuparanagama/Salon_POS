@@ -14,6 +14,11 @@ export const API_BASE_URL =
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: "/api/v1/auth/login",
+    REGISTER_INITIATE: "/api/v1/auth/register/initiate",
+    REGISTER_VERIFY_OTP: "/api/v1/auth/register/verify-otp",
+    REGISTER_RESEND_OTP: "/api/v1/auth/register/resend-otp",
+    REGISTER_CHECK_SLUG: "/api/v1/auth/register/check-slug",
+    REGISTER_COMPLETE: "/api/v1/auth/register/complete",
   },
   DASHBOARD: {
     SUMMARY: "/api/v1/salon/dashboard/summary",

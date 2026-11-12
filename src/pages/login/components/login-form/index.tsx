@@ -146,7 +146,7 @@ export function LoginForm({
         Don&apos;t Have an Account?{" "}
         <button
           type="button"
-          onClick={onRegisterClick}
+          onClick={_onRegisterClick}
           className="font-semibold text-primary hover:text-primary-dark hover:underline transition cursor-pointer"
         >
           Register Here

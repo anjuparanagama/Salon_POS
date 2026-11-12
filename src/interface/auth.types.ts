@@ -61,3 +61,44 @@ export type RegisterInfoModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
+
+// ==========================================
+// 4-Step Registration Types
+// ==========================================
+
+export type RegistrationStep = 1 | 2 | 3 | 4;
+
+export interface OwnerDetailsFormData {
+  fullName: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  agreedToTerms: boolean;
+}
+
+export interface SalonDetailsFormData {
+  salonName: string;
+  slug: string;
+  salonPhone: string;
+  salonEmail: string;
+  address: string;
+  city: string;
+  district: string;
+  salonType: string;
+  currency: string;
+  timezone: string;
+}
+
+export interface RegistrationSessionState {
+  step: RegistrationStep;
+  owner: OwnerDetailsFormData;
+  salon: SalonDetailsFormData;
+  sessionId: string;
+  maskedEmail: string;
+  maskedPhone: string;
+  verificationToken: string;
+  devOtp?: string;
+  resendCooldown: number;
+}
+
