@@ -136,13 +136,36 @@ export function Appointments() {
 
   const [filters, setFilters] = useState<AppointmentFilterState>({
     search: "",
+    searchField: "id",
     status: "all",
     staff: "all",
     date: "",
   });
 
+  const [pageSize, setPageSize] = useState(100);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    aptNumber: true,
+    dateTime: true,
+    client: true,
+    service: true,
+    specialist: true,
+    price: true,
+    status: true,
+    actions: true,
+  });
+
+  const handleToggleColumn = (colKey: string) => {
+    setVisibleColumns((prev) => ({
+      ...prev,
+      [colKey]: prev[colKey] === false ? true : false,
+    }));
+  };
+
   const handleFilterChange = (updated: Partial<AppointmentFilterState>) => {
     setFilters((prev) => ({ ...prev, ...updated }));
+    setCurrentPage(1);
   };
 
   const handleStatusChange = (id: string, newStatus: AppointmentStatus) => {
@@ -193,12 +216,36 @@ export function Appointments() {
     return appointments.filter((apt) => {
       // Search
       if (filters.search.trim()) {
-        const query = filters.search.toLowerCase();
-        const matchesClient = (apt.clientName ?? "").toLowerCase().includes(query);
-        const matchesPhone = (apt.clientPhone ?? "").toLowerCase().includes(query);
-        const matchesService = (apt.serviceName ?? "").toLowerCase().includes(query);
-        const matchesStaff = (apt.staffName ?? "").toLowerCase().includes(query);
-        if (!matchesClient && !matchesPhone && !matchesService && !matchesStaff) return false;
+        const query = filters.search.toLowerCase().trim();
+        const searchField = filters.searchField || "id";
+
+        if (searchField === "id") {
+          const aptNum = (apt.appointmentNumber || "").toLowerCase();
+          const cleanId = (apt.id || "").toLowerCase();
+          if (!aptNum.includes(query) && !cleanId.includes(query)) return false;
+        } else if (searchField === "client") {
+          const name = (apt.clientName || "").toLowerCase();
+          if (!name.includes(query)) return false;
+        } else if (searchField === "phone") {
+          const phone = (apt.clientPhone || "").toLowerCase();
+          if (!phone.includes(query)) return false;
+        } else if (searchField === "service") {
+          const service = (apt.serviceName || "").toLowerCase();
+          if (!service.includes(query)) return false;
+        } else if (searchField === "staff") {
+          const staff = (apt.staffName || "").toLowerCase();
+          if (!staff.includes(query)) return false;
+        } else {
+          // "all"
+          const matchesId =
+            (apt.appointmentNumber || "").toLowerCase().includes(query) ||
+            (apt.id || "").toLowerCase().includes(query);
+          const matchesClient = (apt.clientName ?? "").toLowerCase().includes(query);
+          const matchesPhone = (apt.clientPhone ?? "").toLowerCase().includes(query);
+          const matchesService = (apt.serviceName ?? "").toLowerCase().includes(query);
+          const matchesStaff = (apt.staffName ?? "").toLowerCase().includes(query);
+          if (!matchesId && !matchesClient && !matchesPhone && !matchesService && !matchesStaff) return false;
+        }
       }
       // Status
       if (filters.status !== "all" && apt.status !== filters.status) {
@@ -215,6 +262,51 @@ export function Appointments() {
       return true;
     });
   }, [appointments, filters]);
+
+  // Paginated appointments
+  const paginatedAppointments = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredAppointments.slice(start, start + pageSize);
+  }, [filteredAppointments, currentPage, pageSize]);
+
+  // CSV Export Handler
+  const handleExportCsv = () => {
+    if (filteredAppointments.length === 0) return;
+    const headers = [
+      "Appointment #",
+      "Date",
+      "Time",
+      "Client",
+      "Phone",
+      "Service",
+      "Specialist",
+      "Price (LKR)",
+      "Status",
+    ];
+    const rows = filteredAppointments.map((a) => [
+      `"${a.appointmentNumber || a.id}"`,
+      `"${a.date || ""}"`,
+      `"${a.time || ""}"`,
+      `"${(a.clientName || "").replace(/"/g, '""')}"`,
+      `"${(a.clientPhone || "").replace(/"/g, '""')}"`,
+      `"${(a.serviceName || "").replace(/"/g, '""')}"`,
+      `"${(a.staffName || "").replace(/"/g, '""')}"`,
+      `"${a.price || 0}"`,
+      `"${a.status || ""}"`,
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `appointments_export_${new Date().toISOString().split("T")[0]}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="flex flex-col gap-5 text-slate-900">
@@ -246,12 +338,21 @@ export function Appointments() {
         filters={filters}
         staffList={staffList}
         onFilterChange={handleFilterChange}
+        pageSize={pageSize}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setCurrentPage(1);
+        }}
+        visibleColumns={visibleColumns}
+        onToggleColumn={handleToggleColumn}
+        onExportCsv={handleExportCsv}
       />
 
       {/* Appointments List */}
       <AppointmentList
-        appointments={filteredAppointments}
+        appointments={paginatedAppointments}
         isLoading={isLoading}
+        visibleColumns={visibleColumns}
         onStatusChange={handleStatusChange}
         onApprove={handleApproveAppointment}
         onView={handleViewAppointment}
@@ -261,6 +362,43 @@ export function Appointments() {
           navigate(`${ROUTES.CHECKOUT}?appointmentId=${apt.id}`, { state: { appointment: apt } });
         }}
       />
+
+      {/* Pagination Footer */}
+      {filteredAppointments.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1 py-1 text-xs text-slate-500">
+          <div>
+            Showing <span className="font-semibold text-slate-800">{(currentPage - 1) * pageSize + 1}</span> to{" "}
+            <span className="font-semibold text-slate-800">
+              {Math.min(currentPage * pageSize, filteredAppointments.length)}
+            </span>{" "}
+            of <span className="font-semibold text-slate-800">{filteredAppointments.length}</span> appointments
+          </div>
+
+          {Math.ceil(filteredAppointments.length / pageSize) > 1 && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                Previous
+              </button>
+              <span className="px-2 font-medium text-slate-700">
+                Page {currentPage} of {Math.ceil(filteredAppointments.length / pageSize)}
+              </span>
+              <button
+                type="button"
+                disabled={currentPage >= Math.ceil(filteredAppointments.length / pageSize)}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* New / Edit Appointment Modal */}
       <AppointmentModal

@@ -12,6 +12,7 @@ export type AppointmentListProps = {
   onPrintInvoice?: (appointment: Appointment) => void;
   onCheckout?: (appointment: Appointment) => void;
   isLoading?: boolean;
+  visibleColumns?: Record<string, boolean>;
 };
 
 const defaultBadge = {
@@ -81,6 +82,7 @@ export function AppointmentList({
   onPrintInvoice,
   onCheckout,
   isLoading = false,
+  visibleColumns = {},
 }: AppointmentListProps) {
   if (isLoading && appointments.length === 0) {
     return (
@@ -105,25 +107,36 @@ export function AppointmentList({
     );
   }
 
+  const showAptNumber = visibleColumns.aptNumber !== false;
+  const showDateTime = visibleColumns.dateTime !== false;
+  const showClient = visibleColumns.client !== false;
+  const showService = visibleColumns.service !== false;
+  const showSpecialist = visibleColumns.specialist !== false;
+  const showPrice = visibleColumns.price !== false;
+  const showStatus = visibleColumns.status !== false;
+  const showActions = visibleColumns.actions !== false;
+
   return (
     <div className="overflow-hidden rounded-xl border border-slate-100 bg-white shadow-xs">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1100px] text-left text-xs border-collapse">
+        <table className="w-full min-w-[1000px] text-left text-xs border-collapse">
           <thead className="border-b border-slate-100 bg-slate-50 font-semibold text-slate-600 uppercase tracking-wider">
             <tr>
-              <th scope="col" className="px-5 py-3.5 min-w-[110px]">Apt #</th>
-              <th scope="col" className="px-5 py-3.5 min-w-[160px]">Date & Time</th>
-              <th scope="col" className="px-5 py-3.5 min-w-[210px]">Client</th>
-              <th scope="col" className="px-5 py-3.5 min-w-[220px]">Service</th>
-              <th scope="col" className="px-5 py-3.5 min-w-[160px]">Specialist</th>
-              <th scope="col" className="px-5 py-3.5 min-w-[110px]">Price</th>
-              <th scope="col" className="px-5 py-3.5 min-w-[130px]">Status</th>
-              <th
-                scope="col"
-                className="sticky right-0 z-20 bg-slate-50 px-5 py-3.5 text-right w-[130px] min-w-[130px] shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)] border-l border-slate-100"
-              >
-                Actions
-              </th>
+              {showAptNumber && <th scope="col" className="px-5 py-3.5 min-w-[110px]">Apt #</th>}
+              {showDateTime && <th scope="col" className="px-5 py-3.5 min-w-[160px]">Date & Time</th>}
+              {showClient && <th scope="col" className="px-5 py-3.5 min-w-[210px]">Client</th>}
+              {showService && <th scope="col" className="px-5 py-3.5 min-w-[220px]">Service</th>}
+              {showSpecialist && <th scope="col" className="px-5 py-3.5 min-w-[160px]">Specialist</th>}
+              {showPrice && <th scope="col" className="px-5 py-3.5 min-w-[110px]">Price</th>}
+              {showStatus && <th scope="col" className="px-5 py-3.5 min-w-[130px]">Status</th>}
+              {showActions && (
+                <th
+                  scope="col"
+                  className="sticky right-0 z-20 bg-slate-50 px-5 py-3.5 text-right w-[130px] min-w-[130px] shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)] border-l border-slate-100"
+                >
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -136,95 +149,110 @@ export function AppointmentList({
               return (
                 <tr key={apt.id} className="group hover:bg-slate-50/70 transition-colors">
                   {/* Appointment Number */}
-                  <td className="whitespace-nowrap px-5 py-4 font-mono font-semibold text-slate-800">
-                    <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs border border-slate-200/80">
-                      {formatAppointmentId(apt)}
-                    </span>
-                  </td>
+                  {showAptNumber && (
+                    <td className="whitespace-nowrap px-5 py-4 font-mono font-semibold text-slate-800">
+                      <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs border border-slate-200/80">
+                        {formatAppointmentId(apt)}
+                      </span>
+                    </td>
+                  )}
 
                   {/* Date & Time */}
-                  <td className="whitespace-nowrap px-5 py-4 text-xs">
-                    <span className="font-semibold text-slate-900">{apt.date || "N/A"}</span>
-                    <span className="text-slate-400 font-normal mx-1.5">at</span>
-                    <span className="font-medium text-slate-700">{apt.time || "09:00 AM"}</span>
-                  </td>
+                  {showDateTime && (
+                    <td className="whitespace-nowrap px-5 py-4 text-xs">
+                      <span className="font-semibold text-slate-900">{apt.date || "N/A"}</span>
+                      <span className="text-slate-400 font-normal mx-1.5">at</span>
+                      <span className="font-medium text-slate-700">{apt.time || "09:00 AM"}</span>
+                    </td>
+                  )}
 
                   {/* Client Info */}
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-[11px] font-bold text-primary">
-                        {clientDisplayName.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-slate-900">{clientDisplayName}</div>
-                        <div className="flex items-center gap-1 text-[11px] text-slate-500 whitespace-nowrap">
-                          <Phone className="size-3 text-slate-400 shrink-0" />
-                          <span className="whitespace-nowrap">{clientDisplayPhone}</span>
+                  {showClient && (
+                    <td className="whitespace-nowrap px-5 py-4">
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-[11px] font-bold text-primary">
+                          {clientDisplayName.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-slate-900">{clientDisplayName}</div>
+                          <div className="flex items-center gap-1 text-[11px] text-slate-500 whitespace-nowrap">
+                            <Phone className="size-3 text-slate-400 shrink-0" />
+                            <span className="whitespace-nowrap">{clientDisplayPhone}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
+                    </td>
+                  )}
 
                   {/* Service */}
-                  <td className="px-5 py-4">
-                    <div className="font-medium text-slate-900">{serviceDisplayName}</div>
-                    {apt.notes && (
-                      <div className="text-[11px] text-slate-400 truncate max-w-xs">{apt.notes}</div>
-                    )}
-                  </td>
+                  {showService && (
+                    <td className="px-5 py-4">
+                      <div className="font-medium text-slate-900">{serviceDisplayName}</div>
+                      {apt.notes && (
+                        <div className="text-[11px] text-slate-400 truncate max-w-xs">{apt.notes}</div>
+                      )}
+                    </td>
+                  )}
 
                   {/* Specialist */}
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <div className="flex items-center gap-1.5 text-slate-700">
-                      <User className="size-3.5 text-slate-400" />
-                      <span>{staffDisplayName}</span>
-                    </div>
-                  </td>
+                  {showSpecialist && (
+                    <td className="whitespace-nowrap px-5 py-4">
+                      <div className="flex items-center gap-1.5 text-slate-700">
+                        <User className="size-3.5 text-slate-400" />
+                        <span>{staffDisplayName}</span>
+                      </div>
+                    </td>
+                  )}
 
                   {/* Price */}
-                  <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-900">
-                    {formatPrice(apt.price ?? 0)}
-                  </td>
+                  {showPrice && (
+                    <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-900">
+                      {formatPrice(apt.price ?? 0)}
+                    </td>
+                  )}
 
                   {/* Status Dropdown */}
-                  <td className="whitespace-nowrap px-5 py-4">
-                    {apt.status === "pending" ? (
-                      <span className="text-slate-400 font-semibold px-2">-</span>
-                    ) : (
-                      <div className="relative inline-block">
-                        <select
-                          value={apt.status}
-                          onChange={(e) =>
-                            onStatusChange(apt.id, e.target.value as AppointmentStatus)
-                          }
-                          className={`appearance-none rounded-full border px-3 py-1 pr-6 text-[11px] font-semibold outline-none transition cursor-pointer ${badge.bg} ${badge.text} ${badge.border} hover:opacity-90 focus:ring-2 focus:ring-primary/20`}
-                          title="Change Appointment Status"
-                        >
-                          <option value="pending" className="bg-white text-purple-700 font-semibold py-1">
-                            Pending
-                          </option>
-                          <option value="confirmed" className="bg-white text-emerald-700 font-semibold py-1">
-                            Confirmed
-                          </option>
-                          <option value="in_progress" className="bg-white text-amber-700 font-semibold py-1">
-                            In Progress
-                          </option>
-                          <option value="completed" className="bg-white text-blue-700 font-semibold py-1">
-                            Completed
-                          </option>
-                          <option value="cancelled" className="bg-white text-rose-700 font-semibold py-1">
-                            Cancelled
-                          </option>
-                        </select>
-                        <ChevronDown
-                          className={`pointer-events-none absolute right-2 top-1/2 size-3 -translate-y-1/2 ${badge.text} opacity-70`}
-                        />
-                      </div>
-                    )}
-                  </td>
+                  {showStatus && (
+                    <td className="whitespace-nowrap px-5 py-4">
+                      {apt.status === "pending" ? (
+                        <span className="text-slate-400 font-semibold px-2">-</span>
+                      ) : (
+                        <div className="relative inline-block">
+                          <select
+                            value={apt.status}
+                            onChange={(e) =>
+                              onStatusChange(apt.id, e.target.value as AppointmentStatus)
+                            }
+                            className={`appearance-none rounded-full border px-3 py-1 pr-6 text-[11px] font-semibold outline-none transition cursor-pointer ${badge.bg} ${badge.text} ${badge.border} hover:opacity-90 focus:ring-2 focus:ring-primary/20`}
+                            title="Change Appointment Status"
+                          >
+                            <option value="pending" className="bg-white text-purple-700 font-semibold py-1">
+                              Pending
+                            </option>
+                            <option value="confirmed" className="bg-white text-emerald-700 font-semibold py-1">
+                              Confirmed
+                            </option>
+                            <option value="in_progress" className="bg-white text-amber-700 font-semibold py-1">
+                              In Progress
+                            </option>
+                            <option value="completed" className="bg-white text-blue-700 font-semibold py-1">
+                              Completed
+                            </option>
+                            <option value="cancelled" className="bg-white text-rose-700 font-semibold py-1">
+                              Cancelled
+                            </option>
+                          </select>
+                          <ChevronDown
+                            className={`pointer-events-none absolute right-2 top-1/2 size-3 -translate-y-1/2 ${badge.text} opacity-70`}
+                          />
+                        </div>
+                      )}
+                    </td>
+                  )}
 
                   {/* Actions Column - Sticky Right */}
-                  <td className="sticky right-0 z-10 bg-white group-hover:bg-slate-50 whitespace-nowrap px-5 py-4 text-right shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)] border-l border-slate-100 transition-colors w-[130px] min-w-[130px]">
+                  {showActions && (
+                    <td className="sticky right-0 z-10 bg-white group-hover:bg-slate-50 whitespace-nowrap px-5 py-4 text-right shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)] border-l border-slate-100 transition-colors w-[130px] min-w-[130px]">
                     <div className="inline-flex items-center justify-end gap-1.5">
                       {/* 1. New / Pending Appointments -> Approve Button (Icon + Text) */}
                       {apt.status === "pending" && (
@@ -318,7 +346,8 @@ export function AppointmentList({
                       )}
                     </div>
                   </td>
-                </tr>
+                )}
+              </tr>
               );
             })}
           </tbody>

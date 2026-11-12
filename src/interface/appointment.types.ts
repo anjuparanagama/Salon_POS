@@ -44,6 +44,7 @@ export type AppointmentStats = {
 
 export type AppointmentFilterState = {
   search: string;
+  searchField?: "all" | "id" | "client" | "phone" | "service" | "staff";
   status: "all" | AppointmentStatus;
   staff: string;
   date?: string;
