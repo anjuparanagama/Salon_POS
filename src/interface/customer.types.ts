@@ -36,6 +36,7 @@ export type CustomerStats = {
 
 export type CustomerFilterState = {
   search: string;
+  searchField?: "all" | "name" | "phone" | "email";
   gender: "all" | CustomerGender;
   sortBy: "recent" | "visits" | "spent" | "name";
 };

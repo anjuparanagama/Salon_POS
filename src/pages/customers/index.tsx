@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { UserPlus, RefreshCw, AlertCircle } from "lucide-react";
 import type {
@@ -20,8 +20,21 @@ export function Customers() {
 
   const [filters, setFilters] = useState<CustomerFilterState>({
     search: "",
+    searchField: "name",
     gender: "all",
     sortBy: "recent",
+  });
+
+  const [pageSize, setPageSize] = useState<number>(20);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    name: true,
+    contact: true,
+    lastVisit: true,
+    visitsSpend: true,
+    history: true,
+    actions: true,
   });
 
   const {
@@ -34,9 +47,6 @@ export function Customers() {
     deleteCustomer,
     fetchAll,
   } = useCustomers({
-    search: filters.search,
-    gender: filters.gender,
-    sort_by: filters.sortBy,
     pageSize: 100,
   });
 
@@ -48,6 +58,14 @@ export function Customers() {
 
   const handleFilterChange = (updated: Partial<CustomerFilterState>) => {
     setFilters((prev) => ({ ...prev, ...updated }));
+    setCurrentPage(1);
+  };
+
+  const handleToggleColumn = (columnKey: string) => {
+    setVisibleColumns((prev) => ({
+      ...prev,
+      [columnKey]: prev[columnKey] === false ? true : false,
+    }));
   };
 
   const handleOpenAdd = () => {
@@ -93,6 +111,80 @@ export function Customers() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Filter and sort customers
+  const filteredCustomers = useMemo(() => {
+    return customers
+      .filter((c) => {
+        if (filters.search.trim()) {
+          const query = filters.search.toLowerCase().trim();
+          const searchField = filters.searchField || "name";
+
+          if (searchField === "name") {
+            if (!c.name.toLowerCase().includes(query)) return false;
+          } else if (searchField === "phone") {
+            if (!c.phone.toLowerCase().includes(query)) return false;
+          } else if (searchField === "email") {
+            if (!c.email.toLowerCase().includes(query)) return false;
+          } else {
+            // "all"
+            const matchesName = c.name.toLowerCase().includes(query);
+            const matchesPhone = c.phone.toLowerCase().includes(query);
+            const matchesEmail = c.email.toLowerCase().includes(query);
+            if (!matchesName && !matchesPhone && !matchesEmail) return false;
+          }
+        }
+
+        if (filters.gender !== "all" && c.gender !== filters.gender) {
+          return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (filters.sortBy === "visits") return b.totalVisits - a.totalVisits;
+        if (filters.sortBy === "spent") return b.totalSpent - a.totalSpent;
+        if (filters.sortBy === "name") return a.name.localeCompare(b.name);
+        // Default: most recent visit
+        const timeA = a.lastVisit ? new Date(a.lastVisit).getTime() : 0;
+        const timeB = b.lastVisit ? new Date(b.lastVisit).getTime() : 0;
+        return timeB - timeA;
+      });
+  }, [customers, filters]);
+
+  // Paginated customers slice
+  const paginatedCustomers = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return filteredCustomers.slice(startIndex, startIndex + pageSize);
+  }, [filteredCustomers, currentPage, pageSize]);
+
+  const totalPages = Math.ceil(filteredCustomers.length / pageSize);
+
+  // Export CSV handler
+  const handleExportCsv = () => {
+    if (filteredCustomers.length === 0) return;
+
+    const headers = ["Customer Name", "Phone Number", "Email", "Gender", "Total Visits", "Total Spent", "Last Visit"];
+    const rows = filteredCustomers.map((c) => [
+      `"${c.name.replace(/"/g, '""')}"`,
+      `"${c.phone}"`,
+      `"${c.email || ""}"`,
+      `"${c.gender}"`,
+      c.totalVisits,
+      c.totalSpent,
+      `"${c.lastVisit || ""}"`,
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `customers_export_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -146,17 +238,66 @@ export function Customers() {
       {/* KPI Stats */}
       <CustomerStats stats={stats} />
 
-      {/* Filters & Search */}
-      <CustomerFilters filters={filters} onFilterChange={handleFilterChange} />
+      {/* Filters Bar (Exact Appointment Page Pattern) */}
+      <CustomerFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        pageSize={pageSize}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setCurrentPage(1);
+        }}
+        visibleColumns={visibleColumns}
+        onToggleColumn={handleToggleColumn}
+        onExportCsv={handleExportCsv}
+      />
 
       {/* Customers List Table */}
       <CustomerList
-        customers={customers}
+        customers={paginatedCustomers}
         isLoading={isLoading}
+        visibleColumns={visibleColumns}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}
         onViewHistory={handleOpenHistory}
       />
+
+      {/* Pagination Footer */}
+      {filteredCustomers.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1 py-1 text-xs text-slate-500">
+          <div>
+            Showing <span className="font-semibold text-slate-800">{(currentPage - 1) * pageSize + 1}</span> to{" "}
+            <span className="font-semibold text-slate-800">
+              {Math.min(currentPage * pageSize, filteredCustomers.length)}
+            </span>{" "}
+            of <span className="font-semibold text-slate-800">{filteredCustomers.length}</span> customers
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                disabled={currentPage <= 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                Previous
+              </button>
+              <span className="px-2 text-xs font-medium text-slate-600">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                type="button"
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Customer Create/Edit Drawer Side Panel */}
       <CustomerPanel
