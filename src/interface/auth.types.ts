@@ -79,13 +79,13 @@ export interface OwnerDetailsFormData {
 
 export interface SalonDetailsFormData {
   salonName: string;
-  slug: string;
+  slug?: string;
   salonPhone: string;
   salonEmail: string;
   address: string;
   city: string;
   district: string;
-  salonType: string;
+  salonType?: string;
   currency: string;
   timezone: string;
 }

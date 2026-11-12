@@ -30,6 +30,9 @@ export type Appointment = {
   price: number;
   status: AppointmentStatus;
   notes?: string;
+  hasInvoice?: boolean;
+  invoiceId?: string;
+  invoiceNumber?: string;
 };
 
 export type AppointmentStats = {

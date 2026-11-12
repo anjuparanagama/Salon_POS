@@ -120,6 +120,21 @@ export function AppointmentViewModal({
             Close
           </button>
 
+          {/* If already invoiced/billed -> Show Print Invoice */}
+          {appointment.hasInvoice && onPrintInvoice && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onPrintInvoice(appointment);
+              }}
+              className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition cursor-pointer"
+            >
+              Print Invoice {appointment.invoiceNumber ? `(#${appointment.invoiceNumber})` : ""}
+            </button>
+          )}
+
+          {/* Checkout & Bill */}
           {(appointment.status === "confirmed" ||
             appointment.status === "in_progress" ||
             appointment.status === "completed") && (
@@ -149,19 +164,6 @@ export function AppointmentViewModal({
                 </button>
               )}
             </>
-          )}
-
-          {appointment.status === "completed" && onPrintInvoice && (
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                onPrintInvoice(appointment);
-              }}
-              className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition cursor-pointer"
-            >
-              Print Invoice
-            </button>
           )}
         </div>
       }

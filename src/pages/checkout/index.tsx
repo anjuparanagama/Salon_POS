@@ -168,6 +168,7 @@ export function CheckoutPage() {
     const cleanPhone = (apt.clientPhone || "").replace(/[^\d+]/g, "");
     setWaPhone(cleanPhone.startsWith("0") ? `+94${cleanPhone.slice(1)}` : cleanPhone || "+94");
     setIncludeApptServices(true);
+    setErrorMsg(null);
   };
 
   // Switch / reset to walk-in sale
@@ -645,6 +646,14 @@ Hotline: +94 11 234 5678`;
                           ? `${formatAppointmentId(selectedAppointment)} • ${selectedAppointment.clientName} (${selectedAppointment.time || "Scheduled"})`
                           : "Selling salon retail products or ad-hoc services without prior booking"}
                       </p>
+                      {selectedAppointment && selectedAppointment.hasInvoice && (
+                        <div className="mt-2 flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs text-emerald-800">
+                          <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600" />
+                          <span>
+                            Previous Invoice: <strong>#{selectedAppointment.invoiceNumber || "INV"}</strong> (Additional billing enabled)
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -670,7 +679,7 @@ Hotline: +94 11 234 5678`;
                           -- Load Appointment --
                         </option>
                         {recentAppointments
-                          .filter((a) => a.status !== "completed" && a.status !== "cancelled")
+                          .filter((a) => a.status !== "cancelled")
                           .map((a) => (
                             <option key={a.id} value={a.id}>
                               {formatAppointmentId(a)}: {a.clientName} ({a.time || a.date})

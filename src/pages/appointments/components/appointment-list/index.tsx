@@ -1,4 +1,4 @@
-import { Clock, Phone, User, Check, Eye, Pencil, ChevronDown, Loader2, CreditCard } from "lucide-react";
+import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown, Loader2, CreditCard } from "lucide-react";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { formatAppointmentId } from "../../../../helpers/format-id.helper";
@@ -79,6 +79,7 @@ export function AppointmentList({
   onApprove,
   onView,
   onEdit,
+  onPrintInvoice,
   onCheckout,
   isLoading = false,
   visibleColumns = {},
@@ -253,7 +254,7 @@ export function AppointmentList({
                   {showActions && (
                     <td className="sticky right-0 z-10 bg-white group-hover:bg-slate-50 whitespace-nowrap px-5 py-4 text-right shadow-[-6px_0_10px_-4px_rgba(0,0,0,0.06)] border-l border-slate-100 transition-colors w-[130px] min-w-[130px]">
                     <div className="inline-flex items-center justify-end gap-1.5">
-                      {/* 1. New / Pending Appointments -> Approve Button (Icon + Text) */}
+                      {/* 1. Pending Appointments -> Approve Button */}
                       {apt.status === "pending" && (
                         <button
                           type="button"
@@ -269,7 +270,7 @@ export function AppointmentList({
                         </button>
                       )}
 
-                      {/* 2. Active & Completed Appointments -> Checkout, View & Edit */}
+                      {/* 2. Active or Completed Appointments -> Always Show Checkout */}
                       {(apt.status === "confirmed" ||
                         apt.status === "in_progress" ||
                         apt.status === "completed") && (
@@ -284,6 +285,19 @@ export function AppointmentList({
                             <CreditCard className="size-3" />
                             <span>Checkout</span>
                           </button>
+
+                          {/* If already has invoice, also show Print Bill icon button */}
+                          {apt.hasInvoice && (
+                            <button
+                              type="button"
+                              onClick={() => onPrintInvoice?.(apt)}
+                              title={apt.invoiceNumber ? `Print Bill (${apt.invoiceNumber})` : "Print Bill"}
+                              aria-label="Print Bill"
+                              className="rounded-md p-1.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                            >
+                              <Printer className="size-4" />
+                            </button>
+                          )}
 
                           <button
                             type="button"
@@ -309,7 +323,7 @@ export function AppointmentList({
                         </>
                       )}
 
-                      {/* 4. Cancelled Appointments -> View Details (Icon Only, No Border) */}
+                      {/* 3. Cancelled Appointments -> View Details */}
                       {apt.status === "cancelled" && (
                         <button
                           type="button"

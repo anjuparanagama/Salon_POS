@@ -265,6 +265,9 @@ export function normalizeAppointment(
     price: totalPrice,
     status: normalizeStatus(raw.status as string),
     notes: typeof raw.notes === "string" ? raw.notes : fallbackFormData?.notes,
+    hasInvoice: Boolean((raw as any).has_invoice || (raw as any).hasInvoice || (raw as any).invoice || (raw as any).invoice_id),
+    invoiceId: ((raw as any).invoice_id || (raw as any).invoiceId || (raw as any).invoice?.id) ? String((raw as any).invoice_id || (raw as any).invoiceId || (raw as any).invoice?.id) : undefined,
+    invoiceNumber: ((raw as any).invoice_number || (raw as any).invoiceNumber || (raw as any).invoice?.invoice_number) ? String((raw as any).invoice_number || (raw as any).invoiceNumber || (raw as any).invoice?.invoice_number) : undefined,
   };
 }
 

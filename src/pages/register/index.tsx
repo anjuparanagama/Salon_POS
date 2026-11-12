@@ -44,13 +44,11 @@ export function Register() {
   // Step 3 State: Salon details
   const [salonForm, setSalonForm] = useState<SalonDetailsFormData>({
     salonName: "",
-    slug: "",
     salonPhone: "",
     salonEmail: "",
     address: "",
     city: "Colombo",
     district: "Colombo",
-    salonType: "Unisex Hair & Beauty Salon",
     currency: "LKR",
     timezone: "Asia/Colombo",
   });
@@ -179,13 +177,11 @@ export function Register() {
         phone: ownerForm.phone.trim(),
         password: ownerForm.password,
         salon_name: salonForm.salonName.trim(),
-        slug: salonForm.slug.trim() || undefined,
         salon_phone: salonForm.salonPhone.trim() || undefined,
         salon_email: salonForm.salonEmail.trim() || undefined,
         address: salonForm.address.trim() || undefined,
         city: salonForm.city.trim() || undefined,
         district: salonForm.district.trim() || undefined,
-        salon_type: salonForm.salonType,
         currency: salonForm.currency || "LKR",
         timezone: salonForm.timezone || "Asia/Colombo",
       });

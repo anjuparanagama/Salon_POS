@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { CheckCircle2, Copy, LayoutDashboard, Sparkles, Store, Check, ArrowRight, UserCheck } from "lucide-react";
+import { CheckCircle2, LayoutDashboard, Sparkles, Store, Check, ArrowRight, UserCheck } from "lucide-react";
 import type { RegisterCompleteApiResponse } from "../../../services/auth.service";
 
 interface Step4RegistrationCompleteProps {
@@ -13,16 +12,7 @@ export function Step4RegistrationComplete({
   onLaunchDashboard,
   onGoToLogin,
 }: Step4RegistrationCompleteProps) {
-  const [copied, setCopied] = useState(false);
   const { salon, user } = registrationResult;
-
-  const publicUrl = `https://${salon.slug}.salora.lk`;
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(publicUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <div className="w-full text-center">
@@ -43,7 +33,7 @@ export function Step4RegistrationComplete({
         Welcome to Salora POS!
       </h2>
       <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
-        Your salon workspace has been initialized with automated business hours, staff roles, and an online booking site.
+        Your salon workspace has been initialized with automated business hours and staff roles.
       </p>
 
       {/* Salon Details Summary Card */}
@@ -56,35 +46,6 @@ export function Step4RegistrationComplete({
             <h3 className="text-base font-bold text-slate-900">{salon.name}</h3>
             <p className="text-xs text-slate-500">{salon.address || "Sri Lanka"}</p>
           </div>
-        </div>
-
-        {/* Public Website URL with Copy button */}
-        <div className="rounded-xl border border-slate-200 bg-white p-3 flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <span className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-              Client Booking Storefront
-            </span>
-            <span className="text-xs sm:text-sm font-mono font-semibold text-primary truncate block">
-              {publicUrl}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={handleCopyLink}
-            className="flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 transition shrink-0 cursor-pointer"
-          >
-            {copied ? (
-              <>
-                <Check className="size-3.5 text-emerald-600" />
-                <span className="text-emerald-700">Copied</span>
-              </>
-            ) : (
-              <>
-                <Copy className="size-3.5" />
-                <span>Copy</span>
-              </>
-            )}
-          </button>
         </div>
 
         {/* Provisioned features list */}
