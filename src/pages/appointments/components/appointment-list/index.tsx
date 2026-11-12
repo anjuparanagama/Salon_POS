@@ -1,4 +1,4 @@
-import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown, Loader2, CreditCard } from "lucide-react";
+import { Clock, Phone, User, Check, Eye, Pencil, ChevronDown, Loader2, CreditCard } from "lucide-react";
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { formatAppointmentId } from "../../../../helpers/format-id.helper";
@@ -79,7 +79,6 @@ export function AppointmentList({
   onApprove,
   onView,
   onEdit,
-  onPrintInvoice,
   onCheckout,
   isLoading = false,
   visibleColumns = {},
@@ -270,8 +269,10 @@ export function AppointmentList({
                         </button>
                       )}
 
-                      {/* 2. Approved Appointments (Confirmed & In Progress) -> Checkout, View & Edit */}
-                      {(apt.status === "confirmed" || apt.status === "in_progress") && (
+                      {/* 2. Active & Completed Appointments -> Checkout, View & Edit */}
+                      {(apt.status === "confirmed" ||
+                        apt.status === "in_progress" ||
+                        apt.status === "completed") && (
                         <>
                           <button
                             type="button"
@@ -294,41 +295,17 @@ export function AppointmentList({
                             <Eye className="size-4" />
                           </button>
 
-                          <button
-                            type="button"
-                            onClick={() => onEdit?.(apt)}
-                            title="Edit Appointment"
-                            aria-label="Edit Appointment"
-                            className="rounded-md p-1.5 text-primary hover:bg-primary-lighter/60 hover:text-primary-dark transition cursor-pointer"
-                          >
-                            <Pencil className="size-4" />
-                          </button>
-                        </>
-                      )}
-
-                      {/* 3. Completed Appointments -> Print Bill & View */}
-                      {apt.status === "completed" && (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => onPrintInvoice?.(apt)}
-                            title="Print Bill"
-                            aria-label="Print Bill"
-                            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                          >
-                            <Printer className="size-3.5 text-slate-500" />
-                            <span>Print Bill</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => onView?.(apt)}
-                            title="View Appointment"
-                            aria-label="View Appointment"
-                            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                          >
-                            <Eye className="size-4" />
-                          </button>
+                          {apt.status !== "completed" && (
+                            <button
+                              type="button"
+                              onClick={() => onEdit?.(apt)}
+                              title="Edit Appointment"
+                              aria-label="Edit Appointment"
+                              className="rounded-md p-1.5 text-primary hover:bg-primary-lighter/60 hover:text-primary-dark transition cursor-pointer"
+                            >
+                              <Pencil className="size-4" />
+                            </button>
+                          )}
                         </>
                       )}
 

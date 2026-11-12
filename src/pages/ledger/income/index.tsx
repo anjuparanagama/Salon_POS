@@ -20,7 +20,7 @@ export function LedgerIncome() {
   const { records, isLoading } = useIncomeLedger();
   const [filters, setFilters] = useState<IncomeFilterState>(initialFilters);
 
-  const [pageSize, setPageSize] = useState<number>(100);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     saleId: true,

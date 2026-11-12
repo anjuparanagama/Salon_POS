@@ -142,7 +142,7 @@ export function Appointments() {
     date: "",
   });
 
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({

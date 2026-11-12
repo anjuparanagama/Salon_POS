@@ -121,7 +121,8 @@ export function AppointmentViewModal({
           </button>
 
           {(appointment.status === "confirmed" ||
-            appointment.status === "in_progress") && (
+            appointment.status === "in_progress" ||
+            appointment.status === "completed") && (
             <>
               {onCheckout && (
                 <button
@@ -135,7 +136,7 @@ export function AppointmentViewModal({
                   Checkout & Bill
                 </button>
               )}
-              {onEdit && (
+              {appointment.status !== "completed" && onEdit && (
                 <button
                   type="button"
                   onClick={() => {

@@ -712,10 +712,9 @@ export function StaffSettingsView({
                     }}
                     className="appearance-none rounded-lg border border-slate-200 bg-white pl-2.5 pr-6 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-primary cursor-pointer shadow-2xs"
                   >
-                    <option value={5}>5</option>
                     <option value={10}>10</option>
-                    <option value={20}>20</option>
                     <option value={50}>50</option>
+                    <option value={100}>100</option>
                   </select>
                   <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 size-3 text-slate-400" />
                 </div>

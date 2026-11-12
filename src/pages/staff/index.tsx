@@ -38,7 +38,7 @@ export function Staff() {
     sortBy: "name",
   });
 
-  const [pageSize, setPageSize] = useState<number>(100);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     id: true,

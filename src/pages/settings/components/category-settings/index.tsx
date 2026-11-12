@@ -1,26 +1,43 @@
 import { useState, useEffect, useMemo, type FormEvent } from "react";
 import {
   Plus,
-  Search,
   Trash2,
   AlertCircle,
   X,
   Loader2,
   RefreshCw,
   FolderTree,
-  ChevronDown,
   ChevronsUpDown,
-  Download,
-  Columns3,
   Pencil,
 } from "lucide-react";
 import Pagination from "../../../../components/pagination";
+import TableToolbar, {
+  type AvailableColumn,
+  type SearchFieldOption,
+} from "../../../../components/table-toolbar";
 import { productsService } from "../../../../services/products.service";
 import { servicesService } from "../../../../services/services.service";
 import { ledgerService } from "../../../../services/ledger.service";
 import type { CategoryItem, CategoryFormData } from "../../../../interface/category.types";
 
 export type CategoryKind = "product" | "service" | "expense";
+
+const AVAILABLE_CATEGORY_COLUMNS: AvailableColumn[] = [
+  { key: "catId", label: "Category ID" },
+  { key: "name", label: "Category Name" },
+  { key: "slug", label: "Code / Slug" },
+  { key: "description", label: "Description" },
+  { key: "itemCount", label: "Item Count" },
+  { key: "status", label: "Status" },
+  { key: "actions", label: "Actions" },
+];
+
+const CATEGORY_SEARCH_OPTIONS: SearchFieldOption[] = [
+  { label: "Category Name", value: "name" },
+  { label: "Code / Slug", value: "slug" },
+  { label: "Category ID", value: "id" },
+  { label: "All Fields", value: "all" },
+];
 
 export interface CategorySettingsViewProps {
   activeTab?: CategoryKind;
@@ -50,7 +67,6 @@ export default function CategorySettingsView({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortField, setSortField] = useState<"catCode" | "label" | "value" | "itemCount" | "active">("catCode");
   const [sortAsc, setSortAsc] = useState<boolean>(true);
-  const [showColumnMenu, setShowColumnMenu] = useState<boolean>(false);
   const [visibleColumns, setVisibleColumns] = useState({
     catId: true,
     name: true,
@@ -383,164 +399,64 @@ export default function CategorySettingsView({
 
   return (
     <div className="flex flex-col gap-4 text-slate-900 animate-in fade-in duration-150">
-      {/* Integrated Toolbar matching StoreMate reference */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        {/* Left: Combined Search input with dropdown prefix [ Category Name ▾ | Search... 🔍 ] */}
-        <div className="flex items-center rounded-lg border border-slate-200 bg-white shadow-2xs focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition w-full sm:w-96">
-          <div className="relative border-r border-slate-200 shrink-0">
-            <select
-              value={searchField}
-              onChange={(e) => setSearchField(e.target.value as "name" | "slug" | "id" | "all")}
-              className="appearance-none bg-transparent pl-3 pr-7 py-2 text-xs font-medium text-slate-700 focus:outline-none cursor-pointer"
-            >
-              <option value="name">Category Name</option>
-              <option value="slug">Code / Slug</option>
-              <option value="id">Category ID</option>
-              <option value="all">All Fields</option>
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-3 text-slate-400" />
-          </div>
-
-          <div className="relative flex-1 flex items-center">
-            <input
-              type="text"
-              placeholder={`Search ${activeTab === "product" ? "product" : activeTab === "service" ? "service" : "expense"} categories...`}
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full bg-transparent pl-3 pr-8 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
-            />
-            <Search className="pointer-events-none absolute right-2.5 size-4 text-slate-400" />
-          </div>
-        </div>
-
-        {/* Right: Page Size, Column Toggle, Refresh, Export CSV, + Add Category */}
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-end">
-          {/* Page size selector */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
-            <span>Page size</span>
-            <div className="relative">
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="appearance-none rounded-lg border border-slate-200 bg-white pl-2.5 pr-6 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-primary cursor-pointer shadow-2xs"
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 size-3 text-slate-400" />
-            </div>
-          </div>
-
-          {/* Column toggle button */}
-          <div className="relative">
+      {/* Integrated Reusable TableToolbar */}
+      <TableToolbar
+        search={searchQuery}
+        onSearchChange={(val) => {
+          setSearchQuery(val);
+          setCurrentPage(1);
+        }}
+        searchField={searchField}
+        onSearchFieldChange={(val) =>
+          setSearchField(val as "name" | "slug" | "id" | "all")
+        }
+        searchFieldOptions={CATEGORY_SEARCH_OPTIONS}
+        searchPlaceholder={`Search ${activeTab === "product" ? "product" : activeTab === "service" ? "service" : "expense"} categories...`}
+        pageSize={pageSize}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setCurrentPage(1);
+        }}
+        pageSizeOptions={[10, 50, 100]}
+        availableColumns={AVAILABLE_CATEGORY_COLUMNS}
+        visibleColumns={visibleColumns}
+        onToggleColumn={(colKey) =>
+          setVisibleColumns((prev) => ({
+            ...prev,
+            [colKey]: !prev[colKey as keyof typeof prev],
+          }))
+        }
+        onExportCsv={handleExportCSV}
+        extraRight={
+          <>
+            {/* Refresh Button */}
             <button
               type="button"
-              onClick={() => setShowColumnMenu((p) => !p)}
+              onClick={
+                activeTab === "product"
+                  ? loadProductCategories
+                  : activeTab === "service"
+                  ? loadServiceCategories
+                  : loadExpenseCategories
+              }
               className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
-              title="Toggle visible columns"
+              title="Refresh categories"
             >
-              <Columns3 className="size-4" />
+              <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
             </button>
 
-            {showColumnMenu && (
-              <div className="absolute right-0 top-full mt-1.5 z-40 w-44 rounded-xl border border-slate-200 bg-white p-2.5 shadow-xl text-xs flex flex-col gap-1.5">
-                <div className="font-semibold text-slate-700 pb-1 border-b border-slate-100">
-                  Visible Columns
-                </div>
-                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.catId}
-                    onChange={() => setVisibleColumns((p) => ({ ...p, catId: !p.catId }))}
-                    className="rounded accent-primary"
-                  />
-                  <span>Category ID</span>
-                </label>
-                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.slug}
-                    onChange={() => setVisibleColumns((p) => ({ ...p, slug: !p.slug }))}
-                    className="rounded accent-primary"
-                  />
-                  <span>Code / Slug</span>
-                </label>
-                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.description}
-                    onChange={() => setVisibleColumns((p) => ({ ...p, description: !p.description }))}
-                    className="rounded accent-primary"
-                  />
-                  <span>Description</span>
-                </label>
-                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.itemCount}
-                    onChange={() => setVisibleColumns((p) => ({ ...p, itemCount: !p.itemCount }))}
-                    className="rounded accent-primary"
-                  />
-                  <span>Item Count</span>
-                </label>
-                <label className="flex items-center gap-2 px-1 py-0.5 rounded hover:bg-slate-50 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.status}
-                    onChange={() => setVisibleColumns((p) => ({ ...p, status: !p.status }))}
-                    className="rounded accent-primary"
-                  />
-                  <span>Status</span>
-                </label>
-              </div>
-            )}
-          </div>
-
-          {/* Refresh Button */}
-          <button
-            type="button"
-            onClick={
-              activeTab === "product"
-                ? loadProductCategories
-                : activeTab === "service"
-                ? loadServiceCategories
-                : loadExpenseCategories
-            }
-            className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
-            title="Refresh categories"
-          >
-            <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
-          </button>
-
-          {/* Export / Download CSV */}
-          <button
-            type="button"
-            onClick={handleExportCSV}
-            className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
-            title="Download categories as CSV"
-          >
-            <Download className="size-4" />
-          </button>
-
-          {/* Primary Action Button: + Add Category */}
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
-          >
-            <Plus className="size-4" />
-            <span>Add Category</span>
-          </button>
-        </div>
-      </div>
+            {/* Primary Action Button: + Add Category */}
+            <button
+              type="button"
+              onClick={handleOpenCreate}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
+            >
+              <Plus className="size-4" />
+              <span>Add Category</span>
+            </button>
+          </>
+        }
+      />
 
       {/* Clean Data Table Container */}
       <div className="overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-2xs">
