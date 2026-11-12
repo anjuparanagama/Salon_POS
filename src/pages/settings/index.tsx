@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router";
 import {
   ArrowLeft,
   BellRing,
-  CalendarClock,
+  // CalendarClock,
   FolderTree,
   LayoutTemplate,
   SlidersHorizontal,
@@ -11,7 +11,7 @@ import {
 import Header from "../../components/header";
 import SettingsCard from "./components/settings-card";
 import GeneralSettingsView from "./components/general-settings";
-import AppointmentsSettingsView from "./components/appointments-settings";
+// import AppointmentsSettingsView from "./components/appointments-settings";
 import StaffSettingsView from "./components/staff-settings";
 import LayoutSettingsView from "./components/layout-settings";
 import NotificationSettingsView from "./components/notification-settings";
@@ -30,17 +30,17 @@ export const SETTINGS_ITEMS: SettingsCardItem[] = [
     accentColor: "text-blue-600 hover:text-blue-700",
     borderColor: "hover:border-blue-300",
   },
-  {
-    id: "appointments",
-    title: "Appointments Settings",
-    description: "Booking rules, slot durations, buffer intervals, and cancellation policies.",
-    icon: CalendarClock,
-    bannerBg: "bg-[#FFF0F4]",
-    badgeBg: "bg-white text-[#D9145A]",
-    badgeBorder: "border border-rose-100",
-    accentColor: "text-[#D9145A] hover:text-[#B31350]",
-    borderColor: "hover:border-rose-300",
-  },
+  // {
+  //   id: "appointments",
+  //   title: "Appointments Settings",
+  //   description: "Booking rules, slot durations, buffer intervals, and cancellation policies.",
+  //   icon: CalendarClock,
+  //   bannerBg: "bg-[#FFF0F4]",
+  //   badgeBg: "bg-white text-[#D9145A]",
+  //   badgeBorder: "border border-rose-100",
+  //   accentColor: "text-[#D9145A] hover:text-[#B31350]",
+  //   borderColor: "hover:border-rose-300",
+  // },
   {
     id: "staff",
     title: "Staff Settings",
@@ -291,7 +291,7 @@ export function Settings() {
           {activeSection === "general" && (
             <GeneralSettingsView activeTab={generalTab} onTabChange={setGeneralTab} />
           )}
-          {activeSection === "appointments" && <AppointmentsSettingsView />}
+          {/* {activeSection === "appointments" && <AppointmentsSettingsView />} */}
           {activeSection === "staff" && (
             <StaffSettingsView activeTab={staffTab} onTabChange={setStaffTab} />
           )}
