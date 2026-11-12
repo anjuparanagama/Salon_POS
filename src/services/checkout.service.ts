@@ -103,13 +103,11 @@ export const checkoutService = {
       );
       return res.data;
     } catch (err: any) {
-      // Fallback: If remote backend has not deployed the new /checkout route yet or returns server error (404 / 500),
+      // Fallback: If remote backend has not deployed the new /checkout route yet (404),
       // seamlessly fallback to the appointment invoice generation + payment endpoint
-      if (err.response?.status === 404 || err.response?.status === 500) {
+      if (err.response?.status === 404) {
         console.warn(
-          "Appointment /checkout returned",
-          err.response?.status,
-          "- Falling back to appointment invoice & payment API..."
+          "Appointment /checkout returned 404 - Falling back to appointment invoice & payment API..."
         );
         const invoiceRes = await apiClient.post<any>(
           API_ENDPOINTS.APPOINTMENTS.INVOICE(appointmentId)

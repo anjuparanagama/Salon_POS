@@ -278,18 +278,30 @@ export function AppointmentList({
                         </>
                       )}
 
-                      {/* 3. Completed Appointments -> Print Bill Button (Icon + Text, No Background or Border) */}
+                      {/* 3. Completed Appointments -> Print Bill & View */}
                       {apt.status === "completed" && (
-                        <button
-                          type="button"
-                          onClick={() => onPrintInvoice?.(apt)}
-                          title="Print Bill"
-                          aria-label="Print Bill"
-                          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                        >
-                          <Printer className="size-3.5 text-slate-500" />
-                          <span>Print Bill</span>
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => onPrintInvoice?.(apt)}
+                            title="Print Bill"
+                            aria-label="Print Bill"
+                            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                          >
+                            <Printer className="size-3.5 text-slate-500" />
+                            <span>Print Bill</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => onView?.(apt)}
+                            title="View Appointment"
+                            aria-label="View Appointment"
+                            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                          >
+                            <Eye className="size-4" />
+                          </button>
+                        </>
                       )}
 
                       {/* 4. Cancelled Appointments -> View Details (Icon Only, No Border) */}
