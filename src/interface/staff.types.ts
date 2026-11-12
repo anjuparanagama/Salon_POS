@@ -51,6 +51,7 @@ export type StaffStats = {
 
 export type StaffFilterState = {
   search: string;
+  searchField?: "all" | "name" | "role" | "phone" | "email";
   role: "all" | StaffRole;
   status: "all" | StaffStatus;
   sortBy: "name" | "rating" | "appointments" | "revenue";

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { Plus, Share2, ShoppingBag } from "lucide-react";
+import { Plus, Share2, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
 import { ROUTES } from "../../routes/sidebar.routes";
 import type {
   Product,
@@ -72,6 +72,7 @@ export function Products() {
   // Filters State
   const [filters, setFilters] = useState<ProductFilterState>({
     search: "",
+    searchField: "name",
     category: "all",
     brand: "all",
     stockStatus: "all",
@@ -79,19 +80,47 @@ export function Products() {
     sortBy: "name",
   });
 
+  const [pageSize, setPageSize] = useState<number>(100);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    product: true,
+    sku: true,
+    category: true,
+    description: true,
+    price: true,
+    stock: true,
+    status: true,
+    actions: true,
+  });
+
   const handleFilterChange = (updated: Partial<ProductFilterState>) => {
     setFilters((prev) => ({ ...prev, ...updated }));
+    setCurrentPage(1);
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
+
+  const handleToggleColumn = (columnKey: string) => {
+    setVisibleColumns((prev) => ({
+      ...prev,
+      [columnKey]: prev[columnKey] === false ? true : false,
+    }));
   };
 
   const handleResetFilters = () => {
     setFilters({
       search: "",
+      searchField: "name",
       category: "all",
       brand: "all",
       stockStatus: "all",
       status: "all",
       sortBy: "name",
     });
+    setCurrentPage(1);
   };
 
   // Open Handlers
@@ -206,13 +235,27 @@ export function Products() {
   const filteredProducts = useMemo(() => {
     return products
       .filter((p) => {
-        // Search filter: Name or SKU
+        // Search filter
         if (filters.search.trim()) {
           const query = filters.search.toLowerCase();
-          const matchesName = p.name.toLowerCase().includes(query);
-          const matchesSku = p.sku.toLowerCase().includes(query);
-          const matchesBrand = p.brand?.toLowerCase().includes(query) ?? false;
-          if (!matchesName && !matchesSku && !matchesBrand) return false;
+          const searchField = filters.searchField || "name";
+
+          if (searchField === "name") {
+            if (!p.name.toLowerCase().includes(query)) return false;
+          } else if (searchField === "sku") {
+            if (!p.sku.toLowerCase().includes(query)) return false;
+          } else if (searchField === "brand") {
+            if (!p.brand?.toLowerCase().includes(query)) return false;
+          } else if (searchField === "category") {
+            if (!p.category.toLowerCase().includes(query)) return false;
+          } else {
+            const matchesName = p.name.toLowerCase().includes(query);
+            const matchesSku = p.sku.toLowerCase().includes(query);
+            const matchesBrand = p.brand?.toLowerCase().includes(query) ?? false;
+            const matchesCategory = p.category.toLowerCase().includes(query);
+            const matchesDesc = p.description?.toLowerCase().includes(query) ?? false;
+            if (!matchesName && !matchesSku && !matchesBrand && !matchesCategory && !matchesDesc) return false;
+          }
         }
 
         // Category filter
@@ -253,6 +296,43 @@ export function Products() {
         return a.name.localeCompare(b.name);
       });
   }, [products, filters]);
+
+  // Paginated Products
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredProducts.slice(start, start + pageSize);
+  }, [filteredProducts, currentPage, pageSize]);
+
+  // Export CSV
+  const handleExportCsv = () => {
+    if (filteredProducts.length === 0) return;
+    const headers = ["Product Name", "SKU", "Brand", "Category", "Description", "Selling Price", "Cost Price", "Stock", "Status"];
+    const rows = filteredProducts.map((p) => [
+      `"${p.name.replace(/"/g, '""')}"`,
+      `"${p.sku}"`,
+      `"${(p.brand || "").replace(/"/g, '""')}"`,
+      `"${p.category}"`,
+      `"${(p.description || "").replace(/"/g, '""')}"`,
+      p.sellingPrice,
+      p.costPrice,
+      p.stock,
+      p.status,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `products_export_${new Date().toISOString().slice(0, 10)}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="flex flex-col gap-5 text-slate-900">
@@ -305,11 +385,16 @@ export function Products() {
         onResetFilters={handleResetFilters}
         categories={categories}
         brands={brands}
+        pageSize={pageSize}
+        onPageSizeChange={handlePageSizeChange}
+        visibleColumns={visibleColumns}
+        onToggleColumn={handleToggleColumn}
+        onExportCsv={handleExportCsv}
       />
 
       {/* 4. Products Table */}
       <ProductList
-        products={filteredProducts}
+        products={paginatedProducts}
         categories={categories}
         isLoading={isLoading}
         onView={handleOpenView}
@@ -317,7 +402,57 @@ export function Products() {
         onQuickStockIn={handleOpenStockIn}
         onQuickAdjust={handleOpenStockAdjust}
         onToggleStatus={handleToggleStatus}
+        visibleColumns={visibleColumns}
       />
+
+      {/* Pagination Footer */}
+      {filteredProducts.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 text-xs text-slate-600 border-t border-slate-100">
+          <div>
+            Showing{" "}
+            <span className="font-semibold text-slate-900">
+              {Math.min((currentPage - 1) * pageSize + 1, filteredProducts.length)}
+            </span>{" "}
+            to{" "}
+            <span className="font-semibold text-slate-900">
+              {Math.min(currentPage * pageSize, filteredProducts.length)}
+            </span>{" "}
+            of{" "}
+            <span className="font-semibold text-slate-900">
+              {filteredProducts.length}
+            </span>{" "}
+            items
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage <= 1}
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              <ChevronLeft className="size-3.5" />
+              <span>Previous</span>
+            </button>
+            <span className="px-2 font-medium text-slate-700">
+              Page {currentPage} of {Math.max(1, Math.ceil(filteredProducts.length / pageSize))}
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  prev < Math.ceil(filteredProducts.length / pageSize) ? prev + 1 : prev
+                )
+              }
+              disabled={currentPage >= Math.ceil(filteredProducts.length / pageSize)}
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              <span>Next</span>
+              <ChevronRight className="size-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 5. Right Slider Side Panel for Add & Edit Product */}
       <ProductPanel

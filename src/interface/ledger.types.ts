@@ -26,6 +26,7 @@ export type IncomeStats = {
 
 export type IncomeFilterState = {
   search: string;
+  searchField?: "all" | "saleId" | "customer" | "description";
   startDate: string;
   endDate: string;
   incomeType: IncomeFilterType;
@@ -74,6 +75,7 @@ export type ExpenseStats = {
 
 export type ExpenseFilterState = {
   search: string;
+  searchField?: "all" | "title" | "description";
   startDate: string;
   endDate: string;
   category: ExpenseCategory;

@@ -18,6 +18,7 @@ export type ProductListProps = {
   onQuickAdjust?: (product: Product) => void;
   onToggleStatus?: (productId: string) => void;
   isLoading?: boolean;
+  visibleColumns?: Record<string, boolean>;
 };
 
 export function ProductList({
@@ -29,6 +30,7 @@ export function ProductList({
   onQuickAdjust: _onQuickAdjust,
   onToggleStatus,
   isLoading = false,
+  visibleColumns = {},
 }: ProductListProps) {
   if (isLoading && products.length === 0) {
     return (
@@ -83,34 +85,50 @@ export function ProductList({
         <table className="w-full text-left text-xs whitespace-nowrap">
           <thead className="border-b border-slate-100 bg-slate-50/80 font-semibold text-slate-600 uppercase tracking-wider text-[11px]">
             <tr>
-              <th scope="col" className="px-3.5 py-2.5 min-w-[240px]">
-                Product
-              </th>
-              <th scope="col" className="px-3 py-2.5 min-w-[110px]">
-                SKU
-              </th>
-              <th scope="col" className="px-3 py-2.5 min-w-[120px]">
-                Category
-              </th>
-              <th scope="col" className="px-3 py-2.5 min-w-[180px] max-w-[260px]">
-                Description
-              </th>
-              <th scope="col" className="px-3 py-2.5 text-right min-w-[110px]">
-                Selling Price
-              </th>
-              <th scope="col" className="px-3 py-2.5 text-center min-w-[120px]">
-                Stock
-              </th>
-              <th scope="col" className="px-3 py-2.5 text-center min-w-[100px]">
-                Status
-              </th>
+              {visibleColumns.product !== false && (
+                <th scope="col" className="px-3.5 py-2.5 min-w-[240px]">
+                  Product
+                </th>
+              )}
+              {visibleColumns.sku !== false && (
+                <th scope="col" className="px-3 py-2.5 min-w-[110px]">
+                  SKU
+                </th>
+              )}
+              {visibleColumns.category !== false && (
+                <th scope="col" className="px-3 py-2.5 min-w-[120px]">
+                  Category
+                </th>
+              )}
+              {visibleColumns.description !== false && (
+                <th scope="col" className="px-3 py-2.5 min-w-[180px] max-w-[260px]">
+                  Description
+                </th>
+              )}
+              {visibleColumns.price !== false && (
+                <th scope="col" className="px-3 py-2.5 text-right min-w-[110px]">
+                  Selling Price
+                </th>
+              )}
+              {visibleColumns.stock !== false && (
+                <th scope="col" className="px-3 py-2.5 text-center min-w-[120px]">
+                  Stock
+                </th>
+              )}
+              {visibleColumns.status !== false && (
+                <th scope="col" className="px-3 py-2.5 text-center min-w-[100px]">
+                  Status
+                </th>
+              )}
               {/* Sticky Right Fixed Actions Header */}
-              <th
-                scope="col"
-                className="sticky right-0 z-20 bg-slate-50/95 backdrop-blur-xs px-3.5 py-2.5 text-center min-w-[90px]"
-              >
-                Actions
-              </th>
+              {visibleColumns.actions !== false && (
+                <th
+                  scope="col"
+                  className="sticky right-0 z-20 bg-slate-50/95 backdrop-blur-xs px-3.5 py-2.5 text-center min-w-[90px]"
+                >
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-[11px]">
@@ -126,133 +144,149 @@ export function ProductList({
                   onClick={() => onView(item)}
                 >
                   {/* Product: Image + Name (Single compact line) */}
-                  <td className="px-3.5 py-2">
-                    <div className="flex items-center gap-2.5">
-                      <div className="relative size-8 shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-100 flex items-center justify-center">
-                        {item.imageUrl ? (
-                          <img
-                            src={item.imageUrl}
-                            alt={item.name}
-                            className="size-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = "none";
-                            }}
-                          />
-                        ) : (
-                          <Package className="size-4 text-slate-400" />
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="font-semibold text-slate-900 group-hover:text-primary transition-colors truncate max-w-[220px]">
-                          {item.name}
-                        </span>
-                        {item.brand && (
-                          <span className="text-[10px] text-slate-400 font-normal shrink-0">
-                            • {item.brand}
+                  {visibleColumns.product !== false && (
+                    <td className="px-3.5 py-2">
+                      <div className="flex items-center gap-2.5">
+                        <div className="relative size-8 shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-100 flex items-center justify-center">
+                          {item.imageUrl ? (
+                            <img
+                              src={item.imageUrl}
+                              alt={item.name}
+                              className="size-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <Package className="size-4 text-slate-400" />
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="font-semibold text-slate-900 group-hover:text-primary transition-colors truncate max-w-[220px]">
+                            {item.name}
                           </span>
-                        )}
+                          {item.brand && (
+                            <span className="text-[10px] text-slate-400 font-normal shrink-0">
+                              • {item.brand}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </td>
+                    </td>
+                  )}
 
                   {/* SKU */}
-                  <td className="px-3 py-2 font-mono text-[10px] text-slate-600">
-                    <span className="rounded bg-slate-100 px-1.5 py-0.5 font-medium">
-                      {item.sku}
-                    </span>
-                  </td>
+                  {visibleColumns.sku !== false && (
+                    <td className="px-3 py-2 font-mono text-[10px] text-slate-600">
+                      <span className="rounded bg-slate-100 px-1.5 py-0.5 font-medium">
+                        {item.sku}
+                      </span>
+                    </td>
+                  )}
 
                   {/* Category */}
-                  <td className="px-3 py-2">
-                    <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700">
-                      {getCategoryLabel(item.category)}
-                    </span>
-                  </td>
+                  {visibleColumns.category !== false && (
+                    <td className="px-3 py-2">
+                      <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700">
+                        {getCategoryLabel(item.category)}
+                      </span>
+                    </td>
+                  )}
 
                   {/* Description */}
-                  <td className="px-3 py-2 text-slate-600 max-w-[260px]" title={item.description || ""}>
-                    {item.description && item.description.trim() ? (
-                      <span className="truncate block">{item.description.trim()}</span>
-                    ) : (
-                      <span className="text-slate-400 font-medium">-</span>
-                    )}
-                  </td>
+                  {visibleColumns.description !== false && (
+                    <td className="px-3 py-2 text-slate-600 max-w-[260px]" title={item.description || ""}>
+                      {item.description && item.description.trim() ? (
+                        <span className="truncate block">{item.description.trim()}</span>
+                      ) : (
+                        <span className="text-slate-400 font-medium">-</span>
+                      )}
+                    </td>
+                  )}
 
                   {/* Selling Price */}
-                  <td className="px-3 py-2 text-right font-medium text-slate-900">
-                    {formatPrice(item.sellingPrice)}
-                  </td>
+                  {visibleColumns.price !== false && (
+                    <td className="px-3 py-2 text-right font-medium text-slate-900">
+                      {formatPrice(item.sellingPrice)}
+                    </td>
+                  )}
 
                   {/* Stock */}
-                  <td className="px-3 py-2 text-center">
-                    {isOutOfStock ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-semibold text-rose-700">
-                        <AlertCircle className="size-2.5" />
-                        Out of stock (0)
-                      </span>
-                    ) : isLowStock ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
-                        <AlertTriangle className="size-2.5" />
-                        Low ({item.stock})
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-                        {item.stock} in stock
-                      </span>
-                    )}
-                  </td>
+                  {visibleColumns.stock !== false && (
+                    <td className="px-3 py-2 text-center">
+                      {isOutOfStock ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-semibold text-rose-700">
+                          <AlertCircle className="size-2.5" />
+                          Out of stock (0)
+                        </span>
+                      ) : isLowStock ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                          <AlertTriangle className="size-2.5" />
+                          Low ({item.stock})
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                          {item.stock} in stock
+                        </span>
+                      )}
+                    </td>
+                  )}
 
                   {/* Status: Active / Inactive */}
-                  <td
-                    className="px-3 py-2 text-center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => onToggleStatus?.(item.id)}
-                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium transition cursor-pointer ${
-                        isActive
-                          ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
-                      title="Click to toggle status"
+                  {visibleColumns.status !== false && (
+                    <td
+                      className="px-3 py-2 text-center"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <span
-                        className={`mr-1 size-1.5 rounded-full ${
-                          isActive ? "bg-emerald-500" : "bg-slate-400"
+                      <button
+                        type="button"
+                        onClick={() => onToggleStatus?.(item.id)}
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium transition cursor-pointer ${
+                          isActive
+                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                         }`}
-                      />
-                      {isActive ? "Active" : "Inactive"}
-                    </button>
-                  </td>
-
-                  {/* Sticky Right Fixed Actions: Icons ONLY, no borders */}
-                  <td
-                    className="sticky right-0 z-10 bg-white group-hover:bg-slate-50/95 transition-colors px-3 py-2 text-center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="flex items-center justify-center gap-1.5">
-                      {/* View Action - Icon only */}
-                      <button
-                        type="button"
-                        onClick={() => onView(item)}
-                        className="rounded-md p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 transition cursor-pointer"
-                        title="View Details"
+                        title="Click to toggle status"
                       >
-                        <Eye className="size-3.5" />
+                        <span
+                          className={`mr-1 size-1.5 rounded-full ${
+                            isActive ? "bg-emerald-500" : "bg-slate-400"
+                          }`}
+                        />
+                        {isActive ? "Active" : "Inactive"}
                       </button>
+                    </td>
+                  )}
 
-                      {/* Edit Action - Icon only */}
-                      <button
-                        type="button"
-                        onClick={() => onEdit(item)}
-                        className="rounded-md p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 transition cursor-pointer"
-                        title="Edit Product"
-                      >
-                        <Edit3 className="size-3.5" />
-                      </button>
-                    </div>
-                  </td>
+                  {/* Sticky Right Fixed Actions */}
+                  {visibleColumns.actions !== false && (
+                    <td
+                      className="sticky right-0 z-10 bg-white group-hover:bg-slate-50/95 transition-colors px-3 py-2 text-center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center justify-center gap-1.5">
+                        {/* View Action - Icon only */}
+                        <button
+                          type="button"
+                          onClick={() => onView(item)}
+                          className="rounded-md p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 transition cursor-pointer"
+                          title="View Details"
+                        >
+                          <Eye className="size-3.5" />
+                        </button>
+
+                        {/* Edit Action - Icon only */}
+                        <button
+                          type="button"
+                          onClick={() => onEdit(item)}
+                          className="rounded-md p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 transition cursor-pointer"
+                          title="Edit Product"
+                        >
+                          <Edit3 className="size-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               );
             })}

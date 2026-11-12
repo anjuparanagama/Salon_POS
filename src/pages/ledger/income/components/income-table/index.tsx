@@ -5,9 +5,10 @@ import { formatPrice } from "../../../../../helpers/price.helper";
 export type IncomeTableProps = {
   records: IncomeRecord[];
   isLoading?: boolean;
+  visibleColumns?: Record<string, boolean>;
 };
 
-export function IncomeTable({ records, isLoading = false }: IncomeTableProps) {
+export function IncomeTable({ records, isLoading = false, visibleColumns = {} }: IncomeTableProps) {
   if (isLoading && records.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
@@ -37,69 +38,83 @@ export function IncomeTable({ records, isLoading = false }: IncomeTableProps) {
         <table className="w-full text-left text-xs">
           <thead className="border-b border-slate-100 bg-slate-50 font-semibold text-slate-600 uppercase tracking-wider">
             <tr>
-              <th scope="col" className="px-4 py-2.5">Sale ID</th>
-              <th scope="col" className="px-4 py-2.5">Customer</th>
-              <th scope="col" className="px-4 py-2.5">Description</th>
-              <th scope="col" className="px-4 py-2.5">Income Type</th>
-              <th scope="col" className="px-4 py-2.5 text-right">Amount</th>
-              <th scope="col" className="px-4 py-2.5">Payment Method</th>
-              <th scope="col" className="px-4 py-2.5">Date</th>
+              {visibleColumns.saleId !== false && <th scope="col" className="px-4 py-2.5">Sale ID</th>}
+              {visibleColumns.customer !== false && <th scope="col" className="px-4 py-2.5">Customer</th>}
+              {visibleColumns.description !== false && <th scope="col" className="px-4 py-2.5">Description</th>}
+              {visibleColumns.incomeType !== false && <th scope="col" className="px-4 py-2.5">Income Type</th>}
+              {visibleColumns.amount !== false && <th scope="col" className="px-4 py-2.5 text-right">Amount</th>}
+              {visibleColumns.paymentMethod !== false && <th scope="col" className="px-4 py-2.5">Payment Method</th>}
+              {visibleColumns.date !== false && <th scope="col" className="px-4 py-2.5">Date</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {records.map((item) => (
               <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
                 {/* Sale ID */}
-                <td className="whitespace-nowrap px-4 py-2 font-mono font-semibold text-slate-900">
-                  {item.saleId}
-                </td>
+                {visibleColumns.saleId !== false && (
+                  <td className="whitespace-nowrap px-4 py-2 font-mono font-semibold text-slate-900">
+                    {item.saleId}
+                  </td>
+                )}
 
                 {/* Customer */}
-                <td className="whitespace-nowrap px-4 py-2 font-medium text-slate-800">
-                  {item.customerName || "Walk-in"}
-                </td>
+                {visibleColumns.customer !== false && (
+                  <td className="whitespace-nowrap px-4 py-2 font-medium text-slate-800">
+                    {item.customerName || "Walk-in"}
+                  </td>
+                )}
 
                 {/* Description (Dedicated Column) */}
-                <td className="px-4 py-2 text-slate-700">
-                  <span className="line-clamp-1 font-medium" title={item.description || ""}>
-                    {item.description || "-"}
-                  </span>
-                </td>
+                {visibleColumns.description !== false && (
+                  <td className="px-4 py-2 text-slate-700">
+                    <span className="line-clamp-1 font-medium" title={item.description || ""}>
+                      {item.description || "-"}
+                    </span>
+                  </td>
+                )}
 
                 {/* Income Type */}
-                <td className="whitespace-nowrap px-4 py-2">
-                  {item.incomeType === "service" ? (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-pink-200 bg-pink-50 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                      <Scissors className="size-3" />
-                      Service
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-[10px] font-semibold text-purple-700">
-                      <Package className="size-3" />
-                      Product
-                    </span>
-                  )}
-                </td>
+                {visibleColumns.incomeType !== false && (
+                  <td className="whitespace-nowrap px-4 py-2">
+                    {item.incomeType === "service" ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-pink-200 bg-pink-50 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                        <Scissors className="size-3" />
+                        Service
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-[10px] font-semibold text-purple-700">
+                        <Package className="size-3" />
+                        Product
+                      </span>
+                    )}
+                  </td>
+                )}
 
                 {/* Amount */}
-                <td className="whitespace-nowrap px-4 py-2 text-right font-bold text-emerald-600 font-mono text-xs">
-                  {formatPrice(item.amount, { space: true })}
-                </td>
+                {visibleColumns.amount !== false && (
+                  <td className="whitespace-nowrap px-4 py-2 text-right font-bold text-emerald-600 font-mono text-xs">
+                    {formatPrice(item.amount, { space: true })}
+                  </td>
+                )}
 
                 {/* Payment Method */}
-                <td className="whitespace-nowrap px-4 py-2">
-                  <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 px-2 py-0.5 text-slate-700 font-medium capitalize border border-slate-200 text-[11px]">
-                    {item.paymentMethod === "cash" && <Banknote className="size-3 text-emerald-600" />}
-                    {item.paymentMethod === "card" && <CreditCard className="size-3 text-blue-600" />}
-                    {item.paymentMethod === "bank" && <Building2 className="size-3 text-purple-600" />}
-                    <span>{item.paymentMethod === "bank" ? "Bank" : item.paymentMethod === "card" ? "Card" : "Cash"}</span>
-                  </div>
-                </td>
+                {visibleColumns.paymentMethod !== false && (
+                  <td className="whitespace-nowrap px-4 py-2">
+                    <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 px-2 py-0.5 text-slate-700 font-medium capitalize border border-slate-200 text-[11px]">
+                      {item.paymentMethod === "cash" && <Banknote className="size-3 text-emerald-600" />}
+                      {item.paymentMethod === "card" && <CreditCard className="size-3 text-blue-600" />}
+                      {item.paymentMethod === "bank" && <Building2 className="size-3 text-purple-600" />}
+                      <span>{item.paymentMethod === "bank" ? "Bank" : item.paymentMethod === "card" ? "Card" : "Cash"}</span>
+                    </div>
+                  </td>
+                )}
 
                 {/* Date */}
-                <td className="whitespace-nowrap px-4 py-2 text-slate-600 font-mono text-[11px]">
-                  {item.date}
-                </td>
+                {visibleColumns.date !== false && (
+                  <td className="whitespace-nowrap px-4 py-2 text-slate-600 font-mono text-[11px]">
+                    {item.date}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

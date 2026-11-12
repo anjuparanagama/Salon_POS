@@ -29,6 +29,7 @@ export type ServiceStats = {
 
 export type ServiceFilterState = {
   search: string;
+  searchField?: "all" | "name" | "category" | "description";
   category: ServiceCategory;
   sortBy: "name" | "price-asc" | "price-desc" | "duration";
   status?: "all" | "active" | "inactive";

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Layers, Share2, Loader2 } from "lucide-react";
+import { Plus, Layers, Share2, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import type {
   ServiceItem,
   ServiceCategoryItem,
@@ -37,13 +37,37 @@ export function Services() {
 
   const [filters, setFilters] = useState<ServiceFilterState>({
     search: "",
+    searchField: "name",
     category: "all",
     sortBy: "name",
     status: "all",
   });
 
+  const [pageSize, setPageSize] = useState<number>(100);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    category: true,
+    duration: true,
+    price: true,
+    status: true,
+    description: true,
+  });
+
   const handleFilterChange = (updated: Partial<ServiceFilterState>) => {
     setFilters((prev) => ({ ...prev, ...updated }));
+    setCurrentPage(1);
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
+
+  const handleToggleColumn = (columnKey: string) => {
+    setVisibleColumns((prev) => ({
+      ...prev,
+      [columnKey]: prev[columnKey] === false ? true : false,
+    }));
   };
 
   const handleAddCategory = (newCat: ServiceCategoryItem) => {
@@ -94,10 +118,20 @@ export function Services() {
         // Search
         if (filters.search.trim()) {
           const q = filters.search.toLowerCase();
-          const matchName = service.name.toLowerCase().includes(q);
-          const matchDesc = service.description.toLowerCase().includes(q);
-          const matchCat = service.category.toLowerCase().includes(q);
-          if (!matchName && !matchDesc && !matchCat) return false;
+          const searchField = filters.searchField || "name";
+
+          if (searchField === "name") {
+            if (!service.name.toLowerCase().includes(q)) return false;
+          } else if (searchField === "category") {
+            if (!service.category.toLowerCase().includes(q)) return false;
+          } else if (searchField === "description") {
+            if (!(service.description || "").toLowerCase().includes(q)) return false;
+          } else {
+            const matchName = service.name.toLowerCase().includes(q);
+            const matchDesc = (service.description || "").toLowerCase().includes(q);
+            const matchCat = service.category.toLowerCase().includes(q);
+            if (!matchName && !matchDesc && !matchCat) return false;
+          }
         }
 
         // Status filter
@@ -120,6 +154,40 @@ export function Services() {
         return a.name.localeCompare(b.name);
       });
   }, [services, filters]);
+
+  // Paginated services
+  const paginatedServices = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredServices.slice(start, start + pageSize);
+  }, [filteredServices, currentPage, pageSize]);
+
+  // Export to CSV
+  const handleExportCsv = () => {
+    if (filteredServices.length === 0) return;
+    const headers = ["Service Name", "Category", "Duration (mins)", "Price", "Status", "Description"];
+    const rows = filteredServices.map((s) => [
+      `"${s.name.replace(/"/g, '""')}"`,
+      `"${s.category.replace(/"/g, '""')}"`,
+      s.durationMinutes,
+      s.price,
+      s.isActive ? "Active" : "Inactive",
+      `"${(s.description || "").replace(/"/g, '""')}"`,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `services_export_${new Date().toISOString().slice(0, 10)}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="flex flex-col gap-5 text-slate-900">
@@ -160,6 +228,11 @@ export function Services() {
         filters={filters}
         categories={categories}
         onFilterChange={handleFilterChange}
+        pageSize={pageSize}
+        onPageSizeChange={handlePageSizeChange}
+        visibleColumns={visibleColumns}
+        onToggleColumn={handleToggleColumn}
+        onExportCsv={handleExportCsv}
       />
 
       {/* Service Cards Grid */}
@@ -179,16 +252,67 @@ export function Services() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredServices.map((service) => (
-            <ServiceCard
-              key={service.id}
-              service={service}
-              categories={categories}
-              onToggleStatus={handleToggleStatus}
-              onEdit={handleEditClick}
-            />
-          ))}
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {paginatedServices.map((service) => (
+              <ServiceCard
+                key={service.id}
+                service={service}
+                categories={categories}
+                onToggleStatus={handleToggleStatus}
+                onEdit={handleEditClick}
+              />
+            ))}
+          </div>
+
+          {/* Pagination Footer */}
+          {filteredServices.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 text-xs text-slate-600 border-t border-slate-100">
+              <div>
+                Showing{" "}
+                <span className="font-semibold text-slate-900">
+                  {Math.min((currentPage - 1) * pageSize + 1, filteredServices.length)}
+                </span>{" "}
+                to{" "}
+                <span className="font-semibold text-slate-900">
+                  {Math.min(currentPage * pageSize, filteredServices.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-semibold text-slate-900">
+                  {filteredServices.length}
+                </span>{" "}
+                items
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage <= 1}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronLeft className="size-3.5" />
+                  <span>Previous</span>
+                </button>
+                <span className="px-2 font-medium text-slate-700">
+                  Page {currentPage} of {Math.max(1, Math.ceil(filteredServices.length / pageSize))}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      prev < Math.ceil(filteredServices.length / pageSize) ? prev + 1 : prev
+                    )
+                  }
+                  disabled={currentPage >= Math.ceil(filteredServices.length / pageSize)}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="size-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

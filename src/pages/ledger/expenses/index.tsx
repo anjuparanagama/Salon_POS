@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import type {
   ExpenseRecord,
   ExpenseFilterState,
@@ -16,9 +16,11 @@ import ExpenseDeleteModal from "./components/expense-delete-modal";
 
 const initialFilters: ExpenseFilterState = {
   search: "",
+  searchField: "title",
   startDate: "",
   endDate: "",
   category: "all",
+  paymentMethod: "all",
 };
 
 export function LedgerExpenses() {
@@ -32,6 +34,18 @@ export function LedgerExpenses() {
 
   const [filters, setFilters] = useState<ExpenseFilterState>(initialFilters);
 
+  const [pageSize, setPageSize] = useState<number>(100);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
+    title: true,
+    description: true,
+    category: true,
+    amount: true,
+    paymentMethod: true,
+    date: true,
+    actions: true,
+  });
+
   // Modal states
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<ExpenseRecord | null>(null);
@@ -41,10 +55,19 @@ export function LedgerExpenses() {
 
   const handleFilterChange = (updated: Partial<ExpenseFilterState>) => {
     setFilters((prev) => ({ ...prev, ...updated }));
+    setCurrentPage(1);
   };
 
-  const handleResetFilters = () => {
-    setFilters(initialFilters);
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
+
+  const handleToggleColumn = (columnKey: string) => {
+    setVisibleColumns((prev) => ({
+      ...prev,
+      [columnKey]: prev[columnKey] === false ? true : false,
+    }));
   };
 
   // Add / Edit submit
@@ -93,16 +116,29 @@ export function LedgerExpenses() {
   // Filtered records
   const filteredRecords = useMemo(() => {
     return records.filter((r) => {
-      // Search by title or description
+      // Search
       if (filters.search.trim()) {
         const query = filters.search.toLowerCase();
-        const matchesTitle = r.title.toLowerCase().includes(query);
-        const matchesDesc = (r.description || "").toLowerCase().includes(query);
-        if (!matchesTitle && !matchesDesc) return false;
+        const searchField = filters.searchField || "title";
+
+        if (searchField === "title") {
+          if (!r.title.toLowerCase().includes(query)) return false;
+        } else if (searchField === "description") {
+          if (!(r.description || "").toLowerCase().includes(query)) return false;
+        } else {
+          const matchesTitle = r.title.toLowerCase().includes(query);
+          const matchesDesc = (r.description || "").toLowerCase().includes(query);
+          if (!matchesTitle && !matchesDesc) return false;
+        }
       }
 
       // Category filter
       if (filters.category !== "all" && r.category !== filters.category) {
+        return false;
+      }
+
+      // Payment method filter
+      if (filters.paymentMethod && filters.paymentMethod !== "all" && r.paymentMethod !== filters.paymentMethod) {
         return false;
       }
 
@@ -117,6 +153,40 @@ export function LedgerExpenses() {
       return true;
     });
   }, [records, filters]);
+
+  // Paginated records
+  const paginatedRecords = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredRecords.slice(start, start + pageSize);
+  }, [filteredRecords, currentPage, pageSize]);
+
+  // Export CSV
+  const handleExportCsv = () => {
+    if (filteredRecords.length === 0) return;
+    const headers = ["Title", "Description", "Category", "Amount", "Payment Method", "Date"];
+    const rows = filteredRecords.map((r) => [
+      `"${r.title.replace(/"/g, '""')}"`,
+      `"${(r.description || "").replace(/"/g, '""')}"`,
+      `"${r.category}"`,
+      r.amount,
+      r.paymentMethod,
+      r.date,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `expenses_export_${new Date().toISOString().slice(0, 10)}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="flex flex-col gap-5 text-slate-900">
@@ -143,21 +213,75 @@ export function LedgerExpenses() {
       {/* 3 Summary Cards */}
       <ExpenseStats stats={stats} />
 
-      {/* Filters (Search, Date Range, Category) */}
+      {/* Filters (Search, Date Range, Category, Segmented Bar) */}
       <ExpenseFilters
         filters={filters}
         onFilterChange={handleFilterChange}
-        onResetFilters={handleResetFilters}
+        pageSize={pageSize}
+        onPageSizeChange={handlePageSizeChange}
+        visibleColumns={visibleColumns}
+        onToggleColumn={handleToggleColumn}
+        onExportCsv={handleExportCsv}
       />
 
       {/* Expenses Table with View / Edit / Delete */}
       <ExpenseTable
-        records={filteredRecords}
+        records={paginatedRecords}
         isLoading={isLoading}
         onView={(rec) => setViewingRecord(rec)}
         onEdit={handleStartEdit}
         onDelete={(rec) => setDeletingRecord(rec)}
+        visibleColumns={visibleColumns}
       />
+
+      {/* Pagination Footer */}
+      {filteredRecords.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 text-xs text-slate-600 border-t border-slate-100">
+          <div>
+            Showing{" "}
+            <span className="font-semibold text-slate-900">
+              {Math.min((currentPage - 1) * pageSize + 1, filteredRecords.length)}
+            </span>{" "}
+            to{" "}
+            <span className="font-semibold text-slate-900">
+              {Math.min(currentPage * pageSize, filteredRecords.length)}
+            </span>{" "}
+            of{" "}
+            <span className="font-semibold text-slate-900">
+              {filteredRecords.length}
+            </span>{" "}
+            items
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage <= 1}
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              <ChevronLeft className="size-3.5" />
+              <span>Previous</span>
+            </button>
+            <span className="px-2 font-medium text-slate-700">
+              Page {currentPage} of {Math.max(1, Math.ceil(filteredRecords.length / pageSize))}
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  prev < Math.ceil(filteredRecords.length / pageSize) ? prev + 1 : prev
+                )
+              }
+              disabled={currentPage >= Math.ceil(filteredRecords.length / pageSize)}
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              <span>Next</span>
+              <ChevronRight className="size-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Add / Edit Expense Form Side Panel */}
       <ExpensePanel

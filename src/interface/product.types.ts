@@ -65,6 +65,7 @@ export type ProductStats = {
 
 export type ProductFilterState = {
   search: string;
+  searchField?: "all" | "name" | "sku" | "brand" | "category";
   category: string;
   brand: string;
   stockStatus: ProductStockStatus;
