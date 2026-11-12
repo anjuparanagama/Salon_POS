@@ -1,6 +1,12 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { Plus, Share2, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Share2,
+  ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { ROUTES } from "../../routes/sidebar.routes";
 import type {
   Product,
@@ -51,7 +57,9 @@ export function Products() {
   const categories = useMemo(() => {
     if (!apiCategories || apiCategories.length === 0) return defaultCategories;
     const hasAll = apiCategories.some((c) => c.value === "all");
-    const list = hasAll ? [...apiCategories] : [{ label: "All Items", value: "all" }, ...apiCategories];
+    const list = hasAll
+      ? [...apiCategories]
+      : [{ label: "All Items", value: "all" }, ...apiCategories];
     return list;
   }, [apiCategories]);
 
@@ -65,8 +73,11 @@ export function Products() {
 
   // Stock Modal State
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
-  const [stockModalProduct, setStockModalProduct] = useState<Product | null>(null);
-  const [stockModalMode, setStockModalMode] = useState<StockModalMode>("stock_in");
+  const [stockModalProduct, setStockModalProduct] = useState<Product | null>(
+    null,
+  );
+  const [stockModalMode, setStockModalMode] =
+    useState<StockModalMode>("stock_in");
   const [isPosCheckoutOpen, setIsPosCheckoutOpen] = useState(false);
 
   // Filters State
@@ -82,16 +93,18 @@ export function Products() {
 
   const [pageSize, setPageSize] = useState<number>(100);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
-    product: true,
-    sku: true,
-    category: true,
-    description: true,
-    price: true,
-    stock: true,
-    status: true,
-    actions: true,
-  });
+  const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>(
+    {
+      product: true,
+      sku: true,
+      category: true,
+      description: true,
+      price: true,
+      stock: true,
+      status: true,
+      actions: true,
+    },
+  );
 
   const handleFilterChange = (updated: Partial<ProductFilterState>) => {
     setFilters((prev) => ({ ...prev, ...updated }));
@@ -162,7 +175,9 @@ export function Products() {
     toggleStatus(productId);
     if (viewingProduct?.id === productId) {
       setViewingProduct((p) =>
-        p ? { ...p, status: p.status === "active" ? "inactive" : "active" } : null
+        p
+          ? { ...p, status: p.status === "active" ? "inactive" : "active" }
+          : null,
       );
     }
   };
@@ -193,7 +208,7 @@ export function Products() {
   // Stock Adjustment Handler
   const handleStockAdjustment = async (
     productId: string,
-    payload: StockAdjustmentPayload
+    payload: StockAdjustmentPayload,
   ) => {
     const updated = await adjustStock(productId, payload);
     if (viewingProduct?.id === productId && updated) {
@@ -203,7 +218,10 @@ export function Products() {
   };
 
   // Record Sale Handler (Automatically decreases stock)
-  const handleRecordSale = async (productId: string, payload: StockSalePayload) => {
+  const handleRecordSale = async (
+    productId: string,
+    payload: StockSalePayload,
+  ) => {
     const updated = await recordSale(productId, payload);
     if (viewingProduct?.id === productId && updated) {
       setViewingProduct(updated);
@@ -215,7 +233,9 @@ export function Products() {
   const stats = useMemo(() => {
     const total = products.length;
     const active = products.filter((p) => p.status === "active").length;
-    const lowStock = products.filter((p) => p.stock > 0 && p.stock <= p.lowStockLevel).length;
+    const lowStock = products.filter(
+      (p) => p.stock > 0 && p.stock <= p.lowStockLevel,
+    ).length;
     const outOfStock = products.filter((p) => p.stock <= 0).length;
 
     return {
@@ -251,10 +271,19 @@ export function Products() {
           } else {
             const matchesName = p.name.toLowerCase().includes(query);
             const matchesSku = p.sku.toLowerCase().includes(query);
-            const matchesBrand = p.brand?.toLowerCase().includes(query) ?? false;
+            const matchesBrand =
+              p.brand?.toLowerCase().includes(query) ?? false;
             const matchesCategory = p.category.toLowerCase().includes(query);
-            const matchesDesc = p.description?.toLowerCase().includes(query) ?? false;
-            if (!matchesName && !matchesSku && !matchesBrand && !matchesCategory && !matchesDesc) return false;
+            const matchesDesc =
+              p.description?.toLowerCase().includes(query) ?? false;
+            if (
+              !matchesName &&
+              !matchesSku &&
+              !matchesBrand &&
+              !matchesCategory &&
+              !matchesDesc
+            )
+              return false;
           }
         }
 
@@ -270,10 +299,16 @@ export function Products() {
 
         // Stock status filter
         if (filters.stockStatus !== "all") {
-          if (filters.stockStatus === "in_stock" && (p.stock <= 0 || p.stock <= p.lowStockLevel)) {
+          if (
+            filters.stockStatus === "in_stock" &&
+            (p.stock <= 0 || p.stock <= p.lowStockLevel)
+          ) {
             return false;
           }
-          if (filters.stockStatus === "low_stock" && (p.stock <= 0 || p.stock > p.lowStockLevel)) {
+          if (
+            filters.stockStatus === "low_stock" &&
+            (p.stock <= 0 || p.stock > p.lowStockLevel)
+          ) {
             return false;
           }
           if (filters.stockStatus === "out_of_stock" && p.stock > 0) {
@@ -289,8 +324,10 @@ export function Products() {
         return true;
       })
       .sort((a, b) => {
-        if (filters.sortBy === "price_asc") return a.sellingPrice - b.sellingPrice;
-        if (filters.sortBy === "price_desc") return b.sellingPrice - a.sellingPrice;
+        if (filters.sortBy === "price_asc")
+          return a.sellingPrice - b.sellingPrice;
+        if (filters.sortBy === "price_desc")
+          return b.sellingPrice - a.sellingPrice;
         if (filters.sortBy === "stock_asc") return a.stock - b.stock;
         if (filters.sortBy === "stock_desc") return b.stock - a.stock;
         return a.name.localeCompare(b.name);
@@ -306,7 +343,17 @@ export function Products() {
   // Export CSV
   const handleExportCsv = () => {
     if (filteredProducts.length === 0) return;
-    const headers = ["Product Name", "SKU", "Brand", "Category", "Description", "Selling Price", "Cost Price", "Stock", "Status"];
+    const headers = [
+      "Product Name",
+      "SKU",
+      "Brand",
+      "Category",
+      "Description",
+      "Selling Price",
+      "Cost Price",
+      "Stock",
+      "Status",
+    ];
     const rows = filteredProducts.map((p) => [
       `"${p.name.replace(/"/g, '""')}"`,
       `"${p.sku}"`,
@@ -327,7 +374,7 @@ export function Products() {
     link.setAttribute("href", encodedUri);
     link.setAttribute(
       "download",
-      `products_export_${new Date().toISOString().slice(0, 10)}.csv`
+      `products_export_${new Date().toISOString().slice(0, 10)}.csv`,
     );
     document.body.appendChild(link);
     link.click();
@@ -349,20 +396,16 @@ export function Products() {
               onClick={() => setIsShareModalOpen(true)}
               className="inline-flex size-6 sm:size-7 items-center justify-center rounded-lg text-slate-400 hover:text-primary hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
             >
-              <Share2 aria-hidden="true" className="size-3.5 sm:size-4" strokeWidth={2} />
+              <Share2
+                aria-hidden="true"
+                className="size-3.5 sm:size-4"
+                strokeWidth={2}
+              />
             </button>
           </Tooltip>
         }
         actions={
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => navigate(ROUTES.CHECKOUT)}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
-            >
-              <ShoppingBag className="size-3.5 text-primary" />
-              <span>Direct POS Sale</span>
-            </button>
             <button
               type="button"
               onClick={handleOpenAdd}
@@ -411,7 +454,10 @@ export function Products() {
           <div>
             Showing{" "}
             <span className="font-semibold text-slate-900">
-              {Math.min((currentPage - 1) * pageSize + 1, filteredProducts.length)}
+              {Math.min(
+                (currentPage - 1) * pageSize + 1,
+                filteredProducts.length,
+              )}
             </span>{" "}
             to{" "}
             <span className="font-semibold text-slate-900">
@@ -435,16 +481,21 @@ export function Products() {
               <span>Previous</span>
             </button>
             <span className="px-2 font-medium text-slate-700">
-              Page {currentPage} of {Math.max(1, Math.ceil(filteredProducts.length / pageSize))}
+              Page {currentPage} of{" "}
+              {Math.max(1, Math.ceil(filteredProducts.length / pageSize))}
             </span>
             <button
               type="button"
               onClick={() =>
                 setCurrentPage((prev) =>
-                  prev < Math.ceil(filteredProducts.length / pageSize) ? prev + 1 : prev
+                  prev < Math.ceil(filteredProducts.length / pageSize)
+                    ? prev + 1
+                    : prev,
                 )
               }
-              disabled={currentPage >= Math.ceil(filteredProducts.length / pageSize)}
+              disabled={
+                currentPage >= Math.ceil(filteredProducts.length / pageSize)
+              }
               className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
             >
               <span>Next</span>
