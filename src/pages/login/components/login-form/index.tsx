@@ -142,7 +142,7 @@ export function LoginForm({
       </form>
 
       {/* Don't Have an Account? Register Here */}
-      {/*       <p className="mt-6 text-center text-xs text-slate-600">
+      <p className="mt-6 text-center text-xs text-slate-600">
         Don&apos;t Have an Account?{" "}
         <button
           type="button"
@@ -151,7 +151,7 @@ export function LoginForm({
         >
           Register Here
         </button>
-      </p> */}
+      </p>
     </div>
   );
 }

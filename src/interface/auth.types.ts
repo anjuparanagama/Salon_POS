@@ -11,6 +11,7 @@ export type AuthUser = {
   isOnline?: boolean;
   userId?: string;
   salonId?: string;
+  permissions?: Record<string, boolean>;
 };
 
 export type AuthContextType = {
@@ -19,6 +20,7 @@ export type AuthContextType = {
   isAuthenticated: boolean;
   login: (user: AuthUser, token?: string, rememberMe?: boolean) => void;
   logout: () => void;
+  hasPermission: (perm: string) => boolean;
 };
 
 export type LoginFormData = {

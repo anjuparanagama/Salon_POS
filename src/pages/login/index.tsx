@@ -90,6 +90,7 @@ export function Login() {
           email: passwordForm.email.trim(),
           userId: response.user_id,
           salonId: response.salon_id,
+          permissions: response.permissions || {},
         },
         response.access_token,
         passwordForm.rememberMe,

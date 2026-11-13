@@ -55,6 +55,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sessionStorage.removeItem(TOKEN_STORAGE_KEY);
   };
 
+  const hasPermission = (perm: string): boolean => {
+    if (!user) return false;
+    const roleLower = (user.role || "").toLowerCase();
+    // Admin, owner, salon manager, superuser have full permissions
+    if (
+      roleLower.includes("admin") ||
+      roleLower.includes("owner") ||
+      roleLower.includes("superuser") ||
+      roleLower.includes("salon_manager") ||
+      roleLower.includes("salon manager")
+    ) {
+      return true;
+    }
+    if (!user.permissions) return false;
+    return Boolean(user.permissions[perm]);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -63,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: Boolean(user),
         login,
         logout,
+        hasPermission,
       }}
     >
       {children}

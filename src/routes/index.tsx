@@ -16,10 +16,19 @@ import CheckoutPage from "../pages/checkout";
 import { ROUTES } from "./sidebar.routes";
 import { useAuth } from "../context/use-auth";
 
-function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated } = useAuth();
+function ProtectedRoute({
+  children,
+  requiredPermission,
+}: {
+  children: ReactNode;
+  requiredPermission?: string;
+}) {
+  const { isAuthenticated, hasPermission } = useAuth();
   if (!isAuthenticated) {
     return <Navigate to={ROUTES.LOGIN} replace />;
+  }
+  if (requiredPermission && !hasPermission(requiredPermission)) {
+    return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
   return <>{children}</>;
 }
@@ -43,7 +52,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.APPOINTMENTS}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="viewAppointments">
             <Appointments />
           </ProtectedRoute>
         }
@@ -51,7 +60,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.SERVICES}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="manageServices">
             <Services />
           </ProtectedRoute>
         }
@@ -59,7 +68,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.CUSTOMERS}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="viewCustomers">
             <Customers />
           </ProtectedRoute>
         }
@@ -67,7 +76,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.STAFF}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="manageStaff">
             <Staff />
           </ProtectedRoute>
         }
@@ -75,7 +84,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.PRODUCTS}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="viewProducts">
             <Products />
           </ProtectedRoute>
         }
@@ -87,7 +96,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.LEDGER_INCOME}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="viewFinancialLedger">
             <LedgerIncome />
           </ProtectedRoute>
         }
@@ -95,7 +104,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.LEDGER_EXPENSES}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="viewFinancialLedger">
             <LedgerExpenses />
           </ProtectedRoute>
         }
@@ -103,7 +112,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.LEDGER_TRANSACTIONS}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="viewFinancialLedger">
             <LedgerTransactions />
           </ProtectedRoute>
         }
@@ -111,7 +120,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.SETTINGS}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="manageStaff">
             <Settings />
           </ProtectedRoute>
         }
@@ -119,7 +128,7 @@ export function AppRoutes() {
       <Route
         path={ROUTES.CHECKOUT}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="accessPosCheckout">
             <CheckoutPage />
           </ProtectedRoute>
         }
@@ -127,7 +136,7 @@ export function AppRoutes() {
       <Route
         path="/checkout/:appointmentId"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredPermission="accessPosCheckout">
             <CheckoutPage />
           </ProtectedRoute>
         }

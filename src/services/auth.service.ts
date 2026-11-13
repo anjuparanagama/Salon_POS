@@ -16,6 +16,7 @@ export interface LoginApiResponse {
   salon_id: string;
   role: string;
   salon_name?: string;
+  permissions?: Record<string, boolean>;
 }
 
 export interface RegisterInitiateApiRequest {

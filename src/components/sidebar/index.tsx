@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { sidebarRoutes } from "../../routes/sidebar.routes";
+import { useAuth } from "../../context/use-auth";
 import type { SidebarItem } from "../../interface/routes.types";
 
 export type { SidebarItem };
@@ -110,20 +111,39 @@ export function Sidebar({
     }));
   };
 
+  const { hasPermission } = useAuth();
+
+  const ROUTE_PERMISSION_MAP: Record<string, string> = {
+    "/appointments": "viewAppointments",
+    "/services": "manageServices",
+    "/customers": "viewCustomers",
+    "/staff": "manageStaff",
+    "/products": "viewProducts",
+    "/ledger/income": "viewFinancialLedger",
+    "/ledger/expenses": "viewFinancialLedger",
+    "/ledger": "viewFinancialLedger",
+  };
+
+  const filteredItems = items.filter((item) => {
+    if (item.href === "/dashboard") return true;
+    const requiredPerm = ROUTE_PERMISSION_MAP[item.href];
+    if (requiredPerm && !hasPermission(requiredPerm)) {
+      return false;
+    }
+    return true;
+  });
+
   const isItemActive = (item: SidebarItem) =>
     item.href === activeHref && !item.subItems;
 
-  const activeIndex = items.findIndex(isItemActive);
+  const activeIndex = filteredItems.findIndex(isItemActive);
   const hasActiveItem = activeIndex !== -1;
-  const activeItem = hasActiveItem ? items[activeIndex] : null;
-  const beforeActive = hasActiveItem ? items.slice(0, activeIndex) : items;
-  const afterActive = hasActiveItem ? items.slice(activeIndex + 1) : [];
+  const activeItem = hasActiveItem ? filteredItems[activeIndex] : null;
+  const beforeActive = hasActiveItem ? filteredItems.slice(0, activeIndex) : filteredItems;
+  const afterActive = hasActiveItem ? filteredItems.slice(activeIndex + 1) : [];
 
   const isSettingsActive = activeHref === settingsHref;
   const isHelpActive = activeHref === helpHref;
-
-  const defaultBottomIndex = isSettingsActive ? 0 : isHelpActive ? 1 : 0;
-  const carouselIndex = userCarouselIndex ?? defaultBottomIndex;
 
   const handleSettings = (e: React.MouseEvent) => {
     if (onSettingsClick) {
@@ -155,15 +175,24 @@ export function Sidebar({
     }
   };
 
+  const defaultBottomIndex = isSettingsActive ? 0 : isHelpActive ? 1 : 0;
+  const carouselIndex = userCarouselIndex ?? defaultBottomIndex;
+
+  const canAccessSettings = hasPermission("manageStaff");
+
   const bottomActions = [
-    {
-      id: "settings",
-      label: "Settings",
-      icon: Settings,
-      href: settingsHref,
-      isActive: isSettingsActive,
-      onClick: handleSettings,
-    },
+    ...(canAccessSettings
+      ? [
+          {
+            id: "settings",
+            label: "Settings",
+            icon: Settings,
+            href: settingsHref,
+            isActive: isSettingsActive,
+            onClick: handleSettings,
+          },
+        ]
+      : []),
     {
       id: "help",
       label: "Help",
