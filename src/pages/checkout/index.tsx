@@ -21,8 +21,12 @@ import {
   Search,
   RotateCcw,
   Receipt,
+  Eye,
 } from "lucide-react";
 import Header from "../../components/header";
+import Modal from "../../components/modal";
+import InvoiceRenderer from "../../components/invoice-template";
+import { getStoredLayoutSettings } from "../../helpers/layout-settings.helper";
 import type { Appointment } from "../../interface/appointment.types";
 import type { Product } from "../../interface/product.types";
 import { formatPrice } from "../../helpers/price.helper";
@@ -98,6 +102,7 @@ export function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [completedInvoice, setCompletedInvoice] = useState<InvoiceDetailResponse | null>(null);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   // WhatsApp Web State
   const [waPhone, setWaPhone] = useState("");
@@ -515,28 +520,121 @@ Hotline: +94 11 234 5678`;
           </div>
 
           {/* Quick Action Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <button
+              type="button"
+              onClick={() => setIsReceiptModalOpen(true)}
+              className="flex items-center justify-center gap-2.5 rounded-2xl bg-slate-900 p-4 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition cursor-pointer"
+            >
+              <Eye className="size-5 text-amber-300" />
+              <span>View & Print Receipt</span>
+            </button>
+
             <button
               type="button"
               onClick={() => checkoutService.downloadInvoicePdf(completedInvoice.id, completedInvoice.invoice_number)}
               className="flex items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition cursor-pointer"
             >
               <Download className="size-5 text-primary" />
-              <span>Download Official PDF Invoice</span>
+              <span>Download PDF Invoice</span>
             </button>
 
             <button
               type="button"
               onClick={() => {
-                const pdfUrl = checkoutService.getInvoicePdfViewUrl(completedInvoice.id);
-                window.open(pdfUrl, "_blank");
+                setIsReceiptModalOpen(true);
+                setTimeout(() => window.print(), 350);
               }}
               className="flex items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition cursor-pointer"
             >
               <Printer className="size-5 text-slate-600" />
-              <span>Print Invoice Receipt</span>
+              <span>Print Receipt Slip</span>
             </button>
           </div>
+
+          {/* Modal to Preview & Print Receipt in Customer's Selected Layout */}
+          {isReceiptModalOpen && completedInvoice && (
+            <Modal
+              isOpen={isReceiptModalOpen}
+              onClose={() => setIsReceiptModalOpen(false)}
+              title="Receipt / Invoice Slip"
+              description={`Official receipt for invoice #${completedInvoice.invoice_number}`}
+              size="lg"
+            >
+              <div className="flex flex-col gap-4 text-xs text-slate-800">
+                <div className="max-h-[65vh] overflow-y-auto p-1 rounded-xl bg-slate-100/30">
+                  <InvoiceRenderer
+                    invoice={{
+                      invoiceNumber: completedInvoice.invoice_number,
+                      date: completedInvoice.created_at
+                        ? new Date(completedInvoice.created_at).toISOString().split("T")[0]
+                        : new Date().toISOString().split("T")[0],
+                      time: completedInvoice.created_at
+                        ? new Date(completedInvoice.created_at).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "12:00 PM",
+                      clientName:
+                        completedInvoice.customer?.name || clientName || "Valued Customer",
+                      clientPhone: completedInvoice.customer?.phone || clientPhone || "",
+                      staffName: completedInvoice.appointment?.staff_name || "Specialist",
+                      items:
+                        completedInvoice.items && completedInvoice.items.length > 0
+                          ? completedInvoice.items.map((it, idx) => ({
+                              id: it.id || String(idx),
+                              name: it.description || "Salon Item",
+                              quantity: it.quantity || 1,
+                              unitPrice: it.unit_price,
+                              totalPrice: it.line_total,
+                            }))
+                          : [
+                              {
+                                name: "Salon Services / Retail Sale",
+                                quantity: 1,
+                                unitPrice: completedInvoice.total,
+                                totalPrice: completedInvoice.total,
+                              },
+                            ],
+                      subtotal: completedInvoice.subtotal,
+                      discount: completedInvoice.discount,
+                      tax: completedInvoice.tax,
+                      total: completedInvoice.total,
+                      paidAmount: completedInvoice.paid,
+                      paymentStatus: completedInvoice.payment_status.toUpperCase(),
+                      paymentMethod: payments[0]?.method || "Cash",
+                    }}
+                    layoutSettings={getStoredLayoutSettings()}
+                    containerId="printable-invoice"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+                  <span className="text-[11px] text-slate-500">
+                    Layout styled according to <strong>Layout Settings</strong>.
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsReceiptModalOpen(false)}
+                      className="rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-5 py-2 font-semibold text-white shadow-xs hover:bg-slate-800 transition cursor-pointer"
+                    >
+                      <Printer className="size-4" />
+                      <span>Print Receipt</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Modal>
+          )}
 
           {/* WhatsApp Web Sharing Card */}
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 space-y-4 shadow-sm">

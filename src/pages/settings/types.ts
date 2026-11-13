@@ -85,7 +85,10 @@ export interface StaffSettingsState {
   breakDurationMinutes: number;
 }
 
+export type InvoiceTemplateId = "modern" | "thermal" | "luxury";
+
 export interface LayoutSettingsState {
+  selectedInvoiceTemplate?: InvoiceTemplateId;
   compactDensity: boolean;
   showLogoOnReceipt: boolean;
   showSpecialistOnReceipt: boolean;
