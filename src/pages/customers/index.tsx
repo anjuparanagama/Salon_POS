@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { UserPlus, RefreshCw, AlertCircle } from "lucide-react";
+import Pagination from "../../components/pagination";
 import type {
   Customer,
   CustomerFilterState,
@@ -264,39 +265,15 @@ export function Customers() {
 
       {/* Pagination Footer */}
       {filteredCustomers.length > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1 py-1 text-xs text-slate-500">
-          <div>
-            Showing <span className="font-semibold text-slate-800">{(currentPage - 1) * pageSize + 1}</span> to{" "}
-            <span className="font-semibold text-slate-800">
-              {Math.min(currentPage * pageSize, filteredCustomers.length)}
-            </span>{" "}
-            of <span className="font-semibold text-slate-800">{filteredCustomers.length}</span> customers
-          </div>
-
-          {totalPages > 1 && (
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                disabled={currentPage <= 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
-              >
-                Previous
-              </button>
-              <span className="px-2 text-xs font-medium text-slate-600">
-                {currentPage} / {totalPages}
-              </span>
-              <button
-                type="button"
-                disabled={currentPage >= totalPages}
-                onClick={() => setCurrentPage((p) => p + 1)}
-                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.max(1, totalPages)}
+          totalItems={filteredCustomers.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          itemLabel="customers"
+          className="mt-1"
+        />
       )}
 
       {/* Customer Create/Edit Drawer Side Panel */}

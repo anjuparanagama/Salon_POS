@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
+import Pagination from "../../components/pagination";
 import { ROUTES } from "../../routes/sidebar.routes";
 import type {
   Appointment,
@@ -365,39 +366,15 @@ export function Appointments() {
 
       {/* Pagination Footer */}
       {filteredAppointments.length > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1 py-1 text-xs text-slate-500">
-          <div>
-            Showing <span className="font-semibold text-slate-800">{(currentPage - 1) * pageSize + 1}</span> to{" "}
-            <span className="font-semibold text-slate-800">
-              {Math.min(currentPage * pageSize, filteredAppointments.length)}
-            </span>{" "}
-            of <span className="font-semibold text-slate-800">{filteredAppointments.length}</span> appointments
-          </div>
-
-          {Math.ceil(filteredAppointments.length / pageSize) > 1 && (
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
-              >
-                Previous
-              </button>
-              <span className="px-2 font-medium text-slate-700">
-                Page {currentPage} of {Math.ceil(filteredAppointments.length / pageSize)}
-              </span>
-              <button
-                type="button"
-                disabled={currentPage >= Math.ceil(filteredAppointments.length / pageSize)}
-                onClick={() => setCurrentPage((p) => p + 1)}
-                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.max(1, Math.ceil(filteredAppointments.length / pageSize))}
+          totalItems={filteredAppointments.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          itemLabel="appointments"
+          className="mt-1"
+        />
       )}
 
       {/* New / Edit Appointment Modal */}

@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { UserPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { UserPlus } from "lucide-react";
+import Pagination from "../../components/pagination";
 import type {
   StaffMember,
   StaffFilterState,
@@ -232,51 +233,15 @@ export function Staff() {
 
       {/* Pagination Footer */}
       {filteredStaff.length > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 text-xs text-slate-600 border-t border-slate-100">
-          <div>
-            Showing{" "}
-            <span className="font-semibold text-slate-900">
-              {Math.min((currentPage - 1) * pageSize + 1, filteredStaff.length)}
-            </span>{" "}
-            to{" "}
-            <span className="font-semibold text-slate-900">
-              {Math.min(currentPage * pageSize, filteredStaff.length)}
-            </span>{" "}
-            of{" "}
-            <span className="font-semibold text-slate-900">
-              {filteredStaff.length}
-            </span>{" "}
-            items
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage <= 1}
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-            >
-              <ChevronLeft className="size-3.5" />
-              <span>Previous</span>
-            </button>
-            <span className="px-2 font-medium text-slate-700">
-              Page {currentPage} of {Math.max(1, Math.ceil(filteredStaff.length / pageSize))}
-            </span>
-            <button
-              type="button"
-              onClick={() =>
-                setCurrentPage((prev) =>
-                  prev < Math.ceil(filteredStaff.length / pageSize) ? prev + 1 : prev
-                )
-              }
-              disabled={currentPage >= Math.ceil(filteredStaff.length / pageSize)}
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-            >
-              <span>Next</span>
-              <ChevronRight className="size-3.5" />
-            </button>
-          </div>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.max(1, Math.ceil(filteredStaff.length / pageSize))}
+          totalItems={filteredStaff.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          itemLabel="entries"
+          className="mt-1"
+        />
       )}
 
       {/* Slide-over Side Panel for Add & Edit */}

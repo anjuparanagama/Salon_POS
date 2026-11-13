@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { IncomeFilterState } from "../../../interface/ledger.types";
 import { useIncomeLedger } from "../../../hooks/ledger";
 import Header from "../../../components/header";
+import Pagination from "../../../components/pagination";
 import IncomeStats from "./components/income-stats";
 import IncomeFilters from "./components/income-filters";
 import IncomeTable from "./components/income-table";
@@ -177,51 +177,15 @@ export function LedgerIncome() {
 
       {/* Pagination Footer */}
       {filteredRecords.length > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 text-xs text-slate-600 border-t border-slate-100">
-          <div>
-            Showing{" "}
-            <span className="font-semibold text-slate-900">
-              {Math.min((currentPage - 1) * pageSize + 1, filteredRecords.length)}
-            </span>{" "}
-            to{" "}
-            <span className="font-semibold text-slate-900">
-              {Math.min(currentPage * pageSize, filteredRecords.length)}
-            </span>{" "}
-            of{" "}
-            <span className="font-semibold text-slate-900">
-              {filteredRecords.length}
-            </span>{" "}
-            items
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage <= 1}
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-            >
-              <ChevronLeft className="size-3.5" />
-              <span>Previous</span>
-            </button>
-            <span className="px-2 font-medium text-slate-700">
-              Page {currentPage} of {Math.max(1, Math.ceil(filteredRecords.length / pageSize))}
-            </span>
-            <button
-              type="button"
-              onClick={() =>
-                setCurrentPage((prev) =>
-                  prev < Math.ceil(filteredRecords.length / pageSize) ? prev + 1 : prev
-                )
-              }
-              disabled={currentPage >= Math.ceil(filteredRecords.length / pageSize)}
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-            >
-              <span>Next</span>
-              <ChevronRight className="size-3.5" />
-            </button>
-          </div>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.max(1, Math.ceil(filteredRecords.length / pageSize))}
+          totalItems={filteredRecords.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          itemLabel="records"
+          className="mt-1"
+        />
       )}
     </div>
   );
