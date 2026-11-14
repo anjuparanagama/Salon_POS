@@ -1,15 +1,21 @@
 const rawBaseUrl =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_URL ||
-  "https://sribees-gkbeajd5dzatf3gc.southeastasia-01.azurewebsites.net";
+  "";
 
 // In local development (port 5173), use relative path "" so Vite's proxy forwards
-// requests to the Azure backend. This avoids CORS blocking, especially when backend
+// requests to the backend target configured in .env. This avoids CORS blocking, especially when backend
 // errors (500 / 502) happen, allowing the UI to receive and handle status codes properly.
 export const API_BASE_URL =
   import.meta.env.DEV && import.meta.env.VITE_DIRECT_API !== "true"
     ? ""
     : rawBaseUrl.replace(/\/+$/, "");
+
+// Public customer-facing web client URL (salora-web / Share_web)
+export const PUBLIC_WEB_URL = (
+  import.meta.env.VITE_PUBLIC_WEB_URL ||
+  (import.meta.env.DEV ? "http://localhost:3000" : "https://salora.lk")
+).replace(/\/+$/, "");
 
 export const API_ENDPOINTS = {
   AUTH: {

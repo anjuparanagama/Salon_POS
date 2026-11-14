@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, ExternalLink } from "lucide-react";
 import Modal from "../../../../components/modal";
 import type { ShareServicesModalProps } from "../../../../interface/service.types";
 import { Button } from "../../../../components/button";
+import { PUBLIC_WEB_URL } from "../../../../config/api.config";
 
-const DEFAULT_DUMMY_URL = "https://salora.lk/services/sribees-salon";
+const DEFAULT_SLUG = "sribees-salon";
+const DEFAULT_DUMMY_URL = `${PUBLIC_WEB_URL}/services/${DEFAULT_SLUG}`;
 
 export function ShareServicesModal({
   isOpen,
@@ -12,6 +14,11 @@ export function ShareServicesModal({
   shareUrl = DEFAULT_DUMMY_URL,
 }: ShareServicesModalProps) {
   const [copied, setCopied] = useState(false);
+
+  // Uses PUBLIC_WEB_URL configured from .env (VITE_PUBLIC_WEB_URL)
+  const openUrl = shareUrl.startsWith("http")
+    ? shareUrl.replace(/^https?:\/\/[^/]+/, PUBLIC_WEB_URL)
+    : `${PUBLIC_WEB_URL}${shareUrl.startsWith("/") ? "" : "/"}${shareUrl}`;
 
   const handleCopy = async () => {
     try {
@@ -54,30 +61,51 @@ export function ShareServicesModal({
 
         {/* Link & Copy Box */}
         <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-primary-lighter/25 p-2 sm:p-2.5 transition focus-within:border-primary">
-          <span className="truncate font-mono text-xs text-slate-700 select-all pl-1">
-            {shareUrl}
-          </span>
-          <Button
-            type="button"
-            onClick={handleCopy}
-            className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white transition-all cursor-pointer shrink-0 shadow-xs active:scale-95 ${
-              copied
-                ? "bg-emerald-600 hover:bg-emerald-700"
-                : "bg-primary hover:bg-primary-dark shadow-primary/20"
-            }`}
+          <a
+            href={openUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Click to open salon web catalog"
+            className="truncate font-mono text-xs text-primary hover:text-primary-dark underline decoration-dotted underline-offset-2 select-all pl-1 transition flex items-center gap-1 group"
           >
-            {copied ? (
-              <>
-                <Check className="size-3.5" />
-                <span>Copied</span>
-              </>
-            ) : (
-              <>
-                <Copy className="size-3.5" />
-                <span>Copy</span>
-              </>
-            )}
-          </Button>
+            <span className="truncate">{shareUrl}</span>
+            <ExternalLink className="size-3 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
+          </a>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            <a
+              href={openUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-lg border border-primary/30 bg-white px-2.5 py-2 text-xs font-semibold text-primary transition-all hover:bg-primary-lighter/40 cursor-pointer shadow-2xs active:scale-95"
+              title="Open public website in new tab"
+            >
+              <ExternalLink className="size-3.5" />
+              <span>Open</span>
+            </a>
+
+            <Button
+              type="button"
+              onClick={handleCopy}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-semibold text-white transition-all cursor-pointer shrink-0 shadow-xs active:scale-95 ${
+                copied
+                  ? "bg-emerald-600 hover:bg-emerald-700"
+                  : "bg-primary hover:bg-primary-dark shadow-primary/20"
+              }`}
+            >
+              {copied ? (
+                <>
+                  <Check className="size-3.5" />
+                  <span>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="size-3.5" />
+                  <span>Copy</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         {/* Social Share Section */}
