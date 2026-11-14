@@ -15,6 +15,7 @@ export type HeaderProps = {
   actions?: ReactNode;
   children?: ReactNode;
   className?: string;
+  titleClassName?: string;
   isLoading?: boolean;
 };
 
@@ -30,6 +31,7 @@ export function Header({
   actions,
   children,
   className = "",
+  titleClassName = "",
   isLoading = false,
 }: HeaderProps) {
   const tooltipText = infoTooltip || description;
@@ -45,7 +47,12 @@ export function Header({
       <div className="flex items-center gap-1.5 shrink-0">
         <h1
           title={typeof tooltipText === "string" ? tooltipText : undefined}
-          className="text-xl font-bold tracking-tight text-slate-900"
+          className={[
+            "text-2xl font-bold tracking-tight text-slate-900",
+            titleClassName,
+          ]
+            .filter(Boolean)
+            .join(" ")}
         >
           {title}
         </h1>
