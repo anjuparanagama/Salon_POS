@@ -1,5 +1,6 @@
 import { apiClient } from "../lib/axios";
 import { API_ENDPOINTS } from "../config/api.config";
+import type { ValidateReferralResponse } from "../interface/auth.types";
 
 export interface LoginApiRequest {
   email: string;
@@ -24,6 +25,7 @@ export interface RegisterInitiateApiRequest {
   email: string;
   phone: string;
   password: string;
+  referral_code?: string;
 }
 
 export interface RegisterInitiateApiResponse {
@@ -76,6 +78,7 @@ export interface RegisterCompleteApiRequest {
   email: string;
   phone: string;
   password: string;
+  referral_code?: string;
   salon_name: string;
   slug?: string;
   salon_phone?: string;
@@ -107,6 +110,7 @@ export interface RegisterCompleteApiResponse {
     phone?: string;
     email?: string;
     address?: string;
+    referral_code?: string;
     currency: string;
     timezone: string;
   };
@@ -150,6 +154,14 @@ export const authService = {
     const response = await apiClient.get<CheckSlugApiResponse>(
       API_ENDPOINTS.AUTH.REGISTER_CHECK_SLUG,
       { params: { slug } }
+    );
+    return response.data;
+  },
+
+  async validateReferralCode(code: string): Promise<ValidateReferralResponse> {
+    const response = await apiClient.get<ValidateReferralResponse>(
+      API_ENDPOINTS.AUTH.REGISTER_VALIDATE_REFERRAL,
+      { params: { code: code.trim().toUpperCase() } }
     );
     return response.data;
   },

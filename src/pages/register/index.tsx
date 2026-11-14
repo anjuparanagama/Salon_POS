@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Navigate } from "react-router";
+import { useNavigate, Navigate, useSearchParams } from "react-router";
 import { ROUTES } from "../../routes/sidebar.routes";
 import { BrandHero } from "../login/components/brand-hero";
 import { useAuth } from "../../context/use-auth";
@@ -17,6 +17,8 @@ import { Step4RegistrationComplete } from "./components/step4-registration-compl
 
 export function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialRefCode = (searchParams.get("ref") || "").trim().toUpperCase();
   const { login, isAuthenticated } = useAuth();
 
   const [step, setStep] = useState<RegistrationStep>(1);
@@ -30,6 +32,7 @@ export function Register() {
     phone: "",
     password: "",
     confirmPassword: "",
+    referralCode: initialRefCode,
     agreedToTerms: false,
   });
 
@@ -75,6 +78,7 @@ export function Register() {
         email: ownerForm.email.trim(),
         phone: ownerForm.phone.trim(),
         password: ownerForm.password,
+        referral_code: ownerForm.referralCode?.trim().toUpperCase() || undefined,
       });
 
       setSessionId(response.session_id);
@@ -176,6 +180,7 @@ export function Register() {
         email: ownerForm.email.trim(),
         phone: ownerForm.phone.trim(),
         password: ownerForm.password,
+        referral_code: ownerForm.referralCode?.trim().toUpperCase() || undefined,
         salon_name: salonForm.salonName.trim(),
         salon_phone: salonForm.salonPhone.trim() || undefined,
         salon_email: salonForm.salonEmail.trim() || undefined,

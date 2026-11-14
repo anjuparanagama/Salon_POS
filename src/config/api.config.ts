@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
     REGISTER_VERIFY_OTP: "/api/v1/auth/register/verify-otp",
     REGISTER_RESEND_OTP: "/api/v1/auth/register/resend-otp",
     REGISTER_CHECK_SLUG: "/api/v1/auth/register/check-slug",
+    REGISTER_VALIDATE_REFERRAL: "/api/v1/auth/referral/validate",
     REGISTER_COMPLETE: "/api/v1/auth/register/complete",
   },
   DASHBOARD: {
@@ -108,5 +109,9 @@ export const API_ENDPOINTS = {
       SUMMARY: "/api/v1/salon/ledger/transactions/summary",
       BY_ID: (id: string) => `/api/v1/salon/ledger/transactions/${id}`,
     },
+  },
+  REFERRALS: {
+    BASE: "/api/v1/salon/referrals",
+    SUMMARY: "/api/v1/salon/referrals/summary",
   },
 } as const;

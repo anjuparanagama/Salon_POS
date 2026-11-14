@@ -67,6 +67,17 @@ export function Step4RegistrationComplete({
             <span>Multi-Staff Enabled</span>
           </div>
         </div>
+
+        {/* New Salon Unique Referral Code */}
+        {salon.referral_code && (
+          <div className="rounded-xl border border-primary/20 bg-primary-subtle p-3 flex items-center justify-between">
+            <div className="text-left">
+              <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Your Referral Code</p>
+              <p className="text-sm font-black text-primary-deep tracking-wider font-mono">{salon.referral_code}</p>
+            </div>
+            <span className="text-[11px] font-medium text-slate-500">Share & Earn Free SaaS Months</span>
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}

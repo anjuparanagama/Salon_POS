@@ -76,6 +76,7 @@ export interface OwnerDetailsFormData {
   phone: string;
   password: string;
   confirmPassword: string;
+  referralCode?: string;
   agreedToTerms: boolean;
 }
 
@@ -88,8 +89,17 @@ export interface SalonDetailsFormData {
   city: string;
   district: string;
   salonType?: string;
+  referralCode?: string;
   currency: string;
   timezone: string;
+}
+
+export interface ValidateReferralResponse {
+  valid: boolean;
+  referral_code: string;
+  referrer_name?: string | null;
+  reward_hint?: string | null;
+  message: string;
 }
 
 export interface RegistrationSessionState {

@@ -7,6 +7,7 @@ import {
   LayoutTemplate,
   SlidersHorizontal,
   UserCog,
+  Gift,
 } from "lucide-react";
 import Header from "../../components/header";
 import SettingsCard from "./components/settings-card";
@@ -16,6 +17,7 @@ import StaffSettingsView from "./components/staff-settings";
 import LayoutSettingsView from "./components/layout-settings";
 import NotificationSettingsView from "./components/notification-settings";
 import CategorySettingsView from "./components/category-settings";
+import ReferralSettingsView from "./components/referral-settings";
 import type { SettingsCardItem, SettingsSectionId } from "./types";
 
 export const SETTINGS_ITEMS: SettingsCardItem[] = [
@@ -84,6 +86,17 @@ export const SETTINGS_ITEMS: SettingsCardItem[] = [
     badgeBorder: "border border-emerald-100",
     accentColor: "text-emerald-600 hover:text-emerald-700",
     borderColor: "hover:border-emerald-300",
+  },
+  {
+    id: "referrals",
+    title: "Referrals & Rewards",
+    description: "Share your referral code, invite fellow salons, and earn free monthly subscriptions.",
+    icon: Gift,
+    bannerBg: "bg-primary-lighter/40",
+    badgeBg: "bg-white text-primary",
+    badgeBorder: "border border-primary-lighter",
+    accentColor: "text-primary hover:text-primary-dark",
+    borderColor: "hover:border-primary-light",
   },
 ];
 
@@ -300,6 +313,7 @@ export function Settings() {
           {activeSection === "categories" && (
             <CategorySettingsView activeTab={categoryTab} onTabChange={setCategoryTab} />
           )}
+          {activeSection === "referrals" && <ReferralSettingsView />}
         </div>
       )}
     </div>
