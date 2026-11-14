@@ -212,18 +212,29 @@ export function AppointmentList({
                     </td>
                   )}
 
-                  {/* Status Dropdown */}
+                  {/* Status Dropdown / Finalized Badge */}
                   {showStatus && (
                     <td className="whitespace-nowrap px-5 py-4">
-                      {apt.status === "pending" ? (
+                      {apt.status === "completed" ? (
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-semibold ${badge.bg} ${badge.text} ${badge.border}`}
+                          title="Appointment Completed & Payment Finalized"
+                        >
+                          Completed
+                        </span>
+                      ) : apt.status === "pending" ? (
                         <span className="text-slate-400 font-semibold px-2">-</span>
                       ) : (
                         <div className="relative inline-block">
                           <select
                             value={apt.status}
-                            onChange={(e) =>
-                              onStatusChange(apt.id, e.target.value as AppointmentStatus)
-                            }
+                            onChange={(e) => {
+                              const val = e.target.value as AppointmentStatus;
+                              if (val === "completed" && !apt.hasInvoice) {
+                                return;
+                              }
+                              onStatusChange(apt.id, val);
+                            }}
                             className={`appearance-none rounded-full border px-3 py-1 pr-6 text-[11px] font-semibold outline-none transition cursor-pointer ${badge.bg} ${badge.text} ${badge.border} hover:opacity-90 focus:ring-2 focus:ring-primary/20`}
                             title="Change Appointment Status"
                           >
@@ -236,8 +247,12 @@ export function AppointmentList({
                             <option value="in_progress" className="bg-white text-amber-700 font-semibold py-1">
                               In Progress
                             </option>
-                            <option value="completed" className="bg-white text-blue-700 font-semibold py-1">
-                              Completed
+                            <option
+                              value="completed"
+                              disabled={!apt.hasInvoice}
+                              className="bg-white text-blue-700 font-semibold py-1 disabled:text-slate-400"
+                            >
+                              Completed {!apt.hasInvoice ? "(Payment Required)" : ""}
                             </option>
                             <option value="cancelled" className="bg-white text-rose-700 font-semibold py-1">
                               Cancelled
@@ -271,11 +286,9 @@ export function AppointmentList({
                         </Button>
                       )}
 
-                      {/* 2. Active or Completed Appointments -> Always Show Checkout */}
-                      {(apt.status === "confirmed" ||
-                        apt.status === "in_progress" ||
-                        apt.status === "completed") && (
-                        <>
+                      {/* 2. Active Unpaid Appointments -> Checkout Button (Only if NOT completed & NO invoice) */}
+                      {(apt.status === "confirmed" || apt.status === "in_progress") &&
+                        !apt.hasInvoice && (
                           <Button
                             type="button"
                             onClick={() => onCheckout?.(apt)}
@@ -286,42 +299,43 @@ export function AppointmentList({
                             <CreditCard className="size-3" />
                             <span>Checkout</span>
                           </Button>
+                        )}
 
-                          {/* If already has invoice, also show Print Bill icon button */}
-                          {apt.hasInvoice && (
-                            <Button
-                              type="button"
-                              onClick={() => onPrintInvoice?.(apt)}
-                              title={apt.invoiceNumber ? `Print Bill (${apt.invoiceNumber})` : "Print Bill"}
-                              aria-label="Print Bill"
-                              className="rounded-md p-1.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                            >
-                              <Printer className="size-4" />
-                            </Button>
-                          )}
+                      {/* 3. Completed or Invoiced Appointments -> Show Print / Share Bill */}
+                      {(apt.status === "completed" || apt.hasInvoice) && (
+                        <Button
+                          type="button"
+                          onClick={() => onPrintInvoice?.(apt)}
+                          title={apt.invoiceNumber ? `Print / Share Bill (${apt.invoiceNumber})` : "Print / Share Bill"}
+                          aria-label="Print / Share Bill"
+                          className="rounded-md p-1.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                        >
+                          <Printer className="size-4" />
+                        </Button>
+                      )}
 
-                          <Button
-                            type="button"
-                            onClick={() => onView?.(apt)}
-                            title="View Appointment"
-                            aria-label="View Appointment"
-                            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
-                          >
-                            <Eye className="size-4" />
-                          </Button>
+                      {/* 4. View Appointment Details */}
+                      <Button
+                        type="button"
+                        onClick={() => onView?.(apt)}
+                        title="View Appointment"
+                        aria-label="View Appointment"
+                        className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
+                      >
+                        <Eye className="size-4" />
+                      </Button>
 
-                          {apt.status !== "completed" && (
-                            <Button
-                              type="button"
-                              onClick={() => onEdit?.(apt)}
-                              title="Edit Appointment"
-                              aria-label="Edit Appointment"
-                              className="rounded-md p-1.5 text-primary hover:bg-primary-lighter/60 hover:text-primary-dark transition cursor-pointer"
-                            >
-                              <Pencil className="size-4" />
-                            </Button>
-                          )}
-                        </>
+                      {/* 5. Edit (only if not completed and not invoiced) */}
+                      {apt.status !== "completed" && !apt.hasInvoice && (
+                        <Button
+                          type="button"
+                          onClick={() => onEdit?.(apt)}
+                          title="Edit Appointment"
+                          aria-label="Edit Appointment"
+                          className="rounded-md p-1.5 text-primary hover:bg-primary-lighter/60 hover:text-primary-dark transition cursor-pointer"
+                        >
+                          <Pencil className="size-4" />
+                        </Button>
                       )}
 
                       {/* 3. Cancelled Appointments -> View Details */}

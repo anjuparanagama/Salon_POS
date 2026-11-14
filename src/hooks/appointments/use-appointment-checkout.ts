@@ -243,8 +243,18 @@ export function useAppointmentCheckout({
   const handleCompleteCheckout = async () => {
     setErrorMsg(null);
 
+    if (appointment && (appointment.status === "completed" || appointment.hasInvoice)) {
+      setErrorMsg("This appointment has already been checked out and paid. Cannot checkout again.");
+      return;
+    }
+
     if (subtotal <= 0) {
       setErrorMsg("Please include at least one service or product in the invoice.");
+      return;
+    }
+
+    if (balanceDue > 0 || totalPaid < grandTotal) {
+      setErrorMsg(`Full payment is required before completing checkout. Outstanding balance: ${formatPrice(balanceDue)}.`);
       return;
     }
 

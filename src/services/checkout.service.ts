@@ -1,5 +1,6 @@
 import { apiClient } from "../lib/axios";
 import { API_ENDPOINTS, API_BASE_URL } from "../config/api.config";
+import { getStoredLayoutSettings } from "../helpers/layout-settings.helper";
 
 export interface CheckoutPaymentPayload {
   method: "cash" | "card" | "bank" | "digital" | "other";
@@ -102,14 +103,15 @@ export const checkoutService = {
         payload
       );
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Fallback: If remote backend has not deployed the new /checkout route yet (404),
       // seamlessly fallback to the appointment invoice generation + payment endpoint
-      if (err.response?.status === 404) {
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr.response?.status === 404) {
         console.warn(
           "Appointment /checkout returned 404 - Falling back to appointment invoice & payment API..."
         );
-        const invoiceRes = await apiClient.post<any>(
+        const invoiceRes = await apiClient.post<{ id: string; invoice_number?: string; appointment_id?: string; customer_id?: string; subtotal?: number; total?: number; discount?: number; tax?: number; customer_name?: string; customer_phone?: string; appointment_number?: string; staff_name?: string; items?: InvoiceDetailResponse["items"] }>(
           API_ENDPOINTS.APPOINTMENTS.INVOICE(appointmentId)
         );
         const invoiceData = invoiceRes.data;
@@ -184,11 +186,12 @@ export const checkoutService = {
         payload
       );
       return res.data;
-    } catch (err: any) {
-      if (err.response?.status === 404 || err.response?.status === 500) {
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr.response?.status === 404 || axiosErr.response?.status === 500) {
         console.warn(
           "Direct POS checkout endpoint returned",
-          err.response?.status,
+          axiosErr.response?.status,
           "- Processing resilient walk-in billing..."
         );
 
@@ -281,7 +284,9 @@ export const checkoutService = {
 
         try {
           localStorage.setItem(`invoice_${invoiceResult.id}`, JSON.stringify(invoiceResult));
-        } catch {}
+        } catch {
+          // Ignore localStorage errors in private browsing modes
+        }
 
         return invoiceResult;
       }
@@ -304,11 +309,20 @@ export const checkoutService = {
     }
   },
 
-  async downloadInvoicePdf(invoiceId: string, invoiceNumber?: string): Promise<void> {
+  async downloadInvoicePdf(
+    invoiceId: string,
+    invoiceNumber?: string,
+    template?: string
+  ): Promise<void> {
+    const activeTemplate =
+      template || getStoredLayoutSettings().selectedInvoiceTemplate || "modern";
     try {
-      const res = await apiClient.get(API_ENDPOINTS.INVOICES.PDF(invoiceId, true), {
-        responseType: "blob",
-      });
+      const res = await apiClient.get(
+        API_ENDPOINTS.INVOICES.PDF(invoiceId, true, activeTemplate),
+        {
+          responseType: "blob",
+        }
+      );
       const blob = new Blob([res.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -324,35 +338,43 @@ export const checkoutService = {
     }
   },
 
-  getInvoicePdfViewUrl(invoiceId: string): string {
-    const relativeUrl = API_ENDPOINTS.INVOICES.PDF(invoiceId, false);
+  getInvoicePdfViewUrl(invoiceId: string, template?: string): string {
+    const activeTemplate =
+      template || getStoredLayoutSettings().selectedInvoiceTemplate || "modern";
+    const relativeUrl = API_ENDPOINTS.INVOICES.PDF(invoiceId, false, activeTemplate);
     return `${API_BASE_URL}${relativeUrl}`;
   },
 
-  getPublicReceiptPdfUrl(invoiceId: string): string {
+  getPublicReceiptPdfUrl(invoiceId: string, template?: string): string {
+    const activeTemplate =
+      template || getStoredLayoutSettings().selectedInvoiceTemplate || "modern";
     const base =
       import.meta.env.VITE_API_BASE_URL ||
       import.meta.env.VITE_API_URL ||
       window.location.origin;
-    return `${base.replace(/\/+$/, "")}/api/v1/salon/invoices/${invoiceId}/receipt-pdf`;
+    return `${base.replace(/\/+$/, "")}/api/v1/salon/invoices/${invoiceId}/receipt-pdf?template=${encodeURIComponent(activeTemplate)}`;
   },
 
   async sendInvoiceWhatsApp(
     invoiceId: string,
     recipientPhone: string,
-    customerConsent = true
+    customerConsent = true,
+    template?: string
   ): Promise<WhatsAppSendResponse> {
+    const activeTemplate =
+      template || getStoredLayoutSettings().selectedInvoiceTemplate || "modern";
     const res = await apiClient.post<WhatsAppSendResponse>(
       API_ENDPOINTS.INVOICES.WHATSAPP(invoiceId),
       {
         recipient_phone: recipientPhone,
         customer_consent: customerConsent,
+        template: activeTemplate,
       }
     );
     return res.data;
   },
 
-  async getWhatsAppHistory(invoiceId: string): Promise<any[]> {
+  async getWhatsAppHistory(invoiceId: string): Promise<unknown[]> {
     const res = await apiClient.get(
       API_ENDPOINTS.INVOICES.WHATSAPP_HISTORY(invoiceId)
     );

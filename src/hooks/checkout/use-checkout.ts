@@ -15,6 +15,7 @@ import {
   type InvoiceDetailResponse,
 } from "../../services/checkout.service";
 import { ROUTES } from "../../routes/sidebar.routes";
+import { formatPrice } from "../../helpers/price.helper";
 import { useCheckoutCart } from "./use-checkout-cart";
 import { useCheckoutWhatsApp } from "./use-checkout-whatsapp";
 
@@ -116,6 +117,11 @@ export function useCheckout() {
 
   // Helper to bind appointment data to checkout
   const bindAppointment = (apt: Appointment) => {
+    if (apt.status === "completed" || apt.hasInvoice) {
+      setErrorMsg("This appointment has already been checked out and paid. It cannot be checked out again.");
+      setSelectedAppointment(null);
+      return;
+    }
     setSelectedAppointment(apt);
     setClientName(apt.clientName || "");
     setClientPhone(apt.clientPhone || "");
@@ -141,7 +147,7 @@ export function useCheckout() {
 
         setCatalogServices(svcs.filter((s) => s.isActive));
         setCatalogProducts(prods.items.filter((p) => p.status === "active"));
-        setRecentAppointments(aptsRes.items || []);
+        setRecentAppointments((aptsRes.items || []).filter((a) => a.status !== "completed" && !a.hasInvoice));
 
         if (targetAppointmentId) {
           const found = aptsRes.items?.find((a) => a.id === targetAppointmentId);
@@ -195,6 +201,11 @@ export function useCheckout() {
 
     if (subtotal <= 0) {
       setErrorMsg("Please include at least one service or product in the invoice.");
+      return;
+    }
+
+    if (balanceDue > 0 || totalPaid < grandTotal) {
+      setErrorMsg(`Full payment is required before completing checkout. Outstanding balance: ${formatPrice(balanceDue)}.`);
       return;
     }
 

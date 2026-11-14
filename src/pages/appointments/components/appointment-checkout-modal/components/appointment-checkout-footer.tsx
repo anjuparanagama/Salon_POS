@@ -74,8 +74,17 @@ export function AppointmentCheckoutFooter({
         <Button
           type="button"
           onClick={onCompleteCheckout}
-          disabled={isSubmitting || subtotal <= 0}
-          className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-bold text-white shadow-md hover:bg-primary-dark transition cursor-pointer disabled:opacity-50"
+          disabled={isSubmitting || subtotal <= 0 || balanceDue > 0}
+          title={
+            balanceDue > 0
+              ? `Please pay remaining ${formatPrice(balanceDue)} to complete checkout`
+              : "Complete Checkout & Bill"
+          }
+          className={`flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl px-5 py-2 text-xs font-bold transition ${
+            balanceDue > 0 || subtotal <= 0 || isSubmitting
+              ? "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none border border-slate-200"
+              : "bg-primary text-white shadow-md hover:bg-primary-dark cursor-pointer"
+          }`}
         >
           {isSubmitting ? (
             <>
@@ -85,7 +94,11 @@ export function AppointmentCheckoutFooter({
           ) : (
             <>
               <CheckCircle2 className="size-4" />
-              <span>Complete Checkout & Bill</span>
+              <span>
+                {balanceDue > 0
+                  ? `Pay Due ${formatPrice(balanceDue)}`
+                  : "Complete Checkout & Bill"}
+              </span>
             </>
           )}
         </Button>

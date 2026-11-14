@@ -121,8 +121,8 @@ export function AppointmentViewModal({
             Close
           </Button>
 
-          {/* If already invoiced/billed -> Show Print Invoice */}
-          {appointment.hasInvoice && onPrintInvoice && (
+          {/* If already invoiced/billed or completed -> Show Print / Share Bill */}
+          {(appointment.hasInvoice || appointment.status === "completed") && onPrintInvoice && (
             <Button
               type="button"
               onClick={() => {
@@ -131,41 +131,41 @@ export function AppointmentViewModal({
               }}
               className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition cursor-pointer"
             >
-              Print Invoice {appointment.invoiceNumber ? `(#${appointment.invoiceNumber})` : ""}
+              Print / Share Invoice {appointment.invoiceNumber ? `(#${appointment.invoiceNumber})` : ""}
             </Button>
           )}
 
-          {/* Checkout & Bill */}
-          {(appointment.status === "confirmed" ||
-            appointment.status === "in_progress" ||
-            appointment.status === "completed") && (
-            <>
-              {onCheckout && (
-                <Button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    onCheckout(appointment);
-                  }}
-                  className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
-                >
-                  Checkout & Bill
-                </Button>
-              )}
-              {appointment.status !== "completed" && onEdit && (
-                <Button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    onEdit(appointment);
-                  }}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
-                >
-                  Edit Appointment
-                </Button>
-              )}
-            </>
-          )}
+          {/* Checkout & Bill: ONLY if unpaid and not completed */}
+          {appointment.status !== "completed" &&
+            !appointment.hasInvoice &&
+            (appointment.status === "confirmed" || appointment.status === "in_progress") && (
+              <>
+                {onCheckout && (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onCheckout(appointment);
+                    }}
+                    className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
+                  >
+                    Checkout & Bill
+                  </Button>
+                )}
+                {onEdit && (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onEdit(appointment);
+                    }}
+                    className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                  >
+                    Edit Appointment
+                  </Button>
+                )}
+              </>
+            )}
         </div>
       }
     >

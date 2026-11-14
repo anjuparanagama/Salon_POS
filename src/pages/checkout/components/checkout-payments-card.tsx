@@ -59,7 +59,7 @@ export function CheckoutPaymentsCard({
           <select
             value={payments[0]?.method || "cash"}
             onChange={(e) => {
-              const val = e.target.value as any;
+              const val = e.target.value as CheckoutPaymentPayload["method"];
               setPayments((prev) => [
                 { ...(prev[0] || { amount: 0, reference: "" }), method: val },
               ]);
@@ -115,12 +115,21 @@ export function CheckoutPaymentsCard({
         )}
       </div>
 
-      {/* Complete Checkout Action Button */}
+      {/* Complete Checkout Action Button (Requires Full Payment) */}
       <Button
         type="button"
         onClick={handleCompleteCheckout}
-        disabled={isSubmitting || subtotal <= 0}
-        className="w-full mt-2 flex items-center justify-center gap-2.5 rounded-2xl bg-primary py-3.5 text-sm font-bold text-white shadow-lg hover:bg-primary-dark transition cursor-pointer disabled:opacity-50"
+        disabled={isSubmitting || subtotal <= 0 || balanceDue > 0}
+        title={
+          balanceDue > 0
+            ? `Please pay remaining ${formatPrice(balanceDue)} to complete checkout`
+            : "Complete Checkout & Generate Invoice"
+        }
+        className={`w-full mt-2 flex items-center justify-center gap-2.5 rounded-2xl py-3.5 text-sm font-bold transition ${
+          balanceDue > 0 || subtotal <= 0 || isSubmitting
+            ? "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none border border-slate-200"
+            : "bg-primary text-white shadow-primary/25 hover:bg-primary-dark cursor-pointer shadow-lg"
+        }`}
       >
         {isSubmitting ? (
           <>
@@ -130,7 +139,11 @@ export function CheckoutPaymentsCard({
         ) : (
           <>
             <CheckCircle2 className="size-5" />
-            <span>Complete Checkout & Generate Invoice ({formatPrice(grandTotal)})</span>
+            <span>
+              {balanceDue > 0
+                ? `Pay Remaining ${formatPrice(balanceDue)} to Complete`
+                : `Complete Checkout & Generate Invoice (${formatPrice(grandTotal)})`}
+            </span>
           </>
         )}
       </Button>

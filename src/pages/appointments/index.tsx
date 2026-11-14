@@ -361,6 +361,7 @@ export function Appointments() {
         onEdit={handleEditAppointment}
         onPrintInvoice={handlePrintInvoice}
         onCheckout={(apt) => {
+          if (apt.status === "completed" || apt.hasInvoice) return;
           navigate(`${ROUTES.CHECKOUT}?appointmentId=${apt.id}`, { state: { appointment: apt } });
         }}
       />
@@ -401,6 +402,7 @@ export function Appointments() {
         onEdit={handleEditAppointment}
         onPrintInvoice={handlePrintInvoice}
         onCheckout={(apt) => {
+          if (apt.status === "completed" || apt.hasInvoice) return;
           setViewingAppointment(null);
           navigate(`${ROUTES.CHECKOUT}?appointmentId=${apt.id}`, { state: { appointment: apt } });
         }}

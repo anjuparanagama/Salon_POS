@@ -77,7 +77,13 @@ export const API_ENDPOINTS = {
   INVOICES: {
     CHECKOUT: "/api/v1/salon/invoices/checkout",
     BY_ID: (id: string) => `/api/v1/salon/invoices/${id}`,
-    PDF: (id: string, download = false) => `/api/v1/salon/invoices/${id}/pdf${download ? "?download=true" : ""}`,
+    PDF: (id: string, download = false, template?: string) => {
+      const params = new URLSearchParams();
+      if (download) params.set("download", "true");
+      if (template) params.set("template", template);
+      const q = params.toString();
+      return `/api/v1/salon/invoices/${id}/pdf${q ? `?${q}` : ""}`;
+    },
     WHATSAPP: (id: string) => `/api/v1/salon/invoices/${id}/whatsapp`,
     WHATSAPP_HISTORY: (id: string) => `/api/v1/salon/invoices/${id}/whatsapp/history`,
   },
