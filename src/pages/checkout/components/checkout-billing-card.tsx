@@ -1,3 +1,4 @@
+import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import { formatPrice } from "../../../helpers/price.helper";
 
@@ -43,34 +44,34 @@ export function CheckoutBillingCard({
         {/* Quick discount pills */}
         {subtotal > 0 && (
           <div className="flex items-center justify-end gap-1.5 pt-0.5">
-            <button
+            <Button
               type="button"
               onClick={() => setDiscountAmount(Math.round(subtotal * 0.05))}
               className="rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-bold cursor-pointer transition"
             >
               5%
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => setDiscountAmount(Math.round(subtotal * 0.1))}
               className="rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-bold cursor-pointer transition"
             >
               10%
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => setDiscountAmount(Math.round(subtotal * 0.15))}
               className="rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-bold cursor-pointer transition"
             >
               15%
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => setDiscountAmount(0)}
               className="rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-bold cursor-pointer transition"
             >
               Reset
-            </button>
+            </Button>
           </div>
         )}
 

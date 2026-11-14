@@ -17,6 +17,7 @@ import ServiceModal from "./components/service-modal";
 import ShareServicesModal from "./components/share-services-modal";
 import Header from "../../components/header";
 import Tooltip from "../../components/tooltip";
+import { Button } from "../../components/button";
 
 
 
@@ -199,25 +200,25 @@ export function Services() {
         isLoading={isLoading}
         titleSuffix={
           <Tooltip content="Share Service Catalog" placement="right">
-            <button
+            <Button
               type="button"
               aria-label="Share Service Catalog"
               onClick={() => setIsShareModalOpen(true)}
               className="inline-flex size-6 sm:size-7 items-center justify-center rounded-lg text-slate-400 hover:text-primary hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
             >
               <Share2 aria-hidden="true" className="size-3.5 sm:size-4" strokeWidth={2} />
-            </button>
+            </Button>
           </Tooltip>
         }
         actions={
-          <button
+          <Button
             type="button"
             onClick={handleOpenAddModal}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
           >
             <Plus className="size-4" />
             <span>{t("services:addService", "Add New Service")}</span>
-          </button>
+          </Button>
         }
       />
 

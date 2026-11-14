@@ -1,5 +1,6 @@
 import { Trash2, Loader2 } from "lucide-react";
 import type { CategoryItem, CategoryKind } from "../../../../../interface/category.types";
+import { Button } from "../../../../../components/button";
 
 interface CategoryDeleteModalProps {
   deletingCategory: CategoryItem | null;
@@ -44,14 +45,14 @@ export function CategoryDeleteModal({
         )}
 
         <div className="flex items-center gap-2.5 w-full mt-2">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={onConfirmDelete}
             disabled={isDeleting}
@@ -59,7 +60,7 @@ export function CategoryDeleteModal({
           >
             {isDeleting && <Loader2 className="size-3.5 animate-spin" />}
             <span>Delete</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Trash2, Loader2 } from "lucide-react";
 import { staffService } from "../../../../../services/staff.service";
 import type { StaffRoleItem } from "../../../../../interface/staff.types";
+import { Button } from "../../../../../components/button";
 
 export interface DeleteRoleModalProps {
   role: StaffRoleItem | null;
@@ -52,14 +53,14 @@ export function DeleteRoleModal({
         )}
 
         <div className="flex items-center gap-2.5 w-full mt-2">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={handleConfirmDeleteRole}
             disabled={isDeletingRole}
@@ -67,7 +68,7 @@ export function DeleteRoleModal({
           >
             {isDeletingRole && <Loader2 className="size-3.5 animate-spin" />}
             <span>Delete</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

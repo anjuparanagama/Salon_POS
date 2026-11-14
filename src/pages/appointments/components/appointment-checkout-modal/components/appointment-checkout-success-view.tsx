@@ -9,6 +9,7 @@ import {
   Phone,
   CalendarPlus,
 } from "lucide-react";
+import { Button } from "../../../../../components/button";
 import { Input } from "../../../../../components/input";
 import type { InvoiceDetailResponse } from "../../../../../services/checkout.service";
 import type { WhatsAppStatusMsg } from "../../../../../interface/appointment-checkout.types";
@@ -83,7 +84,7 @@ export function AppointmentCheckoutSuccessView({
       {/* Quick Action Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Download PDF */}
-        <button
+        <Button
           type="button"
           onClick={() =>
             checkoutService.downloadInvoicePdf(completedInvoice.id, completedInvoice.invoice_number)
@@ -92,10 +93,10 @@ export function AppointmentCheckoutSuccessView({
         >
           <Download className="size-4 text-primary" />
           <span>Download PDF Invoice</span>
-        </button>
+        </Button>
 
         {/* Print Invoice */}
-        <button
+        <Button
           type="button"
           onClick={() => {
             const pdfUrl = checkoutService.getInvoicePdfViewUrl(completedInvoice.id);
@@ -105,7 +106,7 @@ export function AppointmentCheckoutSuccessView({
         >
           <Printer className="size-4 text-slate-600" />
           <span>Print Invoice Receipt</span>
-        </button>
+        </Button>
       </div>
 
       {/* WhatsApp Web Sharing Card */}
@@ -122,7 +123,7 @@ export function AppointmentCheckoutSuccessView({
               </p>
             </div>
           </div>
-          <button
+          <Button
             type="button"
             onClick={onCopyReceiptText}
             className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 hover:text-emerald-700 bg-white border border-slate-200 rounded-md px-2 py-1 transition cursor-pointer"
@@ -130,7 +131,7 @@ export function AppointmentCheckoutSuccessView({
           >
             {copiedMessage ? <Check className="size-3 text-emerald-600" /> : <Copy className="size-3" />}
             <span>{copiedMessage ? "Copied!" : "Copy Text"}</span>
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
@@ -145,17 +146,17 @@ export function AppointmentCheckoutSuccessView({
           />
 
           {/* Primary: Open WhatsApp Web */}
-          <button
+          <Button
             type="button"
             onClick={onOpenWhatsAppWeb}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-emerald-700 transition cursor-pointer"
           >
             <MessageCircle className="size-4" />
             <span>Open WhatsApp Web</span>
-          </button>
+          </Button>
 
           {/* Secondary: Open WhatsApp App (wa.me) */}
-          <button
+          <Button
             type="button"
             onClick={onOpenWhatsAppApp}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1 rounded-lg border border-emerald-300 bg-white px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition cursor-pointer"
@@ -163,20 +164,20 @@ export function AppointmentCheckoutSuccessView({
           >
             <ExternalLink className="size-3.5" />
             <span>wa.me</span>
-          </button>
+          </Button>
         </div>
 
         {/* Optional Cloud API trigger */}
         <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
           <span>Customer phone: {cleanRecipientPhone() ? `+${cleanRecipientPhone()}` : "Not provided"}</span>
-          <button
+          <Button
             type="button"
             onClick={onSendWhatsAppApi}
             disabled={isSendingWa}
             className="text-slate-500 hover:text-emerald-700 underline cursor-pointer disabled:opacity-40"
           >
             {isSendingWa ? "Sending via API..." : "Send via Cloud API (Background)"}
-          </button>
+          </Button>
         </div>
 
         {waStatusMsg && (
@@ -204,14 +205,14 @@ export function AppointmentCheckoutSuccessView({
           </p>
         </div>
 
-        <button
+        <Button
           type="button"
           onClick={onBookNext}
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
         >
           <CalendarPlus className="size-3.5" />
           <span>Book Next Appointment</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

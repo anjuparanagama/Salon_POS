@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Check, RotateCcw, Save, Languages } from "lucide-react";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type { GeneralSettingsState } from "../../types";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "../../../../interface/i18n.types";
@@ -211,7 +212,7 @@ export function GeneralSettingsView({
               {SUPPORTED_LANGUAGES.map((lang) => {
                 const isSelected = currentLang === lang.code;
                 return (
-                  <button
+                  <Button
                     key={lang.code}
                     type="button"
                     onClick={() => handleLanguageChange(lang.code)}
@@ -232,7 +233,7 @@ export function GeneralSettingsView({
                         <Check className="size-3" />
                       </span>
                     )}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -276,16 +277,16 @@ export function GeneralSettingsView({
 
       {/* Actions bottom bar */}
       <div className="flex items-center justify-between gap-3 pt-1">
-        <button
+        <Button
           type="button"
           onClick={handleReset}
           className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
         >
           <RotateCcw className="size-3.5" />
           <span>Reset Defaults</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="submit"
           className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer ${
             isSaved
@@ -310,7 +311,7 @@ export function GeneralSettingsView({
               </span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   );

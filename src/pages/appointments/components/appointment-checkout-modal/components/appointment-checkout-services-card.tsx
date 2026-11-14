@@ -1,5 +1,6 @@
 import React from "react";
 import { Scissors, Sparkles, Plus, Trash2 } from "lucide-react";
+import { Button } from "../../../../../components/button";
 import { Input } from "../../../../../components/input";
 import type { Appointment } from "../../../../../interface/appointment.types";
 import type { SelectedServiceItem } from "../../../../../interface/appointment-checkout.types";
@@ -104,7 +105,7 @@ export function AppointmentCheckoutServicesCard({
               </option>
             ))}
           </select>
-          <button
+          <Button
             type="button"
             onClick={onAddService}
             disabled={!selectedServiceId || isLoadingCatalog}
@@ -112,7 +113,7 @@ export function AppointmentCheckoutServicesCard({
           >
             <Plus className="size-3.5" />
             <span>Add</span>
-          </button>
+          </Button>
         </div>
 
         {/* Additional services list */}
@@ -126,7 +127,7 @@ export function AppointmentCheckoutServicesCard({
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="flex items-center border border-slate-200 rounded-md bg-white">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         setAdditionalServices((prev) =>
@@ -138,9 +139,9 @@ export function AppointmentCheckoutServicesCard({
                       className="px-2 py-0.5 text-slate-500 hover:text-slate-800"
                     >
                       -
-                    </button>
+                    </Button>
                     <span className="px-2 font-mono font-semibold text-xs">{item.quantity}</span>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         setAdditionalServices((prev) =>
@@ -150,19 +151,19 @@ export function AppointmentCheckoutServicesCard({
                       className="px-2 py-0.5 text-slate-500 hover:text-slate-800"
                     >
                       +
-                    </button>
+                    </Button>
                   </div>
                   <span className="w-16 text-right font-bold text-slate-900 font-mono">
                     {formatPrice(item.price * item.quantity)}
                   </span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setAdditionalServices((prev) => prev.filter((_, i) => i !== idx))}
                     className="text-slate-400 hover:text-rose-600 transition p-1"
                     title="Remove service"
                   >
                     <Trash2 className="size-3.5" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}

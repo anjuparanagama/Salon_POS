@@ -24,6 +24,7 @@ import AppointmentCheckoutModal from "../appointments/components/appointment-che
 import Header from "../../components/header";
 import Tooltip from "../../components/tooltip";
 import Pagination from "../../components/pagination";
+import { Button } from "../../components/button";
 
 const defaultCategories = [
   { label: "All Items", value: "all" },
@@ -385,7 +386,7 @@ export function Products() {
         isLoading={isLoading}
         titleSuffix={
           <Tooltip content="Share Product Catalog" placement="right">
-            <button
+            <Button
               type="button"
               aria-label="Share Product Catalog"
               onClick={() => setIsShareModalOpen(true)}
@@ -396,19 +397,19 @@ export function Products() {
                 className="size-3.5 sm:size-4"
                 strokeWidth={2}
               />
-            </button>
+            </Button>
           </Tooltip>
         }
         actions={
           <div className="flex items-center gap-2">
-            <button
+            <Button
               type="button"
               onClick={handleOpenAdd}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
             >
               <Plus className="size-4" />
               <span>Add Product</span>
-            </button>
+            </Button>
           </div>
         }
       />

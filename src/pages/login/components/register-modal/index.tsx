@@ -1,5 +1,6 @@
 import { X, Sparkles, Phone, Mail, CheckCircle2 } from "lucide-react";
 import type { RegisterInfoModalProps } from "../../../../interface/auth.types";
+import { Button } from "../../../../components/button";
 
 export function RegisterModal({ isOpen, onClose }: RegisterInfoModalProps) {
   if (!isOpen) return null;
@@ -14,13 +15,13 @@ export function RegisterModal({ isOpen, onClose }: RegisterInfoModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
-        <button
+        <Button
           type="button"
           onClick={onClose}
           className="absolute right-4 top-4 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
         >
           <X className="size-4" />
-        </button>
+        </Button>
 
         <div className="flex items-center gap-3 mb-4">
           <div className="flex size-10 items-center justify-center rounded-xl bg-primary-lighter text-primary">
@@ -60,13 +61,13 @@ export function RegisterModal({ isOpen, onClose }: RegisterInfoModalProps) {
         </div>
 
         <div className="mt-5 pt-3 border-t border-slate-100">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="w-full rounded-lg bg-primary py-2.5 px-4 text-xs font-semibold text-white hover:bg-primary-dark transition cursor-pointer"
           >
             Understood &bull; Return to Login
-          </button>
+          </Button>
         </div>
       </div>
     </div>

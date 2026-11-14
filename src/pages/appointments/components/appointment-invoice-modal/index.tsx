@@ -12,6 +12,7 @@ import InvoiceRenderer, {
   type SalonInfo,
 } from "../../../../components/invoice-template";
 import type { InvoiceTemplateId, LayoutSettingsState } from "../../../settings/types";
+import { Button } from "../../../../components/button";
 
 export type AppointmentInvoiceModalProps = {
   isOpen: boolean;
@@ -150,7 +151,7 @@ export function AppointmentInvoiceModal({
                 (!layoutSettings.selectedInvoiceTemplate && tmpl.id === "modern");
 
               return (
-                <button
+                <Button
                   key={tmpl.id}
                   type="button"
                   onClick={() => setActiveTemplate(tmpl.id)}
@@ -169,7 +170,7 @@ export function AppointmentInvoiceModal({
                       }`}
                     />
                   )}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -193,21 +194,21 @@ export function AppointmentInvoiceModal({
           </span>
 
           <div className="flex items-center gap-2">
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="rounded-xl border border-slate-200 px-4 py-2 font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer"
             >
               Close
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={handlePrint}
               className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-5 py-2 font-semibold text-white shadow-xs hover:bg-slate-800 transition cursor-pointer"
             >
               <Printer className="size-4" />
               <span>Print Invoice</span>
-            </button>
+            </Button>
           </div>
         </div>
       </div>

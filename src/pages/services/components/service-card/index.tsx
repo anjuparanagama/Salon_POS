@@ -1,6 +1,7 @@
 import { Clock, Edit3, Check, X, Sparkles, Image as ImageIcon } from "lucide-react";
 import type { ServiceItem, ServiceCategoryItem } from "../../../../interface/service.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { Button } from "../../../../components/button";
 
 export type ServiceCardProps = {
   service: ServiceItem;
@@ -98,7 +99,7 @@ export function ServiceCard({
         </div>
 
         <div className="mt-3 flex items-center justify-between gap-2 pt-2 border-t border-dashed border-slate-100 text-xs">
-          <button
+          <Button
             type="button"
             onClick={() => onToggleStatus(service.id)}
             className={`flex items-center gap-1 text-[11px] font-medium transition cursor-pointer ${
@@ -118,16 +119,16 @@ export function ServiceCard({
                 <span>Activate</span>
               </>
             )}
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
             onClick={() => onEdit(service)}
             className="flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary-dark transition cursor-pointer"
           >
             <Edit3 className="size-3" />
             <span>Edit</span>
-          </button>
+          </Button>
         </div>
       </div>
     </article>

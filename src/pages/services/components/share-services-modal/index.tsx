@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import Modal from "../../../../components/modal";
 import type { ShareServicesModalProps } from "../../../../interface/service.types";
+import { Button } from "../../../../components/button";
 
 const DEFAULT_DUMMY_URL = "https://salora.lk/services/sribees-salon";
 
@@ -56,7 +57,7 @@ export function ShareServicesModal({
           <span className="truncate font-mono text-xs text-slate-700 select-all pl-1">
             {shareUrl}
           </span>
-          <button
+          <Button
             type="button"
             onClick={handleCopy}
             className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white transition-all cursor-pointer shrink-0 shadow-xs active:scale-95 ${
@@ -76,7 +77,7 @@ export function ShareServicesModal({
                 <span>Copy</span>
               </>
             )}
-          </button>
+          </Button>
         </div>
 
         {/* Social Share Section */}

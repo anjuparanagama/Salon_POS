@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { Upload, X, Tag, CreditCard } from "lucide-react";
 import SidePanel from "../../../../../components/side-panel";
+import { Button } from "../../../../../components/button";
 import { Input } from "../../../../../components/input";
 import type {
   ExpenseFormData,
@@ -179,14 +180,14 @@ function ExpenseFormContent({
               alt="Receipt Preview"
               className="h-32 w-auto max-w-full rounded-lg object-cover"
             />
-            <button
+            <Button
               type="button"
               onClick={removeImage}
               className="absolute right-2 top-2 rounded-full bg-slate-900/80 p-1.5 text-white hover:bg-slate-900 transition cursor-pointer shadow-md"
               title="Remove image"
             >
               <X className="size-3.5" />
-            </button>
+            </Button>
           </div>
         ) : (
           <label className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 bg-slate-50/70 p-5 text-center cursor-pointer hover:bg-slate-100/70 hover:border-slate-400 transition">
@@ -262,20 +263,20 @@ export function ExpensePanel({
 
   const footer = (
     <div className="flex items-center justify-end gap-2.5">
-      <button
+      <Button
         type="button"
         onClick={onClose}
         className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
       >
         Cancel
-      </button>
-      <button
+      </Button>
+      <Button
         type="submit"
         form="expense-form"
         className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
       >
         {isEditing ? "Update Expense" : "Save Expense"}
-      </button>
+      </Button>
     </div>
   );
 

@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "../../lib/cn";
+import { Button } from "../button";
 import { Input } from "../input";
 
 export type SearchFieldOption = {
@@ -144,14 +145,14 @@ export function TableToolbar({
                 className="w-full h-auto border-0 bg-transparent pl-3 pr-8 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none shadow-none ring-0 focus-visible:ring-0"
               />
               {search ? (
-                <button
+                <Button
                   type="button"
                   onClick={() => onSearchChange("")}
                   className="absolute right-2.5 size-4 text-slate-400 hover:text-slate-600 transition cursor-pointer z-10"
                   title="Clear search"
                 >
                   <X className="size-3.5" />
-                </button>
+                </Button>
               ) : (
                 <Search className="pointer-events-none absolute right-2.5 size-4 text-slate-400" />
               )}
@@ -162,7 +163,7 @@ export function TableToolbar({
         {/* Filter Popover Button */}
         {hasFilterPopover && (
           <div className="relative" ref={filterRef}>
-            <button
+            <Button
               type="button"
               onClick={() => setIsFilterOpen((prev) => !prev)}
               aria-label="Toggle filters"
@@ -180,7 +181,7 @@ export function TableToolbar({
                   {activeFilterCount}
                 </span>
               )}
-            </button>
+            </Button>
 
             {/* Filter Popover Dropdown Panel */}
             {isFilterOpen && (
@@ -191,7 +192,7 @@ export function TableToolbar({
                     <span>{filterTitle}</span>
                   </div>
                   {isFilterActive && onResetFilters && (
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         onResetFilters();
@@ -201,7 +202,7 @@ export function TableToolbar({
                     >
                       <RotateCcw className="size-3" />
                       <span>Reset</span>
-                    </button>
+                    </Button>
                   )}
                 </div>
 
@@ -210,13 +211,13 @@ export function TableToolbar({
 
                   {/* Popover Action Footer */}
                   <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setIsFilterOpen(false)}
                       className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-primary-dark transition cursor-pointer"
                     >
                       Apply Filters
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -256,7 +257,7 @@ export function TableToolbar({
         {/* Column toggle button */}
         {hasColumnsToggle && (
           <div className="relative" ref={columnRef}>
-            <button
+            <Button
               type="button"
               onClick={() => setIsColumnMenuOpen((prev) => !prev)}
               aria-label="Toggle visible columns"
@@ -269,7 +270,7 @@ export function TableToolbar({
               )}
             >
               <Columns3 className="size-4 text-slate-600" />
-            </button>
+            </Button>
 
             {/* Columns Popover Dropdown */}
             {isColumnMenuOpen && (
@@ -303,7 +304,7 @@ export function TableToolbar({
 
         {/* Export CSV Button */}
         {onExportCsv && (
-          <button
+          <Button
             type="button"
             onClick={onExportCsv}
             aria-label="Export to CSV"
@@ -311,7 +312,7 @@ export function TableToolbar({
             className="flex items-center justify-center size-8.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 shadow-2xs transition cursor-pointer"
           >
             <Download className="size-4 text-slate-600" />
-          </button>
+          </Button>
         )}
       </div>
     </div>

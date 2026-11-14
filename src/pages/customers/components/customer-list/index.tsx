@@ -1,6 +1,7 @@
 import { Edit3, Trash2, Phone, Mail, AlertCircle, Calendar, History, Loader2 } from "lucide-react";
 import type { Customer, CustomerGender } from "../../../../interface/customer.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { Button } from "../../../../components/button";
 
 export type CustomerListProps = {
   customers: Customer[];
@@ -164,14 +165,14 @@ export function CustomerList({
                   {/* Service History */}
                   {isColVisible("history") && (
                     <td className="whitespace-nowrap px-5 py-4 text-center">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => onViewHistory(customer)}
                         className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-slate-700 shadow-2xs transition hover:border-primary hover:bg-primary-lighter hover:text-primary cursor-pointer"
                       >
                         <History className="size-3.5 text-slate-500 group-hover:text-primary" />
                         <span>View Services</span>
-                      </button>
+                      </Button>
                     </td>
                   )}
 
@@ -179,22 +180,22 @@ export function CustomerList({
                   {isColVisible("actions") && (
                     <td className="whitespace-nowrap px-5 py-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onEdit(customer)}
                           className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                           title="Edit Customer"
                         >
                           <Edit3 className="size-4" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           onClick={() => onDelete(customer.id)}
                           className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer"
                           title="Delete Customer"
                         >
                           <Trash2 className="size-4" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   )}

@@ -12,6 +12,7 @@ import {
   AppointmentCheckoutSuccessView,
   AppointmentCheckoutFooter,
 } from "./components";
+import { Button } from "../../../../components/button";
 
 export type { AppointmentCheckoutModalProps };
 
@@ -185,7 +186,7 @@ export function AppointmentCheckoutModal({
               />
 
               {/* Complete Checkout Action */}
-              <button
+              <Button
                 type="button"
                 onClick={handleCompleteCheckout}
                 disabled={isSubmitting || subtotal <= 0}
@@ -202,7 +203,7 @@ export function AppointmentCheckoutModal({
                     <span>Complete Checkout & Bill</span>
                   </>
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

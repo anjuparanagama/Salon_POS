@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import type { Product } from "../../../../interface/product.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { Button } from "../../../../components/button";
 
 export type ProductListProps = {
   products: Product[];
@@ -238,7 +239,7 @@ export function ProductList({
                       className="px-3 py-2 text-center"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <button
+                      <Button
                         type="button"
                         onClick={() => onToggleStatus?.(item.id)}
                         className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium transition cursor-pointer ${
@@ -254,7 +255,7 @@ export function ProductList({
                           }`}
                         />
                         {isActive ? "Active" : "Inactive"}
-                      </button>
+                      </Button>
                     </td>
                   )}
 
@@ -266,24 +267,24 @@ export function ProductList({
                     >
                       <div className="flex items-center justify-center gap-1.5">
                         {/* View Action - Icon only */}
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onView(item)}
                           className="rounded-md p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 transition cursor-pointer"
                           title="View Details"
                         >
                           <Eye className="size-3.5" />
-                        </button>
+                        </Button>
 
                         {/* Edit Action - Icon only */}
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onEdit(item)}
                           className="rounded-md p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 transition cursor-pointer"
                           title="Edit Product"
                         >
                           <Edit3 className="size-3.5" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   )}

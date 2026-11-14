@@ -19,6 +19,7 @@ import NotificationSettingsView from "./components/notification-settings";
 import CategorySettingsView from "./components/category-settings";
 import ReferralSettingsView from "./components/referral-settings";
 import type { SettingsCardItem, SettingsSectionId } from "./types";
+import { Button } from "../../components/button";
 
 export const SETTINGS_ITEMS: SettingsCardItem[] = [
   {
@@ -163,7 +164,7 @@ export function Settings() {
         centerContent={
           activeSection === "staff" ? (
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 type="button"
                 onClick={() => setStaffTab("roles")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -173,8 +174,8 @@ export function Settings() {
                 }`}
               >
                 Staff Roles
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setStaffTab("permissions")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -184,8 +185,8 @@ export function Settings() {
                 }`}
               >
                 Permission Matrix
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setStaffTab("policies")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -195,11 +196,11 @@ export function Settings() {
                 }`}
               >
                 Login & Shift Policies
-              </button>
+              </Button>
             </div>
           ) : activeSection === "categories" ? (
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 type="button"
                 onClick={() => setCategoryTab("product")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -209,8 +210,8 @@ export function Settings() {
                 }`}
               >
                 Product Categories
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setCategoryTab("service")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -220,8 +221,8 @@ export function Settings() {
                 }`}
               >
                 Service Categories
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setCategoryTab("expense")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -231,11 +232,11 @@ export function Settings() {
                 }`}
               >
                 Expense Categories
-              </button>
+              </Button>
             </div>
           ) : activeSection === "general" ? (
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 type="button"
                 onClick={() => setGeneralTab("profile")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -245,8 +246,8 @@ export function Settings() {
                 }`}
               >
                 Salon Profile
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setGeneralTab("financial")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -256,8 +257,8 @@ export function Settings() {
                 }`}
               >
                 Financial & Regional
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setGeneralTab("operations")}
                 className={`rounded-full px-5 py-1.5 text-xs font-medium transition cursor-pointer whitespace-nowrap ${
@@ -267,20 +268,20 @@ export function Settings() {
                 }`}
               >
                 Daily Operations
-              </button>
+              </Button>
             </div>
           ) : undefined
         }
         actions={
           activeSection ? (
-            <button
+            <Button
               type="button"
               onClick={handleBackToSettings}
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition cursor-pointer"
             >
               <ArrowLeft className="size-3.5" />
               <span>Back to all settings</span>
-            </button>
+            </Button>
           ) : undefined
         }
       />

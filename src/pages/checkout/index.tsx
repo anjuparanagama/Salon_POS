@@ -12,6 +12,7 @@ import {
   CheckoutBillingCard,
   CheckoutPaymentsCard,
 } from "./components";
+import { Button } from "../../components/button";
 
 export function CheckoutPage() {
   const {
@@ -84,22 +85,22 @@ export function CheckoutPage() {
         isLoading={isLoadingData}
         actions={
           <div className="flex items-center gap-2">
-            <button
+            <Button
               type="button"
               onClick={() => navigate(ROUTES.APPOINTMENTS)}
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
             >
               <ArrowLeft className="size-3.5" />
               <span>Appointments</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={handleStartNewSale}
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
             >
               <RotateCcw className="size-3.5" />
               <span>Reset POS</span>
-            </button>
+            </Button>
           </div>
         }
       />

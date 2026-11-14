@@ -3,6 +3,7 @@ import { ShoppingBag, Plus, Trash2 } from "lucide-react";
 import type { Product } from "../../../../../interface/product.types";
 import type { SelectedProductItem } from "../../../../../interface/appointment-checkout.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
+import { Button } from "../../../../../components/button";
 
 interface AppointmentCheckoutProductsCardProps {
   catalogProducts: Product[];
@@ -50,7 +51,7 @@ export function AppointmentCheckoutProductsCard({
             </option>
           ))}
         </select>
-        <button
+        <Button
           type="button"
           onClick={onAddProduct}
           disabled={!selectedProductId || isLoadingCatalog}
@@ -58,7 +59,7 @@ export function AppointmentCheckoutProductsCard({
         >
           <Plus className="size-3.5" />
           <span>Add</span>
-        </button>
+        </Button>
       </div>
 
       {/* Selected products list */}
@@ -75,7 +76,7 @@ export function AppointmentCheckoutProductsCard({
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 <div className="flex items-center border border-slate-200 rounded-md bg-white">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       setSelectedProducts((prev) =>
@@ -87,9 +88,9 @@ export function AppointmentCheckoutProductsCard({
                     className="px-2 py-0.5 text-slate-500 hover:text-slate-800"
                   >
                     -
-                  </button>
+                  </Button>
                   <span className="px-2 font-mono font-semibold text-xs">{item.quantity}</span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       if (item.quantity >= item.stock) {
@@ -103,19 +104,19 @@ export function AppointmentCheckoutProductsCard({
                     className="px-2 py-0.5 text-slate-500 hover:text-slate-800"
                   >
                     +
-                  </button>
+                  </Button>
                 </div>
                 <span className="w-16 text-right font-bold text-slate-900 font-mono">
                   {formatPrice(item.price * item.quantity)}
                 </span>
-                <button
+                <Button
                   type="button"
                   onClick={() => setSelectedProducts((prev) => prev.filter((_, i) => i !== idx))}
                   className="text-slate-400 hover:text-rose-600 transition p-1"
                   title="Remove product"
                 >
                   <Trash2 className="size-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
           ))}

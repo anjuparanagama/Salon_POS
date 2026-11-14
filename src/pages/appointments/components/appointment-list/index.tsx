@@ -2,6 +2,7 @@ import { Clock, Phone, User, Check, Eye, Pencil, Printer, ChevronDown, Loader2, 
 import type { Appointment, AppointmentStatus } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { formatAppointmentId } from "../../../../helpers/format-id.helper";
+import { Button } from "../../../../components/button";
 
 export type AppointmentListProps = {
   appointments: Appointment[];
@@ -256,7 +257,7 @@ export function AppointmentList({
                     <div className="inline-flex items-center justify-end gap-1.5">
                       {/* 1. Pending Appointments -> Approve Button */}
                       {apt.status === "pending" && (
-                        <button
+                        <Button
                           type="button"
                           onClick={() =>
                             onApprove ? onApprove(apt.id) : onStatusChange(apt.id, "confirmed")
@@ -267,7 +268,7 @@ export function AppointmentList({
                         >
                           <Check className="size-3.5" />
                           <span>Approve</span>
-                        </button>
+                        </Button>
                       )}
 
                       {/* 2. Active or Completed Appointments -> Always Show Checkout */}
@@ -275,7 +276,7 @@ export function AppointmentList({
                         apt.status === "in_progress" ||
                         apt.status === "completed") && (
                         <>
-                          <button
+                          <Button
                             type="button"
                             onClick={() => onCheckout?.(apt)}
                             title="Unified POS Checkout"
@@ -284,11 +285,11 @@ export function AppointmentList({
                           >
                             <CreditCard className="size-3" />
                             <span>Checkout</span>
-                          </button>
+                          </Button>
 
                           {/* If already has invoice, also show Print Bill icon button */}
                           {apt.hasInvoice && (
-                            <button
+                            <Button
                               type="button"
                               onClick={() => onPrintInvoice?.(apt)}
                               title={apt.invoiceNumber ? `Print Bill (${apt.invoiceNumber})` : "Print Bill"}
@@ -296,10 +297,10 @@ export function AppointmentList({
                               className="rounded-md p-1.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
                             >
                               <Printer className="size-4" />
-                            </button>
+                            </Button>
                           )}
 
-                          <button
+                          <Button
                             type="button"
                             onClick={() => onView?.(apt)}
                             title="View Appointment"
@@ -307,10 +308,10 @@ export function AppointmentList({
                             className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition cursor-pointer"
                           >
                             <Eye className="size-4" />
-                          </button>
+                          </Button>
 
                           {apt.status !== "completed" && (
-                            <button
+                            <Button
                               type="button"
                               onClick={() => onEdit?.(apt)}
                               title="Edit Appointment"
@@ -318,14 +319,14 @@ export function AppointmentList({
                               className="rounded-md p-1.5 text-primary hover:bg-primary-lighter/60 hover:text-primary-dark transition cursor-pointer"
                             >
                               <Pencil className="size-4" />
-                            </button>
+                            </Button>
                           )}
                         </>
                       )}
 
                       {/* 3. Cancelled Appointments -> View Details */}
                       {apt.status === "cancelled" && (
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onView?.(apt)}
                           title="View Details"
@@ -333,7 +334,7 @@ export function AppointmentList({
                           className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
                         >
                           <Eye className="size-4" />
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </td>

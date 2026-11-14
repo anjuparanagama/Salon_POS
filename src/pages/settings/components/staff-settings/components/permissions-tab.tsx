@@ -3,6 +3,7 @@ import { Check, RotateCcw, Save, KeyRound, Loader2 } from "lucide-react";
 import type { RolePermissions, StaffRoleType } from "../../../types";
 import type { ComputedRole } from "../../../../../interface/staff-settings.types";
 import { PermissionsMatrix } from "./permissions-matrix";
+import { Button } from "../../../../../components/button";
 
 export interface PermissionsTabProps {
   computedRolesList: ComputedRole[];
@@ -53,20 +54,20 @@ export function PermissionsTab({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            <Button
               type="button"
               onClick={handleSelectAllForRole}
               className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
             >
               Select All
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={handleDeselectAllForRole}
               className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
             >
               Deselect All
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -75,7 +76,7 @@ export function PermissionsTab({
           {computedRolesList.map((role) => {
             const isSelected = activeRole === role.id;
             return (
-              <button
+              <Button
                 key={role.id}
                 type="button"
                 onClick={() => setActiveRole(role.id)}
@@ -97,7 +98,7 @@ export function PermissionsTab({
                 >
                   {role.badge}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -121,16 +122,16 @@ export function PermissionsTab({
 
       {/* Bottom Save Bar */}
       <div className="flex items-center justify-between gap-3 pt-2">
-        <button
+        <Button
           type="button"
           onClick={handleResetDefaults}
           className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
         >
           <RotateCcw className="size-3.5" />
           <span>Reset Defaults</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="submit"
           disabled={isSavingPermissions}
           className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer ${
@@ -155,7 +156,7 @@ export function PermissionsTab({
               <span>Save Role Permissions</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   );

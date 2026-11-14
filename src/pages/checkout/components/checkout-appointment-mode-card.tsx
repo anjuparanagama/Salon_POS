@@ -1,4 +1,5 @@
 import { Scissors, ShoppingBag, CheckCircle2 } from "lucide-react";
+import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import type { Appointment } from "../../../interface/appointment.types";
 import type { CartServiceItem } from "../../../interface/checkout.types";
@@ -57,13 +58,13 @@ export function CheckoutAppointmentModeCard({
 
         <div className="flex items-center gap-2">
           {selectedAppointment ? (
-            <button
+            <Button
               type="button"
               onClick={handleClearAppointment}
               className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
             >
               Switch to Walk-in
-            </button>
+            </Button>
           ) : (
             <select
               onChange={(e) => {

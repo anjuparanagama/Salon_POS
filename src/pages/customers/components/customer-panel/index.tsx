@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent } from "react";
 import SidePanel from "../../../../components/side-panel";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type { Customer, CustomerFormData, CustomerGender } from "../../../../interface/customer.types";
 
@@ -48,15 +49,15 @@ export function CustomerPanel({
 
   const footer = (
     <div className="flex items-center justify-end gap-2.5">
-      <button
+      <Button
         type="button"
         onClick={onClose}
         disabled={isLoading}
         className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer disabled:opacity-50"
       >
         Cancel
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={handleSubmit}
         disabled={isLoading || !formData.name.trim() || !formData.phone.trim()}
@@ -67,7 +68,7 @@ export function CustomerPanel({
           : editingCustomer
           ? "Save Changes"
           : "Create Customer"}
-      </button>
+      </Button>
     </div>
   );
 

@@ -14,6 +14,7 @@ import SidePanel from "../../../../components/side-panel";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { customersService } from "../../../../services/customers.service";
 import type { Customer, CustomerGender, ServiceHistoryItem } from "../../../../interface/customer.types";
+import { Button } from "../../../../components/button";
 
 export type CustomerViewPanelProps = {
   isOpen: boolean;
@@ -71,15 +72,15 @@ export function CustomerViewPanel({
 
   const footer = (
     <div className="flex items-center justify-between gap-2.5">
-      <button
+      <Button
         type="button"
         onClick={onClose}
         className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
       >
         Close
-      </button>
+      </Button>
       {onEdit && (
-        <button
+        <Button
           type="button"
           onClick={() => {
             onClose();
@@ -89,7 +90,7 @@ export function CustomerViewPanel({
         >
           <Edit3 className="size-3.5" />
           <span>Edit Customer</span>
-        </button>
+        </Button>
       )}
     </div>
   );

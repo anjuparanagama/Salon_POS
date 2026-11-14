@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Info, Loader2 } from "lucide-react";
 import Tooltip, { type TooltipPlacement } from "../tooltip";
+import { Button } from "../button";
 
 export type HeaderProps = {
   title?: ReactNode;
@@ -51,14 +52,14 @@ export function Header({
 
         {showInfo && tooltipText && (
           <Tooltip content={tooltipText} placement={tooltipPlacement}>
-            <button
+            <Button
               type="button"
               aria-label={typeof tooltipText === "string" ? tooltipText : "Information"}
               onClick={onInfoClick}
               className="inline-flex size-5 items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 cursor-pointer"
             >
               <Info aria-hidden="true" className="size-3.5" strokeWidth={2} />
-            </button>
+            </Button>
           </Tooltip>
         )}
 

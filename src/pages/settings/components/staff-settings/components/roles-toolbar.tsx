@@ -7,6 +7,7 @@ import {
   Download,
   Columns3,
 } from "lucide-react";
+import { Button } from "../../../../../components/button";
 import { Input } from "../../../../../components/input";
 import type { RoleSearchField, VisibleColumns } from "../../../../../interface/staff-settings.types";
 
@@ -93,14 +94,14 @@ export function RolesToolbar({
 
         {/* Column toggle button */}
         <div className="relative">
-          <button
+          <Button
             type="button"
             onClick={() => setShowColumnMenu((p) => !p)}
             className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
             title="Toggle visible columns"
           >
             <Columns3 className="size-4" />
-          </button>
+          </Button>
 
           {showColumnMenu && (
             <div className="absolute right-0 top-full mt-1.5 z-40 w-44 rounded-xl border border-slate-200 bg-white p-2.5 shadow-xl text-xs flex flex-col gap-1.5">
@@ -152,34 +153,34 @@ export function RolesToolbar({
         </div>
 
         {/* Refresh Button */}
-        <button
+        <Button
           type="button"
           onClick={onRefresh}
           className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
           title="Refresh staff roles"
         >
           <RefreshCw className={`size-4 ${isLoadingRoles ? "animate-spin" : ""}`} />
-        </button>
+        </Button>
 
         {/* Export / Download CSV */}
-        <button
+        <Button
           type="button"
           onClick={onExportCSV}
           className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
           title="Download roles as CSV"
         >
           <Download className="size-4" />
-        </button>
+        </Button>
 
         {/* Primary Action Button: + Add New Role */}
-        <button
+        <Button
           type="button"
           onClick={onOpenAddRole}
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
         >
           <Plus className="size-4" />
           <span>Add New Role</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

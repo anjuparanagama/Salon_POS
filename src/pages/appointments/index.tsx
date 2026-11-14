@@ -23,6 +23,7 @@ import AppointmentViewModal from "./components/appointment-view-modal";
 import AppointmentInvoiceModal from "./components/appointment-invoice-modal";
 import AppointmentCheckoutModal from "./components/appointment-checkout-modal";
 import Header from "../../components/header";
+import { Button } from "../../components/button";
 
 export function Appointments() {
   const navigate = useNavigate();
@@ -317,7 +318,7 @@ export function Appointments() {
         description={t("appointments:subtitle", "Manage bookings, schedule clients, and assign salon staff.")}
         isLoading={isLoading}
         actions={
-          <button
+          <Button
             type="button"
             onClick={() => {
               setEditingAppointment(null);
@@ -327,7 +328,7 @@ export function Appointments() {
           >
             <Plus className="size-4" />
             <span>{t("appointments:newAppointment", "New Appointment")}</span>
-          </button>
+          </Button>
         }
       />
 

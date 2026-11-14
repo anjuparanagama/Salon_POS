@@ -1,4 +1,5 @@
 import { Search, Calendar, Filter, ArrowDownLeft, ArrowUpRight, Layers, X } from "lucide-react";
+import { Button } from "../../../../../components/button";
 import { Input } from "../../../../../components/input";
 import type {
   TransactionType,
@@ -39,7 +40,7 @@ export function TransactionFilters({
             const isSelected = filters.type === tab.value;
             const Icon = tab.icon;
             return (
-              <button
+              <Button
                 key={tab.value}
                 type="button"
                 onClick={() => onFilterChange({ type: tab.value })}
@@ -51,20 +52,20 @@ export function TransactionFilters({
               >
                 <Icon className="size-3.5" />
                 <span>{tab.label}</span>
-              </button>
+              </Button>
             );
           })}
         </div>
 
         {hasActiveFilters && (
-          <button
+          <Button
             type="button"
             onClick={onResetFilters}
             className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800 transition cursor-pointer"
           >
             <X className="size-3.5" />
             <span>Reset filters</span>
-          </button>
+          </Button>
         )}
       </div>
 

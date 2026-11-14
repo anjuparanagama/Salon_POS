@@ -3,6 +3,7 @@ import Modal from "../../../../../components/modal";
 import type { ExpenseRecord } from "../../../../../interface/ledger.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
 import { getCategoryMeta } from "../../../../../helpers/ledger.helper";
+import { Button } from "../../../../../components/button";
 
 export type ExpenseViewModalProps = {
   isOpen: boolean;
@@ -98,14 +99,14 @@ export function ExpenseViewModal({ isOpen, onClose, record, onEdit }: ExpenseVie
 
         {/* Footer actions */}
         <div className="mt-2 flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
           >
             Close
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => {
               onClose();
@@ -114,7 +115,7 @@ export function ExpenseViewModal({ isOpen, onClose, record, onEdit }: ExpenseVie
             className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
           >
             Edit Expense
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>

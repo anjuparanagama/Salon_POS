@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Mail, CheckCircle2, Loader2, ArrowLeft, KeyRound } from "lucide-react";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type { ForgotPasswordModalProps } from "../../../../interface/auth.types";
 
@@ -47,13 +48,13 @@ function ModalDialog({
       onClick={(e) => e.stopPropagation()}
     >
       {/* Close Button */}
-      <button
+      <Button
         type="button"
         onClick={onClose}
         className="absolute right-4 top-4 rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
       >
         <X className="size-4" />
-      </button>
+      </Button>
 
       {isSuccess ? (
         <div className="text-center py-4 space-y-3">
@@ -71,13 +72,13 @@ function ModalDialog({
           </p>
 
           <div className="pt-2">
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="w-full rounded-xl bg-primary py-2.5 px-4 text-xs font-semibold text-white hover:bg-primary-dark transition cursor-pointer"
             >
               Back to Sign In
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -117,7 +118,7 @@ function ModalDialog({
           />
 
           <div className="flex items-center gap-2 pt-2">
-            <button
+            <Button
               type="button"
               onClick={onClose}
               disabled={isLoading}
@@ -125,9 +126,9 @@ function ModalDialog({
             >
               <ArrowLeft className="size-3.5" />
               Cancel
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="submit"
               disabled={isLoading}
               className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-primary py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition disabled:opacity-60 cursor-pointer"
@@ -140,7 +141,7 @@ function ModalDialog({
               ) : (
                 <span>Send Reset Link</span>
               )}
-            </button>
+            </Button>
           </div>
         </form>
       )}

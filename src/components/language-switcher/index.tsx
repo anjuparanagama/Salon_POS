@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Languages, Check, ChevronDown } from "lucide-react";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "../../interface/i18n.types";
+import { Button } from "../button";
 
 export type LanguageSwitcherProps = {
   className?: string;
@@ -39,7 +40,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <button
+      <Button
         type="button"
         title="Change Language"
         aria-label="Change Language"
@@ -55,7 +56,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
             isOpen ? "rotate-180" : ""
           }`}
         />
-      </button>
+      </Button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-44 rounded-xl border border-slate-100 bg-white py-1.5 shadow-lg shadow-slate-200/50 z-50 animate-in fade-in zoom-in-95 duration-150">
@@ -65,7 +66,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
           {SUPPORTED_LANGUAGES.map((lang) => {
             const isSelected = lang.code === currentLang;
             return (
-              <button
+              <Button
                 key={lang.code}
                 type="button"
                 onClick={() => handleLanguageChange(lang.code)}
@@ -80,7 +81,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
                   <span className="text-[11px] text-slate-400 font-normal">{lang.label}</span>
                 </div>
                 {isSelected && <Check aria-hidden="true" className="size-4 text-[#D9145A]" />}
-              </button>
+              </Button>
             );
           })}
         </div>

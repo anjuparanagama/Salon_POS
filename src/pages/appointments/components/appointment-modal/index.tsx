@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, type FormEvent } from "react";
 import { Plus, X, AlertCircle } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type {
   Appointment,
@@ -332,14 +333,14 @@ function AppointmentForm({
                   <span className="font-semibold text-slate-900">
                     {formatPrice(svc.price)}
                   </span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => handleRemoveService(idx)}
                     className="rounded p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                     title="Remove service"
                   >
                     <X className="size-3.5" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
@@ -387,7 +388,7 @@ function AppointmentForm({
                 </option>
               ))}
           </select>
-          <button
+          <Button
             type="button"
             disabled={!serviceToAdd}
             onClick={() => handleAddService()}
@@ -395,7 +396,7 @@ function AppointmentForm({
           >
             <Plus className="size-3.5" />
             <span>Add</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -552,14 +553,14 @@ export function AppointmentModal({
       size="xl"
       footer={
         <div className="flex items-center justify-end gap-2">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             form="appointment-form"
             disabled={hasConflict}
@@ -570,7 +571,7 @@ export function AppointmentModal({
               : isEdit
                 ? "Update Appointment"
                 : "Confirm Appointment"}
-          </button>
+          </Button>
         </div>
       }
     >

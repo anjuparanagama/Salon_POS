@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Eye, EyeOff, Loader2, AlertCircle, Gift, CheckCircle2 } from "lucide-react";
+import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import { authService } from "../../../services/auth.service";
 import type { OwnerDetailsFormData, ValidateReferralResponse } from "../../../interface/auth.types";
@@ -177,13 +178,13 @@ export function Step1OwnerDetails({
             disabled={isLoading}
             error={fieldErrors.password}
             rightElement={
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
               >
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-              </button>
+              </Button>
             }
             className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
           />
@@ -201,13 +202,13 @@ export function Step1OwnerDetails({
             disabled={isLoading}
             error={fieldErrors.confirmPassword}
             rightElement={
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
                 className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
               >
                 {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-              </button>
+              </Button>
             }
             className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
           />
@@ -245,14 +246,14 @@ export function Step1OwnerDetails({
             disabled={isLoading}
             rightElement={
               formData.referralCode?.trim() ? (
-                <button
+                <Button
                   type="button"
                   onClick={() => handleValidateCode(formData.referralCode || "")}
                   disabled={isLoading || validatingRef}
                   className="rounded bg-slate-100 hover:bg-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition cursor-pointer"
                 >
                   {validatingRef ? <Loader2 className="size-3 animate-spin text-slate-500" /> : "Apply"}
-                </button>
+                </Button>
               ) : undefined
             }
             className={`w-full rounded-lg bg-white border px-3.5 py-2 pr-16 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 uppercase tracking-wider outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 ${
@@ -303,7 +304,7 @@ export function Step1OwnerDetails({
 
         {/* Primary Action Button */}
         <div className="pt-2">
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
             className="flex w-full items-center justify-center rounded-lg bg-primary py-2.5 px-4 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-primary-dark active:scale-[0.99] disabled:opacity-70 cursor-pointer"
@@ -316,20 +317,20 @@ export function Step1OwnerDetails({
             ) : (
               <span>Continue to Verification</span>
             )}
-          </button>
+          </Button>
         </div>
       </form>
 
       {/* Already Have an Account? Sign In */}
       <p className="mt-5 text-center text-xs text-slate-600">
         Already have an account?{" "}
-        <button
+        <Button
           type="button"
           onClick={onGoToLogin}
           className="font-semibold text-primary hover:text-primary-dark hover:underline transition cursor-pointer"
         >
           Sign In
-        </button>
+        </Button>
       </p>
     </div>
   );

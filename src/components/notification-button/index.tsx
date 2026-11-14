@@ -1,4 +1,5 @@
 import { Bell } from "lucide-react";
+import { Button } from "../button";
 
 export type NotificationButtonProps = {
   hasNotification?: boolean;
@@ -18,7 +19,7 @@ export function NotificationButton({
   const showDot = hasNotification || (notificationCount !== undefined && notificationCount > 0);
 
   return (
-    <button
+    <Button
       type="button"
       title={title}
       aria-label={title}
@@ -35,7 +36,7 @@ export function NotificationButton({
           aria-label={notificationCount ? `${notificationCount} unread notifications` : "New notifications"}
         />
       )}
-    </button>
+    </Button>
   );
 }
 

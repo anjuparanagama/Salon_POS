@@ -12,6 +12,7 @@ import type {
   CategorySortField,
   CategoryVisibleColumns,
 } from "../../../../../interface/category.types";
+import { Button } from "../../../../../components/button";
 
 interface CategoryTableProps {
   activeTab: CategoryKind;
@@ -210,7 +211,7 @@ export function CategoryTable({
                     {/* Status Toggle */}
                     {visibleColumns.status && (
                       <td className="px-4 py-3.5 text-center">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onQuickToggle(item)}
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium transition cursor-pointer ${
@@ -226,30 +227,30 @@ export function CategoryTable({
                             }`}
                           />
                           <span>{isActive ? "Active" : "Inactive"}</span>
-                        </button>
+                        </Button>
                       </td>
                     )}
 
                     {/* Actions: Edit & Delete */}
                     <td className="px-4 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onOpenEdit(item)}
                           className="rounded-lg p-1.5 text-slate-500 hover:bg-rose-50 hover:text-primary transition cursor-pointer"
                           title="Edit Category"
                         >
                           <Pencil className="size-4" />
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onDelete(item)}
                           className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer"
                           title="Delete Category"
                         >
                           <Trash2 className="size-4" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>

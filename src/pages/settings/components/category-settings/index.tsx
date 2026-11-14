@@ -15,6 +15,7 @@ import {
   CategoryModal,
   CategoryDeleteModal,
 } from "./components";
+import { Button } from "../../../../components/button";
 
 export type { CategoryKind, CategorySettingsViewProps };
 
@@ -96,24 +97,24 @@ export default function CategorySettingsView({
         extraRight={
           <>
             {/* Refresh Button */}
-            <button
+            <Button
               type="button"
               onClick={handleRefresh}
               className="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 shadow-2xs transition cursor-pointer"
               title="Refresh categories"
             >
               <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
-            </button>
+            </Button>
 
             {/* Primary Action Button: + Add Category */}
-            <button
+            <Button
               type="button"
               onClick={handleOpenCreate}
               className="inline-flex items-center gap-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white px-4 py-2 text-xs font-semibold shadow-xs transition cursor-pointer"
             >
               <Plus className="size-4" />
               <span>Add Category</span>
-            </button>
+            </Button>
           </>
         }
       />

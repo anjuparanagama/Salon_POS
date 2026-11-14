@@ -15,6 +15,7 @@ import {
 import { sidebarRoutes } from "../../routes/sidebar.routes";
 import { useAuth } from "../../context/use-auth";
 import type { SidebarItem } from "../../interface/routes.types";
+import { Button } from "../button";
 
 export type { SidebarItem };
 
@@ -248,7 +249,7 @@ export function Sidebar({
     return (
       <div className="relative flex flex-col gap-0.5">
         {hasSub ? (
-          <button
+          <Button
             type="button"
             aria-expanded={isOpen}
             aria-label={isCollapsed ? item.label : undefined}
@@ -311,7 +312,7 @@ export function Sidebar({
                 )}
               </span>
             )}
-          </button>
+          </Button>
         ) : (
           <a
             aria-current={active ? "page" : undefined}
@@ -421,7 +422,7 @@ export function Sidebar({
                   <Icon className="size-4 text-[#D9145A]" />
                   <span>{item.label}</span>
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -430,7 +431,7 @@ export function Sidebar({
                   className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
                 >
                   <X className="size-3.5" />
-                </button>
+                </Button>
               </div>
 
               <div className="mt-1.5 flex flex-col gap-1">
@@ -517,7 +518,7 @@ export function Sidebar({
                 />
               </div>
             )}
-            <button
+            <Button
               aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               className={[
                 "shrink-0 rounded-xl p-2 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
@@ -534,7 +535,7 @@ export function Sidebar({
               ) : (
                 <PanelLeftClose aria-hidden="true" className="size-4" />
               )}
-            </button>
+            </Button>
           </li>
           <div
             className={
@@ -613,7 +614,7 @@ export function Sidebar({
               <div className="flex flex-col items-center justify-center gap-1 w-full">
                 <div className="flex items-center justify-between w-full px-0.5">
                   {/* Previous Arrow Button */}
-                  <button
+                  <Button
                     type="button"
                     title="Previous"
                     aria-label="Previous action"
@@ -621,11 +622,11 @@ export function Sidebar({
                     className="flex size-5 items-center justify-center rounded text-white/70 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white cursor-pointer"
                   >
                     <ChevronLeft aria-hidden="true" className="size-3.5" />
-                  </button>
+                  </Button>
 
                   {/* Single Action Icon Button (Carousel Active Item) */}
                   {currentAction.id === "logout" ? (
-                    <button
+                    <Button
                       type="button"
                       title={currentAction.label}
                       aria-label={currentAction.label}
@@ -643,7 +644,7 @@ export function Sidebar({
                         className="size-4"
                         strokeWidth={2}
                       />
-                    </button>
+                    </Button>
                   ) : (
                     <a
                       href={currentAction.href}
@@ -668,7 +669,7 @@ export function Sidebar({
                   )}
 
                   {/* Next Arrow Button */}
-                  <button
+                  <Button
                     type="button"
                     title="Next"
                     aria-label="Next action"
@@ -676,13 +677,13 @@ export function Sidebar({
                     className="flex size-5 items-center justify-center rounded text-white/70 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white cursor-pointer"
                   >
                     <ChevronRight aria-hidden="true" className="size-3.5" />
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Carousel Indicator Dots */}
                 <div className="flex items-center justify-center gap-1">
                   {bottomActions.map((action, idx) => (
-                    <button
+                    <Button
                       key={action.id}
                       type="button"
                       title={action.label}
@@ -709,7 +710,7 @@ export function Sidebar({
                   const isLogout = action.id === "logout";
 
                   return isLogout ? (
-                    <button
+                    <Button
                       key={action.id}
                       type="button"
                       title={action.label}
@@ -725,7 +726,7 @@ export function Sidebar({
                       <span className="truncate text-[10px] font-medium leading-none tracking-tight">
                         {action.label}
                       </span>
-                    </button>
+                    </Button>
                   ) : (
                     <a
                       key={action.id}

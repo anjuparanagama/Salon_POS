@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { ShieldCheck, X, AlertCircle, Loader2 } from "lucide-react";
+import { Button } from "../../../../../components/button";
 import { Input } from "../../../../../components/input";
 import { staffService } from "../../../../../services/staff.service";
 import type { StaffRoleItem } from "../../../../../interface/staff.types";
@@ -96,13 +97,13 @@ export function AddRoleModal({
               </p>
             </div>
           </div>
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
           >
             <X className="size-4" />
-          </button>
+          </Button>
         </div>
 
         <form onSubmit={handleSaveNewRole}>
@@ -170,21 +171,21 @@ export function AddRoleModal({
           </div>
 
           <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/50 px-6 py-3.5">
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isSavingRole || !newRoleName.trim()}
               className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-amber-600 transition disabled:opacity-50 cursor-pointer"
             >
               {isSavingRole && <Loader2 className="size-3.5 animate-spin" />}
               <span>Create Role</span>
-            </button>
+            </Button>
           </div>
         </form>
       </div>

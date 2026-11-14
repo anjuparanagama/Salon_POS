@@ -19,6 +19,7 @@ import {
   saveStoredLayoutSettings,
 } from "../../../../helpers/layout-settings.helper";
 import Modal from "../../../../components/modal";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import InvoiceRenderer, {
   type InvoiceData,
@@ -163,14 +164,14 @@ export function LayoutSettingsView() {
             </p>
           </div>
 
-          <button
+          <Button
             type="button"
             onClick={() => openPreview(activeTemplateId)}
             className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition cursor-pointer shrink-0"
           >
             <Eye className="size-3.5 text-primary" />
             <span>Preview Active Template</span>
-          </button>
+          </Button>
         </div>
 
         {/* 3 Template Cards Grid */}
@@ -328,7 +329,7 @@ export function LayoutSettingsView() {
 
                 {/* Action Buttons */}
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <button
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -338,9 +339,9 @@ export function LayoutSettingsView() {
                   >
                     <Eye className="size-3" />
                     <span>Live Preview</span>
-                  </button>
+                  </Button>
 
-                  <button
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -360,7 +361,7 @@ export function LayoutSettingsView() {
                     ) : (
                       <span>Apply Layout</span>
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
             );
@@ -485,16 +486,16 @@ export function LayoutSettingsView() {
 
       {/* Actions bottom bar */}
       <div className="flex items-center justify-between gap-3 pt-2">
-        <button
+        <Button
           type="button"
           onClick={handleReset}
           className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
         >
           <RotateCcw className="size-3.5" />
           <span>Reset Defaults</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="submit"
           className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer ${
             isSaved
@@ -513,7 +514,7 @@ export function LayoutSettingsView() {
               <span>Save Layout Settings</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
 
       {/* ========================================================================= */}
@@ -534,7 +535,7 @@ export function LayoutSettingsView() {
                 {INVOICE_TEMPLATES_META.map((tmpl) => {
                   const isActive = previewTemplate === tmpl.id;
                   return (
-                    <button
+                    <Button
                       key={tmpl.id}
                       type="button"
                       onClick={() => setPreviewTemplate(tmpl.id)}
@@ -548,22 +549,22 @@ export function LayoutSettingsView() {
                       {activeTemplateId === tmpl.id && (
                         <span className="size-1.5 rounded-full bg-emerald-500" />
                       )}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
 
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   type="button"
                   onClick={() => window.print()}
                   className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
                 >
                   <Printer className="size-3.5 text-slate-500" />
                   <span>Test Print</span>
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     handleApplyTemplate(previewTemplate);
@@ -581,7 +582,7 @@ export function LayoutSettingsView() {
                       ? "Currently Applied"
                       : "Apply This Template"}
                   </span>
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -600,13 +601,13 @@ export function LayoutSettingsView() {
               <span className="text-[11px] text-slate-500">
                 You can change the applied invoice layout at any time.
               </span>
-              <button
+              <Button
                 type="button"
                 onClick={() => setPreviewOpen(false)}
                 className="rounded-xl border border-slate-200 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
               >
                 Close Preview
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>

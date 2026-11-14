@@ -1,4 +1,5 @@
 import { ShoppingBag, Sparkles, Search, Plus } from "lucide-react";
+import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import type { Product } from "../../../interface/product.types";
 import type {
@@ -49,7 +50,7 @@ export function CheckoutCatalogExplorer({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Tab Selector */}
         <div className="flex items-center bg-slate-100 p-1 rounded-xl">
-          <button
+          <Button
             type="button"
             onClick={() => {
               setCatalogTab("products");
@@ -63,8 +64,8 @@ export function CheckoutCatalogExplorer({
           >
             <ShoppingBag className="size-3.5" />
             <span>Retail Products ({catalogProducts.length})</span>
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => {
               setCatalogTab("services");
@@ -78,7 +79,7 @@ export function CheckoutCatalogExplorer({
           >
             <Sparkles className="size-3.5" />
             <span>Extra Services ({catalogServices.length})</span>
-          </button>
+          </Button>
         </div>
 
         {/* Search Bar */}
@@ -98,7 +99,7 @@ export function CheckoutCatalogExplorer({
       {/* Category Pills (for products) */}
       {catalogTab === "products" && productCategories.length > 0 && (
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-thin">
-          <button
+          <Button
             type="button"
             onClick={() => setSelectedCategory("all")}
             className={`rounded-full px-3 py-1 font-semibold text-[11px] transition cursor-pointer ${
@@ -108,9 +109,9 @@ export function CheckoutCatalogExplorer({
             }`}
           >
             All Categories
-          </button>
+          </Button>
           {productCategories.map((cat) => (
-            <button
+            <Button
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
@@ -121,7 +122,7 @@ export function CheckoutCatalogExplorer({
               }`}
             >
               {cat}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -149,7 +150,7 @@ export function CheckoutCatalogExplorer({
                       {formatPrice(p.sellingPrice)}
                     </p>
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => handleAddProductToCart(p)}
                     disabled={p.stock <= 0}
@@ -161,7 +162,7 @@ export function CheckoutCatalogExplorer({
                   >
                     <Plus className="size-3" />
                     <span>{inCart ? `x${inCart.quantity}` : "Add"}</span>
-                  </button>
+                  </Button>
                 </div>
               );
             })}
@@ -187,7 +188,7 @@ export function CheckoutCatalogExplorer({
                       {formatPrice(s.price)}
                     </p>
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => handleAddServiceToCart(s)}
                     className={`shrink-0 inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold transition cursor-pointer ${
@@ -198,7 +199,7 @@ export function CheckoutCatalogExplorer({
                   >
                     <Plus className="size-3" />
                     <span>{inCart ? `x${inCart.quantity}` : "Add"}</span>
-                  </button>
+                  </Button>
                 </div>
               );
             })}

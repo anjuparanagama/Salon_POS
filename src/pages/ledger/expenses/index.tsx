@@ -14,6 +14,7 @@ import ExpenseTable from "./components/expense-table";
 import ExpensePanel from "./components/expense-modal";
 import ExpenseViewModal from "./components/expense-view-modal";
 import ExpenseDeleteModal from "./components/expense-delete-modal";
+import { Button } from "../../../components/button";
 
 const initialFilters: ExpenseFilterState = {
   search: "",
@@ -197,7 +198,7 @@ export function LedgerExpenses() {
         description="Manage salon operational expenses, bills, staff salaries, and supply costs."
         isLoading={isLoading}
         actions={
-          <button
+          <Button
             type="button"
             onClick={() => {
               setEditingRecord(null);
@@ -207,7 +208,7 @@ export function LedgerExpenses() {
           >
             <Plus className="size-4" />
             <span>Add Expense</span>
-          </button>
+          </Button>
         }
       />
 

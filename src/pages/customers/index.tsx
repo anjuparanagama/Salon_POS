@@ -15,6 +15,7 @@ import CustomerPanel from "./components/customer-panel";
 import CustomerViewPanel from "./components/customer-view-panel";
 import Header from "../../components/header";
 import { useCustomers } from "../../hooks/customers";
+import { Button } from "../../components/button";
 
 export function Customers() {
   const { t } = useTranslation(["common"]);
@@ -199,22 +200,22 @@ export function Customers() {
         )}
         actions={
           <div className="flex items-center gap-2">
-            <button
+            <Button
               type="button"
               onClick={() => fetchAll()}
               className="inline-flex items-center justify-center p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition cursor-pointer"
               title="Refresh"
             >
               <RefreshCw className={`size-4 ${isLoading ? "animate-spin text-primary" : ""}`} />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={handleOpenAdd}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-primary-dark cursor-pointer"
             >
               <UserPlus className="size-4" />
               <span>{t("customers.addCustomer", "New Customer")}</span>
-            </button>
+            </Button>
           </div>
         }
       />
@@ -226,13 +227,13 @@ export function Customers() {
             <AlertCircle className="size-4 shrink-0 text-rose-600" />
             <span>{actionError || error}</span>
           </div>
-          <button
+          <Button
             type="button"
             onClick={() => setActionError(null)}
             className="font-semibold text-rose-700 hover:underline cursor-pointer"
           >
             Dismiss
-          </button>
+          </Button>
         </div>
       )}
 

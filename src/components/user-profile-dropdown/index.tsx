@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, User, Settings, LogOut } from "lucide-react";
 import type { UserProfile, UserProfileDropdownProps } from "../../interface/user.types";
+import { Button } from "../button";
 
 const defaultUser: UserProfile = {
   name: "Amanda Ray",
@@ -42,7 +43,7 @@ export function UserProfileDropdown({
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <button
+      <Button
         type="button"
         title={user.name}
         aria-label={`User profile for ${user.name}`}
@@ -89,7 +90,7 @@ export function UserProfileDropdown({
             isOpen ? "rotate-180" : ""
           }`}
         />
-      </button>
+      </Button>
 
       {/* Dropdown Menu */}
       {isOpen && (
@@ -100,7 +101,7 @@ export function UserProfileDropdown({
           </div>
 
           <div className="py-1">
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setIsOpen(false);
@@ -110,9 +111,9 @@ export function UserProfileDropdown({
             >
               <User className="size-3.5 text-slate-400" />
               <span>My Profile</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setIsOpen(false);
@@ -122,11 +123,11 @@ export function UserProfileDropdown({
             >
               <Settings className="size-3.5 text-slate-400" />
               <span>Account Settings</span>
-            </button>
+            </Button>
           </div>
 
           <div className="border-t border-slate-100 pt-1">
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setIsOpen(false);
@@ -136,7 +137,7 @@ export function UserProfileDropdown({
             >
               <LogOut className="size-3.5 text-rose-500" />
               <span>Log out</span>
-            </button>
+            </Button>
           </div>
         </div>
       )}

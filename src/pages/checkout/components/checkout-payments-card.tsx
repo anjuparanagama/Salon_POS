@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import type { CheckoutPaymentPayload } from "../../../services/checkout.service";
 import { formatPrice } from "../../../helpers/price.helper";
@@ -36,20 +37,20 @@ export function CheckoutPaymentsCard({
           Payments
         </span>
         <div className="flex items-center gap-1.5">
-          <button
+          <Button
             type="button"
             onClick={() => handlePayFull("cash")}
             className="rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 text-xs font-bold hover:bg-emerald-100 transition cursor-pointer"
           >
             💵 Cash Full
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => handlePayFull("card")}
             className="rounded-lg bg-purple-50 text-purple-700 border border-purple-200 px-2.5 py-1 text-xs font-bold hover:bg-purple-100 transition cursor-pointer"
           >
             💳 Card Full
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -115,7 +116,7 @@ export function CheckoutPaymentsCard({
       </div>
 
       {/* Complete Checkout Action Button */}
-      <button
+      <Button
         type="button"
         onClick={handleCompleteCheckout}
         disabled={isSubmitting || subtotal <= 0}
@@ -132,7 +133,7 @@ export function CheckoutPaymentsCard({
             <span>Complete Checkout & Generate Invoice ({formatPrice(grandTotal)})</span>
           </>
         )}
-      </button>
+      </Button>
     </div>
   );
 }

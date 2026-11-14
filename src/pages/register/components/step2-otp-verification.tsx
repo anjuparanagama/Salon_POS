@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Loader2, ArrowLeft, AlertCircle, RefreshCw, Sparkles, Mail, Phone } from "lucide-react";
+import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 
 interface Step2OtpVerificationProps {
@@ -136,13 +137,13 @@ export function Step2OtpVerification({
               Code: <strong className="font-mono text-xs tracking-wider text-primary">{devOtp}</strong>
             </span>
           </div>
-          <button
+          <Button
             type="button"
             onClick={handleAutofillDevOtp}
             className="rounded bg-white px-2 py-0.5 text-[11px] font-semibold text-primary border border-primary/20 hover:bg-primary hover:text-white transition cursor-pointer"
           >
             Auto-fill
-          </button>
+          </Button>
         </div>
       )}
 
@@ -188,21 +189,21 @@ export function Step2OtpVerification({
 
         {/* Resend Action & Countdown */}
         <div className="flex items-center justify-between text-xs text-slate-600 pt-1">
-          <button
+          <Button
             type="button"
             onClick={onBack}
             className="inline-flex items-center gap-1 font-medium text-slate-500 hover:text-slate-800 transition cursor-pointer"
           >
             <ArrowLeft className="size-3.5" />
             <span>Edit details</span>
-          </button>
+          </Button>
 
           {timer > 0 ? (
             <span className="text-slate-400 font-medium">
               Resend in <strong className="text-slate-700 font-mono">{timer}s</strong>
             </span>
           ) : (
-            <button
+            <Button
               type="button"
               onClick={onResend}
               disabled={isLoading}
@@ -210,12 +211,12 @@ export function Step2OtpVerification({
             >
               <RefreshCw className="size-3.5" />
               <span>Resend Code</span>
-            </button>
+            </Button>
           )}
         </div>
 
         {/* Verify Button */}
-        <button
+        <Button
           type="submit"
           disabled={!isComplete || isLoading}
           className="flex w-full items-center justify-center rounded-lg bg-primary py-2.5 px-4 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-primary-dark active:scale-[0.99] disabled:opacity-70 cursor-pointer"
@@ -228,7 +229,7 @@ export function Step2OtpVerification({
           ) : (
             <span>Verify & Continue</span>
           )}
-        </button>
+        </Button>
       </form>
     </div>
   );

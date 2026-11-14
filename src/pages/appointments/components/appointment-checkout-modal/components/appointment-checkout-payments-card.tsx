@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "../../../../../components/button";
 import { Input } from "../../../../../components/input";
 import type { CheckoutPaymentPayload } from "../../../../../services/checkout.service";
 import { formatPrice } from "../../../../../helpers/price.helper";
@@ -27,20 +28,20 @@ export function AppointmentCheckoutPaymentsCard({
           Payments
         </span>
         <div className="flex items-center gap-1.5">
-          <button
+          <Button
             type="button"
             onClick={() => onPayFull("cash")}
             className="rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold hover:bg-emerald-100 transition cursor-pointer"
           >
             Cash Full
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => onPayFull("card")}
             className="rounded-md bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 text-[10px] font-bold hover:bg-purple-100 transition cursor-pointer"
           >
             Card Full
-          </button>
+          </Button>
         </div>
       </div>
 

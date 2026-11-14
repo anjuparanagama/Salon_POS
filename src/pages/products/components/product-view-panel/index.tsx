@@ -5,6 +5,7 @@ import type {
   StockMovement,
 } from "../../../../interface/product.types";
 import { formatPrice } from "../../../../helpers/price.helper";
+import { Button } from "../../../../components/button";
 
 export type ProductViewPanelProps = {
   isOpen: boolean;
@@ -78,15 +79,15 @@ export function ProductViewPanel({
 
   const footer = (
     <div className="flex items-center justify-end gap-2.5">
-      <button
+      <Button
         type="button"
         onClick={onClose}
         className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
       >
         Close
-      </button>
+      </Button>
 
-      <button
+      <Button
         type="button"
         onClick={() => {
           onClose();
@@ -96,7 +97,7 @@ export function ProductViewPanel({
       >
         <Edit3 className="size-3.5" />
         <span>Edit Product</span>
-      </button>
+      </Button>
     </div>
   );
 

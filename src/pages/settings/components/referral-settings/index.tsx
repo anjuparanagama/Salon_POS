@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { referralService } from "../../../../services/referral.service";
 import type { ReferralSummary } from "../../../../interface/referral.types";
+import { Button } from "../../../../components/button";
 
 export function ReferralSettingsView() {
   const [loading, setLoading] = useState(true);
@@ -118,7 +119,7 @@ export function ReferralSettingsView() {
               <span className="rounded-xl border border-primary/20 bg-primary-subtle px-4 py-2 font-mono text-2xl font-black text-primary-deep tracking-widest">
                 {referralCode}
               </span>
-              <button
+              <Button
                 type="button"
                 onClick={handleCopyCode}
                 className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
@@ -134,7 +135,7 @@ export function ReferralSettingsView() {
                     <span>Copy Code</span>
                   </>
                 )}
-              </button>
+              </Button>
             </div>
             <p className="text-xs text-slate-500">
               Share this code for new users to enter during registration.
@@ -142,7 +143,7 @@ export function ReferralSettingsView() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3 pt-2 lg:pt-0">
-            <button
+            <Button
               type="button"
               onClick={handleCopyLink}
               className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
@@ -158,15 +159,15 @@ export function ReferralSettingsView() {
                   <span>Copy Invite Link</span>
                 </>
               )}
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
               onClick={handleShareWhatsApp}
               className="flex items-center gap-2 rounded-xl bg-whatsapp px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:opacity-90 transition cursor-pointer"
             >
               <span>Invite via WhatsApp</span>
-            </button>
+            </Button>
           </div>
         </div>
 

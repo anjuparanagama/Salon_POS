@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import { staffService } from "../../../../services/staff.service";
 import type {
@@ -261,7 +262,7 @@ function StaffForm({
               </p>
             </div>
           </div>
-          <button
+          <Button
             type="button"
             role="switch"
             aria-checked={Boolean(formData.canAccessPos)}
@@ -280,7 +281,7 @@ function StaffForm({
                 formData.canAccessPos ? "translate-x-4.5" : "translate-x-0.5"
               }`}
             />
-          </button>
+          </Button>
         </div>
 
         {/* Password Input */}
@@ -305,7 +306,7 @@ function StaffForm({
               }
               leftElement={<Lock className="size-3.5 text-slate-400" />}
               rightElement={
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="text-slate-400 hover:text-slate-600 transition cursor-pointer p-0.5"
@@ -316,7 +317,7 @@ function StaffForm({
                   ) : (
                     <Eye className="size-4" />
                   )}
-                </button>
+                </Button>
               }
               helperText={
                 isEditing
@@ -382,20 +383,20 @@ export function StaffPanel({
 
   const footer = (
     <div className="flex items-center justify-end gap-2.5">
-      <button
+      <Button
         type="button"
         onClick={onClose}
         className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
       >
         Cancel
-      </button>
-      <button
+      </Button>
+      <Button
         type="submit"
         form="staff-form"
         className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-primary-dark cursor-pointer"
       >
         {isEditing ? "Save Changes" : "Add Staff Member"}
-      </button>
+      </Button>
     </div>
   );
 

@@ -5,6 +5,7 @@ import Breadcrumb from "../breadcrumb";
 import SearchBar from "../search-bar";
 import NotificationButton from "../notification-button";
 import UserProfileDropdown from "../user-profile-dropdown";
+import { Button } from "../button";
 
 export type { UserProfile, BreadcrumbItem };
 
@@ -77,7 +78,7 @@ export function TopHeader({
         />
 
         {/* POS Terminal Direct Button */}
-        <button
+        <Button
           type="button"
           onClick={onPosClick}
           className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-[#7a053c] px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:opacity-95 transition-all cursor-pointer shrink-0 active:scale-98"
@@ -85,7 +86,7 @@ export function TopHeader({
         >
           <CreditCard className="size-3.5" />
           <span className="hidden sm:inline">POS Terminal</span>
-        </button>
+        </Button>
 
         {/* Notification Button Component */}
         <NotificationButton

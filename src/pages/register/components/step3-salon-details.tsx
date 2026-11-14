@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
+import { Button } from "../../../components/button";
 import { Input } from "../../../components/input";
 import type { SalonDetailsFormData } from "../../../interface/auth.types";
 
@@ -184,7 +185,7 @@ export function Step3SalonDetails({
 
         {/* Action Buttons */}
         <div className="pt-4 flex items-center gap-3">
-          <button
+          <Button
             type="button"
             onClick={onBack}
             disabled={isLoading}
@@ -192,9 +193,9 @@ export function Step3SalonDetails({
           >
             <ArrowLeft className="size-4" />
             <span>Back</span>
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
             className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary py-2.5 px-4 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer disabled:opacity-50"
@@ -207,7 +208,7 @@ export function Step3SalonDetails({
             ) : (
               <span>Complete Registration</span>
             )}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -1,6 +1,7 @@
 import { Eye, Edit3, Trash2, Phone, Mail, AlertCircle, ShieldCheck, Loader2 } from "lucide-react";
 import type { StaffMember, StaffRole } from "../../../../interface/staff.types";
 import { formatStaffId } from "../../../../helpers/format-id.helper";
+import { Button } from "../../../../components/button";
 
 export type StaffListProps = {
   staffList: StaffMember[];
@@ -161,7 +162,7 @@ export function StaffList({
                   {/* Status (Active or Inactive) */}
                   {visibleColumns.status !== false && (
                     <td className="whitespace-nowrap px-4 py-2.5">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => onToggleStatus(staff.id)}
                         className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium cursor-pointer transition hover:opacity-85 ${
@@ -177,7 +178,7 @@ export function StaffList({
                           }`}
                         />
                         {isActive ? "Active" : "Inactive"}
-                      </button>
+                      </Button>
                     </td>
                   )}
 
@@ -185,30 +186,30 @@ export function StaffList({
                   {visibleColumns.actions !== false && (
                     <td className="whitespace-nowrap px-4 py-2.5 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onView(staff)}
                           className="rounded-lg p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                           title="View Staff Details"
                         >
                           <Eye className="size-4" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           onClick={() => onEdit(staff)}
                           className="rounded-lg p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                           title="Edit Staff Member"
                         >
                           <Edit3 className="size-4" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           onClick={() => onDelete(staff.id)}
                           className="rounded-lg p-1 text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer"
                           title="Delete Staff Member"
                         >
                           <Trash2 className="size-4" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   )}

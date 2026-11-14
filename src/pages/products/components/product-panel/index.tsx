@@ -18,6 +18,7 @@ import {
   Power,
 } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type {
   Product,
@@ -334,14 +335,14 @@ function ProductForm({
                 <span className="font-medium text-slate-700">
                   SKU / Product Code <span className="text-rose-500">*</span>
                 </span>
-                <button
+                <Button
                   type="button"
                   onClick={generateSku}
                   className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline cursor-pointer"
                 >
                   <Sparkles className="size-3" />
                   Generate
-                </button>
+                </Button>
               </div>
             }
             labelClassName="w-full"
@@ -413,14 +414,14 @@ function ProductForm({
               Product Image{" "}
               <span className="text-slate-400 font-normal">(1 Image)</span>
             </label>
-            <button
+            <Button
               type="button"
               onClick={() => setShowUrlInput(!showUrlInput)}
               className="text-[11px] font-medium text-primary hover:underline cursor-pointer flex items-center gap-1"
             >
               <Link2 className="size-3" />
               <span>{showUrlInput ? "Upload File" : "Paste URL"}</span>
-            </button>
+            </Button>
           </div>
 
           <Input
@@ -459,21 +460,21 @@ function ProductForm({
               </div>
 
               <div className="flex items-center gap-1 shrink-0 ml-2">
-                <button
+                <Button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700 hover:bg-slate-50 cursor-pointer transition shadow-2xs"
                 >
                   Change
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={handleRemoveImage}
                   className="rounded-md p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer transition"
                   title="Remove image"
                 >
                   <Trash2 className="size-4" />
-                </button>
+                </Button>
               </div>
             </div>
           ) : showUrlInput ? (
@@ -497,7 +498,7 @@ function ProductForm({
                   Quick presets:
                 </span>
                 {sampleImagePresets.map((preset) => (
-                  <button
+                  <Button
                     key={preset.label}
                     type="button"
                     onClick={() =>
@@ -506,7 +507,7 @@ function ProductForm({
                     className="rounded bg-slate-100 hover:bg-slate-200 px-2 py-0.5 text-[10px] text-slate-600 transition cursor-pointer"
                   >
                     {preset.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -630,7 +631,7 @@ function ProductForm({
               />
               {isEditing && (
                 <div className="flex items-center gap-1 shrink-0">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       const next = (parseInt(stockInput, 10) || 0) + 1;
@@ -641,8 +642,8 @@ function ProductForm({
                     title="Add 1 to stock"
                   >
                     +1
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => {
                       const next = (parseInt(stockInput, 10) || 0) + 5;
@@ -653,8 +654,8 @@ function ProductForm({
                     title="Add 5 to stock"
                   >
                     +5
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => {
                       const next = (parseInt(stockInput, 10) || 0) + 10;
@@ -665,7 +666,7 @@ function ProductForm({
                     title="Add 10 to stock"
                   >
                     +10
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -741,7 +742,7 @@ function ProductForm({
           </div>
         </div>
 
-        <button
+        <Button
           type="button"
           role="switch"
           aria-checked={formData.status === "active"}
@@ -767,7 +768,7 @@ function ProductForm({
                 : "translate-x-0.5"
             }`}
           />
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -811,20 +812,20 @@ export function ProductPanel({
 
   const footer = (
     <div className="flex items-center justify-end gap-2.5">
-      <button
+      <Button
         type="button"
         onClick={onClose}
         className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
       >
         Cancel
-      </button>
-      <button
+      </Button>
+      <Button
         type="submit"
         form="product-form"
         className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-primary-dark cursor-pointer"
       >
         {isEditing ? "Save Changes" : "Add Product"}
-      </button>
+      </Button>
     </div>
   );
 

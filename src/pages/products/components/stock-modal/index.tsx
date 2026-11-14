@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { PlusCircle, ShoppingBag, AlertTriangle, ArrowRight } from "lucide-react";
 import Modal from "../../../../components/modal";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type {
   Product,
@@ -104,7 +105,7 @@ function StockModalForm({
     <div className="flex flex-col gap-4 text-xs">
       {/* Mode Selector Tabs */}
       <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1">
-        <button
+        <Button
           type="button"
           onClick={() => setMode("stock_in")}
           className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium transition cursor-pointer ${
@@ -115,9 +116,9 @@ function StockModalForm({
         >
           <PlusCircle className="size-3.5" />
           <span>Stock In</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
           onClick={() => setMode("adjustment")}
           className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium transition cursor-pointer ${
@@ -128,9 +129,9 @@ function StockModalForm({
         >
           <AlertTriangle className="size-3.5" />
           <span>Adjustment</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
           onClick={() => setMode("sale")}
           className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium transition cursor-pointer ${
@@ -141,7 +142,7 @@ function StockModalForm({
         >
           <ShoppingBag className="size-3.5" />
           <span>Record Sale</span>
-        </button>
+        </Button>
       </div>
 
       {/* Stock Level Preview Banner */}
@@ -215,7 +216,7 @@ function StockModalForm({
                 Adjustment Reason Type <span className="text-rose-500">*</span>
               </label>
               <div className="grid grid-cols-3 gap-2">
-                <button
+                <Button
                   type="button"
                   onClick={() => setAdjustType("damaged")}
                   className={`rounded-lg border p-2 text-center font-medium transition cursor-pointer ${
@@ -225,8 +226,8 @@ function StockModalForm({
                   }`}
                 >
                   Damaged
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => setAdjustType("lost")}
                   className={`rounded-lg border p-2 text-center font-medium transition cursor-pointer ${
@@ -236,8 +237,8 @@ function StockModalForm({
                   }`}
                 >
                   Lost / Expired
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => setAdjustType("correction")}
                   className={`rounded-lg border p-2 text-center font-medium transition cursor-pointer ${
@@ -247,7 +248,7 @@ function StockModalForm({
                   }`}
                 >
                   Count Correction
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -323,14 +324,14 @@ function StockModalForm({
         )}
 
         <div className="mt-2 flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="rounded-lg border border-slate-200 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-50 transition cursor-pointer"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             className="rounded-lg bg-primary px-4 py-2 font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
           >
@@ -339,7 +340,7 @@ function StockModalForm({
               : mode === "adjustment"
               ? "Confirm Adjustment"
               : "Confirm Sale"}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

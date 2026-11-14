@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { cn } from "../../lib/cn";
+import { Button } from "../button";
 
 export type SidePanelProps = {
   isOpen: boolean;
@@ -86,14 +87,14 @@ export function SidePanel({
               <p className="mt-0.5 text-xs text-slate-500">{description}</p>
             )}
           </div>
-          <button
+          <Button
             aria-label="Close panel"
             className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
             onClick={onClose}
             type="button"
           >
             <X aria-hidden="true" className="size-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Content Body */}

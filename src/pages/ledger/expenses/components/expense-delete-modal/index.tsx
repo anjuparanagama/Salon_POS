@@ -2,6 +2,7 @@ import { AlertTriangle } from "lucide-react";
 import Modal from "../../../../../components/modal";
 import type { ExpenseRecord } from "../../../../../interface/ledger.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
+import { Button } from "../../../../../components/button";
 
 export type ExpenseDeleteModalProps = {
   isOpen: boolean;
@@ -43,14 +44,14 @@ export function ExpenseDeleteModal({
         </div>
 
         <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => {
               onConfirm();
@@ -59,7 +60,7 @@ export function ExpenseDeleteModal({
             className="rounded-lg bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700 transition cursor-pointer"
           >
             Confirm Delete
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>

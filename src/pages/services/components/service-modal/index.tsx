@@ -1,6 +1,7 @@
 import { useState, useRef, type FormEvent, type ChangeEvent } from "react";
 import { Plus, X, ImagePlus, Check } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type {
   ServiceFormData,
@@ -173,16 +174,16 @@ function ServiceForm({
         <div className="flex items-center justify-between mb-1">
           <label className="font-medium text-slate-700">Category *</label>
           {!isAddingCategory ? (
-            <button
+            <Button
               type="button"
               onClick={() => setIsAddingCategory(true)}
               className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:text-primary-dark cursor-pointer transition"
             >
               <Plus className="size-3" />
               <span>New Category</span>
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setIsAddingCategory(false);
@@ -191,7 +192,7 @@ function ServiceForm({
               className="text-[11px] text-slate-400 hover:text-slate-600 cursor-pointer"
             >
               Cancel
-            </button>
+            </Button>
           )}
         </div>
 
@@ -215,7 +216,7 @@ function ServiceForm({
               wrapperClassName="flex-1"
               className="rounded-md border-slate-200 px-2.5 py-1.5 text-xs text-slate-900 bg-white focus:border-primary"
             />
-            <button
+            <Button
               type="button"
               onClick={handleAddNewCategory}
               disabled={!newCategoryName.trim()}
@@ -223,7 +224,7 @@ function ServiceForm({
             >
               <Check className="size-3.5" />
               <span>Add</span>
-            </button>
+            </Button>
           </div>
         ) : (
           <select
@@ -311,19 +312,19 @@ function ServiceForm({
                   Cover
                 </span>
               )}
-              <button
+              <Button
                 type="button"
                 onClick={() => handleRemoveImage(idx)}
                 className="absolute top-1 right-1 flex size-5 items-center justify-center rounded-full bg-slate-900/80 text-white hover:bg-rose-600 transition cursor-pointer"
                 title="Remove photo"
               >
                 <X className="size-3" />
-              </button>
+              </Button>
             </div>
           ))}
 
           {images.length < MAX_IMAGES && (
-            <button
+            <Button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="flex flex-col items-center justify-center aspect-square rounded-lg border-2 border-dashed border-slate-200 bg-slate-50/60 hover:bg-slate-100 hover:border-primary/50 text-slate-400 hover:text-primary transition cursor-pointer p-2 text-center"
@@ -331,7 +332,7 @@ function ServiceForm({
               <ImagePlus className="size-5 mb-1" />
               <span className="text-[11px] font-medium leading-tight">Add Photo</span>
               <span className="text-[9px] text-slate-400">Up to 5</span>
-            </button>
+            </Button>
           )}
         </div>
         <p className="mt-1 text-[11px] text-slate-400">
@@ -414,20 +415,20 @@ export function ServiceModal({
       side="right"
       footer={
         <div className="flex items-center justify-end gap-2">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             form="service-form"
             className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
           >
             {isEdit ? "Save Changes" : "Create Service"}
-          </button>
+          </Button>
         </div>
       }
     >

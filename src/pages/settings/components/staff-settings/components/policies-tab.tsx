@@ -1,5 +1,6 @@
 import type { FormEvent, Dispatch, SetStateAction } from "react";
 import { Check, RotateCcw, Save, Loader2 } from "lucide-react";
+import { Button } from "../../../../../components/button";
 import { Input } from "../../../../../components/input";
 import type { StaffSettingsState } from "../../../types";
 
@@ -146,16 +147,16 @@ export function PoliciesTab({
 
       {/* Bottom Save Bar */}
       <div className="flex items-center justify-between gap-3 pt-2">
-        <button
+        <Button
           type="button"
           onClick={handleResetDefaults}
           className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
         >
           <RotateCcw className="size-3.5" />
           <span>Reset Defaults</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="submit"
           disabled={isSavingPermissions}
           className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer ${
@@ -180,7 +181,7 @@ export function PoliciesTab({
               <span>Save Staff Policies</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   );

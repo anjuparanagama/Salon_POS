@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, X } from "lucide-react";
+import { Button } from "../button";
 import { Input } from "../input";
 
 export type SearchBarProps = {
@@ -133,7 +134,7 @@ export function SearchBar({
       />
 
       {/* Close Button */}
-      <button
+      <Button
         type="button"
         title="Close search"
         aria-label="Close search"
@@ -150,7 +151,7 @@ export function SearchBar({
         ].join(" ")}
       >
         <X aria-hidden="true" className="size-3" />
-      </button>
+      </Button>
     </div>
   );
 }

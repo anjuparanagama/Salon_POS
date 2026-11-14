@@ -1,6 +1,7 @@
 import { Loader2, CheckCircle2 } from "lucide-react";
 import type { InvoiceDetailResponse } from "../../../../../services/checkout.service";
 import { formatPrice } from "../../../../../helpers/price.helper";
+import { Button } from "../../../../../components/button";
 
 interface AppointmentCheckoutFooterProps {
   completedInvoice: InvoiceDetailResponse | null;
@@ -24,13 +25,13 @@ export function AppointmentCheckoutFooter({
   if (completedInvoice) {
     return (
       <div className="flex justify-end w-full">
-        <button
+        <Button
           type="button"
           onClick={onClose}
           className="rounded-xl border border-slate-200 bg-white px-5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
         >
           Close
-        </button>
+        </Button>
       </div>
     );
   }
@@ -62,15 +63,15 @@ export function AppointmentCheckoutFooter({
       </div>
 
       <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-        <button
+        <Button
           type="button"
           onClick={onClose}
           disabled={isSubmitting}
           className="flex-1 sm:flex-none rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer disabled:opacity-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onCompleteCheckout}
           disabled={isSubmitting || subtotal <= 0}
@@ -87,7 +88,7 @@ export function AppointmentCheckoutFooter({
               <span>Complete Checkout & Bill</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </div>
   );

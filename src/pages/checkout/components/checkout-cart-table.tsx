@@ -3,6 +3,7 @@ import { Receipt, Scissors, ShoppingBag, Trash2 } from "lucide-react";
 import type { Appointment } from "../../../interface/appointment.types";
 import type { CartProductItem, CartServiceItem } from "../../../interface/checkout.types";
 import { formatPrice } from "../../../helpers/price.helper";
+import { Button } from "../../../components/button";
 
 export interface CheckoutCartTableProps {
   additionalServices: CartServiceItem[];
@@ -40,7 +41,7 @@ export function CheckoutCartTable({
           </span>
         </div>
         {(additionalServices.length > 0 || cartProducts.length > 0) && (
-          <button
+          <Button
             type="button"
             onClick={() => {
               setAdditionalServices([]);
@@ -49,7 +50,7 @@ export function CheckoutCartTable({
             className="text-[11px] font-semibold text-rose-600 hover:underline cursor-pointer"
           >
             Clear Added Items
-          </button>
+          </Button>
         )}
       </div>
 
@@ -69,7 +70,7 @@ export function CheckoutCartTable({
 
             <div className="flex items-center gap-3 shrink-0">
               <div className="flex items-center border border-slate-200 rounded-lg bg-white">
-                <button
+                <Button
                   type="button"
                   onClick={() =>
                     setAdditionalServices((prev) =>
@@ -79,9 +80,9 @@ export function CheckoutCartTable({
                   className="px-2 py-0.5 text-slate-500 hover:text-slate-800 cursor-pointer"
                 >
                   -
-                </button>
+                </Button>
                 <span className="px-2 font-mono font-semibold text-xs">{item.quantity}</span>
-                <button
+                <Button
                   type="button"
                   onClick={() =>
                     setAdditionalServices((prev) =>
@@ -91,18 +92,18 @@ export function CheckoutCartTable({
                   className="px-2 py-0.5 text-slate-500 hover:text-slate-800 cursor-pointer"
                 >
                   +
-                </button>
+                </Button>
               </div>
               <span className="w-20 text-right font-bold text-slate-900 font-mono">
                 {formatPrice(item.price * item.quantity)}
               </span>
-              <button
+              <Button
                 type="button"
                 onClick={() => setAdditionalServices((prev) => prev.filter((_, i) => i !== idx))}
                 className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
               >
                 <Trash2 className="size-3.5" />
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -124,7 +125,7 @@ export function CheckoutCartTable({
 
             <div className="flex items-center gap-3 shrink-0">
               <div className="flex items-center border border-slate-200 rounded-lg bg-white">
-                <button
+                <Button
                   type="button"
                   onClick={() =>
                     setCartProducts((prev) =>
@@ -134,9 +135,9 @@ export function CheckoutCartTable({
                   className="px-2 py-0.5 text-slate-500 hover:text-slate-800 cursor-pointer"
                 >
                   -
-                </button>
+                </Button>
                 <span className="px-2 font-mono font-semibold text-xs">{item.quantity}</span>
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     if (item.quantity >= item.stock) {
@@ -150,18 +151,18 @@ export function CheckoutCartTable({
                   className="px-2 py-0.5 text-slate-500 hover:text-slate-800 cursor-pointer"
                 >
                   +
-                </button>
+                </Button>
               </div>
               <span className="w-20 text-right font-bold text-slate-900 font-mono">
                 {formatPrice(item.price * item.quantity)}
               </span>
-              <button
+              <Button
                 type="button"
                 onClick={() => setCartProducts((prev) => prev.filter((_, i) => i !== idx))}
                 className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
               >
                 <Trash2 className="size-3.5" />
-              </button>
+              </Button>
             </div>
           </div>
         ))}

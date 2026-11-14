@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "../button";
 
 export interface PaginationProps {
   currentPage: number;
@@ -86,7 +87,7 @@ export const Pagination: FC<PaginationProps> = ({
       {/* Right: Modern Circle Page Buttons */}
       <div className="flex items-center gap-1 self-end sm:self-auto">
         {/* Previous Chevron */}
-        <button
+        <Button
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
@@ -94,7 +95,7 @@ export const Pagination: FC<PaginationProps> = ({
           className="size-7 flex items-center justify-center text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer rounded-full hover:bg-slate-100"
         >
           <ChevronLeft className="size-3.5" />
-        </button>
+        </Button>
 
         {/* Page items */}
         {pages.map((item, index) => {
@@ -112,7 +113,7 @@ export const Pagination: FC<PaginationProps> = ({
           const isActive = item === currentPage;
 
           return (
-            <button
+            <Button
               key={item}
               type="button"
               onClick={() => onPageChange(item)}
@@ -125,12 +126,12 @@ export const Pagination: FC<PaginationProps> = ({
               ].join(" ")}
             >
               {item}
-            </button>
+            </Button>
           );
         })}
 
         {/* Next Chevron */}
-        <button
+        <Button
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
@@ -138,7 +139,7 @@ export const Pagination: FC<PaginationProps> = ({
           className="size-7 flex items-center justify-center text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer rounded-full hover:bg-slate-100"
         >
           <ChevronRight className="size-3.5" />
-        </button>
+        </Button>
       </div>
     </div>
   );

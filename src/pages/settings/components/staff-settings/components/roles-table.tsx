@@ -9,6 +9,7 @@ import {
 import type { StaffRoleItem } from "../../../../../interface/staff.types";
 import type { StaffRoleType } from "../../../types";
 import type { ComputedRole, RoleSortField, VisibleColumns } from "../../../../../interface/staff-settings.types";
+import { Button } from "../../../../../components/button";
 
 export interface RolesTableProps {
   dbRoles: StaffRoleItem[];
@@ -197,7 +198,7 @@ export function RolesTable({
                     {/* Status */}
                     {visibleColumns.status && (
                       <td className="px-4 py-3.5 text-center">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onQuickToggleRole(role.id, role.active)}
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium transition cursor-pointer ${
@@ -213,7 +214,7 @@ export function RolesTable({
                             }`}
                           />
                           <span>{role.active ? "Active" : "Inactive"}</span>
-                        </button>
+                        </Button>
                       </td>
                     )}
 
@@ -221,35 +222,35 @@ export function RolesTable({
                     <td className="px-4 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {/* Manage Permissions Shortcut */}
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onConfigurePermissions(role.id)}
                           className="rounded-lg p-1.5 text-slate-400 hover:bg-emerald-50 hover:text-emerald-700 transition cursor-pointer"
                           title="Configure Permissions"
                         >
                           <ShieldCheck className="size-4" />
-                        </button>
+                        </Button>
 
                         {/* Pencil Edit Icon */}
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onOpenEditRole(roleItemObj)}
                           className="rounded-lg p-1.5 text-slate-500 hover:bg-rose-50 hover:text-primary transition cursor-pointer"
                           title="Edit Role"
                         >
                           <Pencil className="size-4" />
-                        </button>
+                        </Button>
 
                         {/* Delete button (custom roles only) */}
                         {role.isCustom && (
-                          <button
+                          <Button
                             type="button"
                             onClick={() => onDeleteRole(roleItemObj)}
                             className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer"
                             title="Delete Role"
                           >
                             <Trash2 className="size-4" />
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </td>

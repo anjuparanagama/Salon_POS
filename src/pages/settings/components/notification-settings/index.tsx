@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Check, RotateCcw, Save } from "lucide-react";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type { NotificationSettingsState } from "../../types";
 
@@ -144,16 +145,16 @@ export function NotificationSettingsView() {
 
       {/* Actions bottom bar */}
       <div className="flex items-center justify-between gap-3 pt-2">
-        <button
+        <Button
           type="button"
           onClick={handleReset}
           className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
         >
           <RotateCcw className="size-3.5" />
           <span>Reset Defaults</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="submit"
           className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer ${
             isSaved
@@ -172,7 +173,7 @@ export function NotificationSettingsView() {
               <span>Save Notification Settings</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   );

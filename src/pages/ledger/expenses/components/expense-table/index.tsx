@@ -11,6 +11,7 @@ import {
 import type { ExpenseRecord } from "../../../../../interface/ledger.types";
 import { formatPrice } from "../../../../../helpers/price.helper";
 import { getCategoryMeta } from "../../../../../helpers/ledger.helper";
+import { Button } from "../../../../../components/button";
 
 export type ExpenseTableProps = {
   records: ExpenseRecord[];
@@ -132,30 +133,30 @@ export function ExpenseTable({
                   {visibleColumns.actions !== false && (
                     <td className="whitespace-nowrap px-4 py-2 text-center">
                       <div className="flex items-center justify-center gap-1">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onView(item)}
                           className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
                           title="View Details"
                         >
                           <Eye className="size-3.5" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           onClick={() => onEdit(item)}
                           className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-primary transition cursor-pointer"
                           title="Edit Expense"
                         >
                           <Pencil className="size-3.5" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           onClick={() => onDelete(item)}
                           className="rounded-md p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer"
                           title="Delete Expense"
                         >
                           <Trash2 className="size-3.5" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   )}

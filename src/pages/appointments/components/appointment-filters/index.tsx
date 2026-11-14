@@ -5,6 +5,7 @@ import {
   Activity,
   X,
 } from "lucide-react";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import TableToolbar, {
   type AvailableColumn,
@@ -144,14 +145,14 @@ export function AppointmentFilters({
             className="rounded-lg border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer shadow-2xs"
           />
           {filters.date && (
-            <button
+            <Button
               type="button"
               onClick={() => onFilterChange({ date: "" })}
               className="rounded-md p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer"
               title="Clear date filter"
             >
               <X className="size-3.5" />
-            </button>
+            </Button>
           )}
         </div>
       </div>

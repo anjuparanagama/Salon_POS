@@ -6,6 +6,7 @@ import type {
 } from "../../../../interface/appointment.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { formatAppointmentId } from "../../../../helpers/format-id.helper";
+import { Button } from "../../../../components/button";
 
 export type AppointmentViewModalProps = {
   isOpen: boolean;
@@ -112,17 +113,17 @@ export function AppointmentViewModal({
       size="lg"
       footer={
         <div className="flex items-center justify-end gap-2">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer"
           >
             Close
-          </button>
+          </Button>
 
           {/* If already invoiced/billed -> Show Print Invoice */}
           {appointment.hasInvoice && onPrintInvoice && (
-            <button
+            <Button
               type="button"
               onClick={() => {
                 onClose();
@@ -131,7 +132,7 @@ export function AppointmentViewModal({
               className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-slate-800 transition cursor-pointer"
             >
               Print Invoice {appointment.invoiceNumber ? `(#${appointment.invoiceNumber})` : ""}
-            </button>
+            </Button>
           )}
 
           {/* Checkout & Bill */}
@@ -140,7 +141,7 @@ export function AppointmentViewModal({
             appointment.status === "completed") && (
             <>
               {onCheckout && (
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     onClose();
@@ -149,10 +150,10 @@ export function AppointmentViewModal({
                   className="rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition cursor-pointer"
                 >
                   Checkout & Bill
-                </button>
+                </Button>
               )}
               {appointment.status !== "completed" && onEdit && (
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     onClose();
@@ -161,7 +162,7 @@ export function AppointmentViewModal({
                   className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Edit Appointment
-                </button>
+                </Button>
               )}
             </>
           )}

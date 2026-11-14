@@ -1,5 +1,6 @@
 import { CheckCircle2, LayoutDashboard, Sparkles, Store, Check, ArrowRight, UserCheck } from "lucide-react";
 import type { RegisterCompleteApiResponse } from "../../../services/auth.service";
+import { Button } from "../../../components/button";
 
 interface Step4RegistrationCompleteProps {
   registrationResult: RegisterCompleteApiResponse;
@@ -82,7 +83,7 @@ export function Step4RegistrationComplete({
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <button
+        <Button
           type="button"
           onClick={onLaunchDashboard}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 px-6 text-sm font-bold text-white shadow-lg shadow-primary/25 hover:bg-primary-dark transition-all duration-200 active:scale-[0.99] cursor-pointer"
@@ -90,15 +91,15 @@ export function Step4RegistrationComplete({
           <LayoutDashboard className="size-4" />
           <span>Launch POS Dashboard</span>
           <ArrowRight className="size-4" />
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
           onClick={onGoToLogin}
           className="w-full text-xs font-semibold text-slate-600 hover:text-slate-900 transition py-2 cursor-pointer"
         >
           Sign In Manually
-        </button>
+        </Button>
       </div>
     </div>
   );

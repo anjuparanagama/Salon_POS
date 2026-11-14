@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
+import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type {
   LoginFormData,
@@ -76,7 +77,7 @@ export function LoginForm({
           disabled={isLoading}
           error={errors.password}
           rightElement={
-            <button
+            <Button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? "Hide password" : "Show password"}
@@ -87,7 +88,7 @@ export function LoginForm({
               ) : (
                 <Eye className="size-4" />
               )}
-            </button>
+            </Button>
           }
           className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
         />
@@ -104,7 +105,7 @@ export function LoginForm({
         </div>
 
         {/* Primary Login Button */}
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
           className="flex w-full items-center justify-center rounded-lg bg-primary py-2.5 px-4 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-primary-dark active:scale-[0.99] disabled:opacity-70 cursor-pointer"
@@ -117,19 +118,19 @@ export function LoginForm({
           ) : (
             <span>Login</span>
           )}
-        </button>
+        </Button>
       </form>
 
       {/* Don't Have an Account? Register Here */}
       <p className="mt-6 text-center text-xs text-slate-600">
         Don&apos;t Have an Account?{" "}
-        <button
+        <Button
           type="button"
           onClick={_onRegisterClick}
           className="font-semibold text-primary hover:text-primary-dark hover:underline transition cursor-pointer"
         >
           Register Here
-        </button>
+        </Button>
       </p>
     </div>
   );

@@ -13,6 +13,7 @@ import SidePanel from "../../../../components/side-panel";
 import type { StaffMember, StaffRole } from "../../../../interface/staff.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { formatStaffId } from "../../../../helpers/format-id.helper";
+import { Button } from "../../../../components/button";
 
 export type StaffViewPanelProps = {
   isOpen: boolean;
@@ -54,14 +55,14 @@ export function StaffViewPanel({
 
   const footer = (
     <div className="flex items-center justify-between gap-2.5">
-      <button
+      <Button
         type="button"
         onClick={onClose}
         className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
       >
         Close
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={() => {
           onClose();
@@ -71,7 +72,7 @@ export function StaffViewPanel({
       >
         <Edit3 className="size-3.5" />
         <span>Edit Staff Member</span>
-      </button>
+      </Button>
     </div>
   );
 

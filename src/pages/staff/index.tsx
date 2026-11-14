@@ -14,6 +14,7 @@ import StaffList from "./components/staff-list";
 import StaffPanel from "./components/staff-panel";
 import StaffViewPanel from "./components/staff-view-panel";
 import Header from "../../components/header";
+import { Button } from "../../components/button";
 
 export function Staff() {
   const { t } = useTranslation(["common"]);
@@ -198,14 +199,14 @@ export function Staff() {
         )}
         isLoading={isLoading}
         actions={
-          <button
+          <Button
             type="button"
             onClick={handleOpenAdd}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-primary-dark cursor-pointer"
           >
             <UserPlus className="size-4" />
             <span>{t("staff.addStaff", "Add Staff Member")}</span>
-          </button>
+          </Button>
         }
       />
 
