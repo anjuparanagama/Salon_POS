@@ -58,14 +58,14 @@ export function Table<T extends TableRecord & RowData>({
   });
 
   return (
-    <table className="w-full min-w-lg border-collapse text-left text-sm text-slate-600 dark:text-slate-300">
-      <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+    <table className="w-full min-w-lg border-collapse text-left text-sm text-slate-600">
+      <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-700">
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <th
                 key={header.id}
-                className="border-b border-slate-200 px-4 py-3 font-semibold dark:border-slate-700"
+                className="border-b border-slate-200 px-4 py-3 font-semibold"
                 scope="col"
               >
                 {header.isPlaceholder ? null : (
@@ -81,7 +81,7 @@ export function Table<T extends TableRecord & RowData>({
           table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              className="border-b border-slate-200 last:border-b-0 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/60"
+              className="border-b border-slate-200 last:border-b-0 hover:bg-slate-50"
             >
               {row.getAllCells().map((cell) => (
                 <td key={cell.id} className="px-4 py-3">
@@ -93,7 +93,7 @@ export function Table<T extends TableRecord & RowData>({
         ) : (
           <tr>
             <td
-              className="px-4 py-8 text-center text-slate-500 dark:text-slate-400"
+              className="px-4 py-8 text-center text-slate-500"
               colSpan={Math.max(columns.length, 1)}
             >
               No data available

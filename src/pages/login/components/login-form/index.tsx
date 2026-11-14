@@ -15,6 +15,7 @@ export type LoginFormProps = {
   status: AuthSubmitStatus;
   errors: AuthErrorState;
   onRegisterClick: () => void;
+  onForgotPasswordClick?: () => void;
 };
 
 export function LoginForm({
@@ -24,6 +25,7 @@ export function LoginForm({
   status,
   errors,
   onRegisterClick: _onRegisterClick,
+  onForgotPasswordClick,
 }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isLoading = status === "loading";
@@ -61,7 +63,7 @@ export function LoginForm({
           placeholder="demo@sribees.com"
           disabled={isLoading}
           error={errors.email}
-          className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
+          className="rounded-lg bg-white border-slate-300 px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary/20"
         />
 
         {/* Password Field */}
@@ -90,11 +92,11 @@ export function LoginForm({
               )}
             </Button>
           }
-          className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
+          className="rounded-lg bg-white border-slate-300 px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary/20"
         />
 
-        {/* Remember Me Checkbox */}
-        <div className="pt-0.5">
+        {/* Remember Me Checkbox & Forgot Password Link */}
+        <div className="flex items-center justify-between pt-0.5">
           <Input
             type="checkbox"
             label={<span className="text-xs text-slate-600">Remember Me</span>}
@@ -102,6 +104,16 @@ export function LoginForm({
             onChange={(e) => onChange({ rememberMe: e.target.checked })}
             className="size-4 rounded border-slate-300 text-primary accent-primary focus:ring-primary/30"
           />
+
+          {onForgotPasswordClick && (
+            <Button
+              type="button"
+              onClick={onForgotPasswordClick}
+              className="text-xs font-semibold text-primary hover:text-primary-dark transition cursor-pointer"
+            >
+              Forgot Password?
+            </Button>
+          )}
         </div>
 
         {/* Primary Login Button */}

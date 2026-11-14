@@ -26,6 +26,10 @@ export const API_ENDPOINTS = {
     REGISTER_CHECK_SLUG: "/api/v1/auth/register/check-slug",
     REGISTER_VALIDATE_REFERRAL: "/api/v1/auth/referral/validate",
     REGISTER_COMPLETE: "/api/v1/auth/register/complete",
+    PASSWORD_RESET_INITIATE: "/api/v1/auth/password-reset/initiate",
+    PASSWORD_RESET_VERIFY_OTP: "/api/v1/auth/password-reset/verify-otp",
+    PASSWORD_RESET_RESEND_OTP: "/api/v1/auth/password-reset/resend-otp",
+    PASSWORD_RESET_CONFIRM: "/api/v1/auth/password-reset/confirm",
   },
   DASHBOARD: {
     SUMMARY: "/api/v1/salon/dashboard/summary",

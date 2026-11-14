@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router";
 import axios from "axios";
+import { CheckCircle2 } from "lucide-react";
 import { ROUTES } from "../../routes/sidebar.routes";
 import { BrandHero } from "./components/brand-hero";
 import { LoginForm } from "./components/login-form";
 import { RegisterModal } from "./components/register-modal";
+import { ForgotPasswordModal } from "./components/forgot-password-modal";
 import { useAuth } from "../../context/use-auth";
 import { authService } from "../../services/auth.service";
 import type {
@@ -37,6 +39,8 @@ export function Login() {
   const [status, setStatus] = useState<AuthSubmitStatus>("idle");
   const [errors, setErrors] = useState<AuthErrorState>({});
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [successNotice, setSuccessNotice] = useState<string | null>(null);
 
   const [passwordForm, setPasswordForm] = useState<LoginFormData>({
     email: "",
@@ -53,6 +57,7 @@ export function Login() {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
+    setSuccessNotice(null);
 
     const newErrors: AuthErrorState = {};
     if (!passwordForm.email.trim()) {
@@ -154,6 +159,13 @@ export function Login() {
 
         {/* Right Side: Clean Centered Login Form Area */}
         <div className="flex flex-1 flex-col items-center justify-center p-6 sm:p-12 overflow-y-auto">
+          {successNotice && (
+            <div className="w-full max-w-[360px] mb-4 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800 animate-in fade-in duration-200">
+              <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+              <span>{successNotice}</span>
+            </div>
+          )}
+
           <LoginForm
             formData={passwordForm}
             onChange={(fields) =>
@@ -163,6 +175,10 @@ export function Login() {
             status={status}
             errors={errors}
             onRegisterClick={() => navigate(ROUTES.REGISTER)}
+            onForgotPasswordClick={() => {
+              setSuccessNotice(null);
+              setIsForgotPasswordOpen(true);
+            }}
           />
         </div>
       </div>
@@ -171,6 +187,17 @@ export function Login() {
       <RegisterModal
         isOpen={isRegisterOpen}
         onClose={() => setIsRegisterOpen(false)}
+      />
+
+      {/* Forgot Password Flow Modal */}
+      <ForgotPasswordModal
+        isOpen={isForgotPasswordOpen}
+        initialEmail={passwordForm.email}
+        onClose={() => setIsForgotPasswordOpen(false)}
+        onSuccess={(resetEmail) => {
+          setPasswordForm((prev) => ({ ...prev, email: resetEmail, password: "" }));
+          setSuccessNotice("Password reset successfully! Please log in with your new password.");
+        }}
       />
     </div>
   );

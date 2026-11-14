@@ -1,6 +1,16 @@
 import { apiClient } from "../lib/axios";
 import { API_ENDPOINTS } from "../config/api.config";
-import type { ValidateReferralResponse } from "../interface/auth.types";
+import type {
+  ValidateReferralResponse,
+  ForgotPasswordInitiatePayload,
+  ForgotPasswordInitiateResult,
+  ForgotPasswordVerifyOtpPayload,
+  ForgotPasswordVerifyOtpResult,
+  ForgotPasswordResendOtpPayload,
+  ForgotPasswordResendOtpResult,
+  ForgotPasswordConfirmPayload,
+  ForgotPasswordConfirmResult,
+} from "../interface/auth.types";
 
 export interface LoginApiRequest {
   email: string;
@@ -169,6 +179,38 @@ export const authService = {
   async completeRegister(data: RegisterCompleteApiRequest): Promise<RegisterCompleteApiResponse> {
     const response = await apiClient.post<RegisterCompleteApiResponse>(
       API_ENDPOINTS.AUTH.REGISTER_COMPLETE,
+      data
+    );
+    return response.data;
+  },
+
+  async forgotPasswordInitiate(data: ForgotPasswordInitiatePayload): Promise<ForgotPasswordInitiateResult> {
+    const response = await apiClient.post<ForgotPasswordInitiateResult>(
+      API_ENDPOINTS.AUTH.PASSWORD_RESET_INITIATE,
+      data
+    );
+    return response.data;
+  },
+
+  async forgotPasswordVerifyOtp(data: ForgotPasswordVerifyOtpPayload): Promise<ForgotPasswordVerifyOtpResult> {
+    const response = await apiClient.post<ForgotPasswordVerifyOtpResult>(
+      API_ENDPOINTS.AUTH.PASSWORD_RESET_VERIFY_OTP,
+      data
+    );
+    return response.data;
+  },
+
+  async forgotPasswordResendOtp(data: ForgotPasswordResendOtpPayload): Promise<ForgotPasswordResendOtpResult> {
+    const response = await apiClient.post<ForgotPasswordResendOtpResult>(
+      API_ENDPOINTS.AUTH.PASSWORD_RESET_RESEND_OTP,
+      data
+    );
+    return response.data;
+  },
+
+  async forgotPasswordConfirm(data: ForgotPasswordConfirmPayload): Promise<ForgotPasswordConfirmResult> {
+    const response = await apiClient.post<ForgotPasswordConfirmResult>(
+      API_ENDPOINTS.AUTH.PASSWORD_RESET_CONFIRM,
       data
     );
     return response.data;

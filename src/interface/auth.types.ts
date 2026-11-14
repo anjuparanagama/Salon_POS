@@ -56,7 +56,7 @@ export type ForgotPasswordModalProps = {
   isOpen: boolean;
   initialEmail?: string;
   onClose: () => void;
-  onSubmit: (email: string) => Promise<boolean>;
+  onSuccess?: (email: string) => void;
 };
 
 export type RegisterInfoModalProps = {
@@ -112,5 +112,64 @@ export interface RegistrationSessionState {
   verificationToken: string;
   devOtp?: string;
   resendCooldown: number;
+}
+
+// ==========================================
+// Forgot Password / Password Reset Types
+// ==========================================
+
+export type ForgotPasswordStep = "request" | "verify" | "reset" | "success";
+
+export interface ForgotPasswordInitiatePayload {
+  email: string;
+}
+
+export interface ForgotPasswordInitiateResult {
+  success: boolean;
+  session_id: string;
+  masked_email: string;
+  masked_phone?: string | null;
+  expires_in: number;
+  cooldown_seconds: number;
+  dev_otp?: string | null;
+  message: string;
+}
+
+export interface ForgotPasswordVerifyOtpPayload {
+  session_id: string;
+  email: string;
+  otp: string;
+}
+
+export interface ForgotPasswordVerifyOtpResult {
+  success: boolean;
+  verified: boolean;
+  verification_token: string;
+  message: string;
+}
+
+export interface ForgotPasswordResendOtpPayload {
+  session_id: string;
+  email: string;
+}
+
+export interface ForgotPasswordResendOtpResult {
+  success: boolean;
+  session_id: string;
+  expires_in: number;
+  cooldown_seconds: number;
+  dev_otp?: string | null;
+  message: string;
+}
+
+export interface ForgotPasswordConfirmPayload {
+  verification_token: string;
+  email: string;
+  new_password: string;
+}
+
+export interface ForgotPasswordConfirmResult {
+  success: boolean;
+  message: string;
 }
 
