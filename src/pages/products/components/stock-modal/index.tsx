@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { PlusCircle, ShoppingBag, AlertTriangle, ArrowRight } from "lucide-react";
 import Modal from "../../../../components/modal";
+import { Input } from "../../../../components/input";
 import type {
   Product,
   StockInPayload,
@@ -160,62 +161,50 @@ function StockModalForm({
       <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
         {mode === "stock_in" && (
           <>
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">
-                Quantity to Add <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                required
-                value={stockInQty}
-                onChange={(e) => setStockInQty(parseInt(e.target.value, 10) || 0)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="e.g. 10"
-              />
-            </div>
+            <Input
+              type="number"
+              min="1"
+              required
+              label={<>Quantity to Add <span className="text-rose-500">*</span></>}
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={stockInQty}
+              onChange={(e) => setStockInQty(parseInt(e.target.value, 10) || 0)}
+              className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="e.g. 10"
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block mb-1 font-medium text-slate-700">
-                  Purchase Unit Cost (Rs.)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={stockInCost || ""}
-                  onChange={(e) => setStockInCost(parseFloat(e.target.value) || 0)}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                  placeholder={product.costPrice.toString()}
-                />
-              </div>
-              <div>
-                <label className="block mb-1 font-medium text-slate-700">
-                  Supplier / Vendor
-                </label>
-                <input
-                  type="text"
-                  value={stockInSupplier}
-                  onChange={(e) => setStockInSupplier(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                  placeholder="e.g. Cosmo Brands"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">
-                Note / PO Reference
-              </label>
-              <input
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                label="Purchase Unit Cost (Rs.)"
+                labelClassName="block mb-0 font-medium text-slate-700"
+                value={stockInCost || ""}
+                onChange={(e) => setStockInCost(parseFloat(e.target.value) || 0)}
+                className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+                placeholder={product.costPrice.toString()}
+              />
+              <Input
                 type="text"
-                value={stockInNote}
-                onChange={(e) => setStockInNote(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="e.g. Invoice #INV-8921"
+                label="Supplier / Vendor"
+                labelClassName="block mb-0 font-medium text-slate-700"
+                value={stockInSupplier}
+                onChange={(e) => setStockInSupplier(e.target.value)}
+                className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+                placeholder="e.g. Cosmo Brands"
               />
             </div>
+
+            <Input
+              type="text"
+              label="Note / PO Reference"
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={stockInNote}
+              onChange={(e) => setStockInNote(e.target.value)}
+              className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="e.g. Invoice #INV-8921"
+            />
           </>
         )}
 
@@ -262,58 +251,47 @@ function StockModalForm({
               </div>
             </div>
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">
-                Quantity to Deduct <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                max={currentStock}
-                required
-                value={adjustQty}
-                onChange={(e) => setAdjustQty(parseInt(e.target.value, 10) || 0)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="e.g. 1"
-              />
-            </div>
+            <Input
+              type="number"
+              min="1"
+              max={currentStock}
+              required
+              label={<>Quantity to Deduct <span className="text-rose-500">*</span></>}
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={adjustQty}
+              onChange={(e) => setAdjustQty(parseInt(e.target.value, 10) || 0)}
+              className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="e.g. 1"
+            />
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">
-                Reason Description <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={adjustReason}
-                onChange={(e) => setAdjustReason(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="e.g. Bottle broken during shelf arrangement"
-              />
-            </div>
+            <Input
+              type="text"
+              required
+              label={<>Reason Description <span className="text-rose-500">*</span></>}
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={adjustReason}
+              onChange={(e) => setAdjustReason(e.target.value)}
+              className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="e.g. Bottle broken during shelf arrangement"
+            />
           </>
         )}
 
         {mode === "sale" && (
           <>
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">
-                Quantity Sold <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                max={currentStock}
-                required
-                value={saleQty}
-                onChange={(e) => setSaleQty(parseInt(e.target.value, 10) || 0)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="1"
-              />
-              <span className="text-[10px] text-slate-400 mt-0.5 block">
-                Available in stock: {currentStock}
-              </span>
-            </div>
+            <Input
+              type="number"
+              min="1"
+              max={currentStock}
+              required
+              label={<>Quantity Sold <span className="text-rose-500">*</span></>}
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={saleQty}
+              onChange={(e) => setSaleQty(parseInt(e.target.value, 10) || 0)}
+              helperText={`Available in stock: ${currentStock}`}
+              className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="1"
+            />
 
             <div className="flex items-center justify-between rounded-lg bg-primary-lighter/40 p-2.5 border border-primary/20">
               <span className="text-[11px] text-slate-600">Total Sale Amount:</span>
@@ -322,31 +300,25 @@ function StockModalForm({
               </span>
             </div>
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">
-                Customer / Stylist Name <span className="text-slate-400 font-normal">(Optional)</span>
-              </label>
-              <input
-                type="text"
-                value={saleCustomer}
-                onChange={(e) => setSaleCustomer(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="e.g. Kasun or Walk-in Customer"
-              />
-            </div>
+            <Input
+              type="text"
+              label={<>Customer / Stylist Name <span className="text-slate-400 font-normal">(Optional)</span></>}
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={saleCustomer}
+              onChange={(e) => setSaleCustomer(e.target.value)}
+              className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="e.g. Kasun or Walk-in Customer"
+            />
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">
-                Sale Notes <span className="text-slate-400 font-normal">(Optional)</span>
-              </label>
-              <input
-                type="text"
-                value={saleNote}
-                onChange={(e) => setSaleNote(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="e.g. Sold after haircut service"
-              />
-            </div>
+            <Input
+              type="text"
+              label={<>Sale Notes <span className="text-slate-400 font-normal">(Optional)</span></>}
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={saleNote}
+              onChange={(e) => setSaleNote(e.target.value)}
+              className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="e.g. Sold after haircut service"
+            />
           </>
         )}
 

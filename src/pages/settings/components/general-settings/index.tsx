@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Check, RotateCcw, Save, Languages } from "lucide-react";
+import { Input } from "../../../../components/input";
 import type { GeneralSettingsState } from "../../types";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "../../../../interface/i18n.types";
 
@@ -83,48 +84,44 @@ export function GeneralSettingsView({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">Salon Business Name</label>
-              <input
-                type="text"
-                required
-                value={formData.salonName}
-                onChange={(e) => setFormData({ ...formData, salonName: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-              />
-            </div>
+            <Input
+              type="text"
+              required
+              label="Salon Business Name"
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={formData.salonName}
+              onChange={(e) => setFormData({ ...formData, salonName: e.target.value })}
+              className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+            />
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">Official Phone Number</label>
-              <input
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-              />
-            </div>
+            <Input
+              type="tel"
+              required
+              label="Official Phone Number"
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+            />
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">Contact Email</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-              />
-            </div>
+            <Input
+              type="email"
+              required
+              label="Contact Email"
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+            />
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">Physical Address / Branch</label>
-              <input
-                type="text"
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-              />
-            </div>
+            <Input
+              type="text"
+              label="Physical Address / Branch"
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+            />
 
             <div>
               <label className="block mb-1 font-medium text-slate-700">Display Language (පද්ධති භාෂාව)</label>
@@ -171,18 +168,17 @@ export function GeneralSettingsView({
               </select>
             </div>
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">Default Service Tax (%)</label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                max="100"
-                value={formData.taxRate}
-                onChange={(e) => setFormData({ ...formData, taxRate: Number(e.target.value) })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-              />
-            </div>
+            <Input
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              label="Default Service Tax (%)"
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={formData.taxRate}
+              onChange={(e) => setFormData({ ...formData, taxRate: Number(e.target.value) })}
+              className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+            />
 
             <div>
               <label className="block mb-1 font-medium text-slate-700">Time Zone</label>
@@ -257,25 +253,23 @@ export function GeneralSettingsView({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">Opening Time</label>
-              <input
-                type="time"
-                value={formData.openingTime}
-                onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-              />
-            </div>
+            <Input
+              type="time"
+              label="Opening Time"
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={formData.openingTime}
+              onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
+              className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+            />
 
-            <div>
-              <label className="block mb-1 font-medium text-slate-700">Closing Time</label>
-              <input
-                type="time"
-                value={formData.closingTime}
-                onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-              />
-            </div>
+            <Input
+              type="time"
+              label="Closing Time"
+              labelClassName="block mb-0 font-medium text-slate-700"
+              value={formData.closingTime}
+              onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
+              className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+            />
           </div>
         </div>
       )}

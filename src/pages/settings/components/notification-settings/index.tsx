@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Check, RotateCcw, Save } from "lucide-react";
+import { Input } from "../../../../components/input";
 import type { NotificationSettingsState } from "../../types";
 
 const defaultNotifications: NotificationSettingsState = {
@@ -49,31 +50,31 @@ export function NotificationSettingsView() {
         </p>
 
         <div className="mt-4 flex flex-col gap-3.5 text-xs">
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Send Booking Confirmation SMS</span>
               <p className="text-[11px] text-slate-500">Dispatches an instant booking receipt via SMS once an appointment is scheduled.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.enableBookingConfirmationSms}
               onChange={(e) => setFormData({ ...formData, enableBookingConfirmationSms: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
 
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Send Appointment Reminder SMS</span>
               <p className="text-[11px] text-slate-500">Sends reminder with appointment time, specialist, and salon directions.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.enableSmsReminders}
               onChange={(e) => setFormData({ ...formData, enableSmsReminders: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
 
           {formData.enableSmsReminders && (
             <div className="pl-4 pt-1 flex items-center gap-3">
@@ -91,18 +92,18 @@ export function NotificationSettingsView() {
             </div>
           )}
 
-          <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-2 border-t border-slate-100">
             <div>
               <span className="font-semibold text-xs text-slate-800">Enable WhatsApp Direct Share Links</span>
               <p className="text-[11px] text-slate-500">Allows one-click sharing of catalogs and invoices via WhatsApp API.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.enableWhatsAppNotifications}
               onChange={(e) => setFormData({ ...formData, enableWhatsAppNotifications: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
         </div>
       </div>
 
@@ -114,26 +115,28 @@ export function NotificationSettingsView() {
         </p>
 
         <div className="mt-4 flex flex-col gap-3 text-xs">
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Low Stock Product Alert Emails</span>
               <p className="text-[11px] text-slate-500">Notifies management when inventory reaches or drops below warning threshold.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.enableLowStockEmail}
               onChange={(e) => setFormData({ ...formData, enableLowStockEmail: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
 
           <div className="pt-2">
-            <label className="block mb-1 font-medium text-slate-700">Manager Notification Email</label>
-            <input
+            <Input
               type="email"
+              label="Manager Notification Email"
+              labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.managerNotificationEmail}
               onChange={(e) => setFormData({ ...formData, managerNotificationEmail: e.target.value })}
-              className="w-full sm:w-1/2 rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
+              wrapperClassName="w-full sm:w-1/2"
+              className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
           </div>
         </div>

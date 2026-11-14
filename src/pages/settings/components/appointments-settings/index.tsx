@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Check, RotateCcw, Save } from "lucide-react";
+import { Input } from "../../../../components/input";
 import type { AppointmentsSettingsState } from "../../types";
 
 const defaultAppointments: AppointmentsSettingsState = {
@@ -102,62 +103,56 @@ export function AppointmentsSettingsView() {
         </p>
 
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">
-              Cancellation Deadline (Hours before appointment)
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="72"
-              value={formData.cancellationWindowHours}
-              onChange={(e) => setFormData({ ...formData, cancellationWindowHours: Number(e.target.value) })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
-          </div>
+          <Input
+            type="number"
+            min="1"
+            max="72"
+            label="Cancellation Deadline (Hours before appointment)"
+            labelClassName="block mb-0 font-medium text-slate-700"
+            value={formData.cancellationWindowHours}
+            onChange={(e) => setFormData({ ...formData, cancellationWindowHours: Number(e.target.value) })}
+            className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+          />
 
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">
-              Maximum Advance Booking Window (Days)
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="180"
-              value={formData.maxAdvanceBookingDays}
-              onChange={(e) => setFormData({ ...formData, maxAdvanceBookingDays: Number(e.target.value) })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-            />
-          </div>
+          <Input
+            type="number"
+            min="1"
+            max="180"
+            label="Maximum Advance Booking Window (Days)"
+            labelClassName="block mb-0 font-medium text-slate-700"
+            value={formData.maxAdvanceBookingDays}
+            onChange={(e) => setFormData({ ...formData, maxAdvanceBookingDays: Number(e.target.value) })}
+            className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+          />
         </div>
 
         {/* Toggle switches */}
         <div className="mt-5 flex flex-col gap-3 pt-3 border-t border-slate-100">
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Allow Online Customer Booking</span>
               <p className="text-[11px] text-slate-500">Allow customers to request appointments via shared links.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.allowOnlineBooking}
               onChange={(e) => setFormData({ ...formData, allowOnlineBooking: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
 
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Auto-Approve Appointments</span>
               <p className="text-[11px] text-slate-500">Automatically mark online bookings as Confirmed without manual review.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.autoApprove}
               onChange={(e) => setFormData({ ...formData, autoApprove: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
         </div>
       </div>
 

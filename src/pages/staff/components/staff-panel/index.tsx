@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
+import { Input } from "../../../../components/input";
 import { staffService } from "../../../../services/staff.service";
 import type {
   StaffMember,
@@ -139,19 +140,16 @@ function StaffForm({
     >
       {/* Full Name & Role */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Full Name *
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="e.g. Amelia Vance"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
+        <Input
+          type="text"
+          required
+          label="Full Name *"
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="e.g. Amelia Vance"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+        />
 
         <div>
           <label className="block mb-1 font-medium text-slate-700">
@@ -178,37 +176,31 @@ function StaffForm({
 
       {/* Phone & Email */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Phone Number *
-          </label>
-          <input
-            type="tel"
-            required
-            placeholder="e.g. +1 (555) 234-5678"
-            value={formData.phone}
-            onChange={(e) =>
-              setFormData({ ...formData, phone: e.target.value })
-            }
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
+        <Input
+          type="tel"
+          required
+          label="Phone Number *"
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="e.g. +1 (555) 234-5678"
+          value={formData.phone}
+          onChange={(e) =>
+            setFormData({ ...formData, phone: e.target.value })
+          }
+          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+        />
 
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Email Address *
-          </label>
-          <input
-            type="email"
-            required
-            placeholder="e.g. amelia@salonpos.com"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
+        <Input
+          type="email"
+          required
+          label="Email Address *"
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="e.g. amelia@salonpos.com"
+          value={formData.email}
+          onChange={(e) =>
+            setFormData({ ...formData, email: e.target.value })
+          }
+          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+        />
       </div>
 
       {/* Status (Active / Inactive) & Commission */}
@@ -232,24 +224,17 @@ function StaffForm({
           </select>
         </div>
 
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Commission Rate (%)
-          </label>
-          <div className="relative">
-            <input
-              type="text"
-              inputMode="decimal"
-              placeholder="0"
-              value={commissionInput}
-              onChange={handleCommissionChange}
-              className="w-full rounded-lg border border-slate-200 pl-3 pr-8 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 pointer-events-none">
-              %
-            </span>
-          </div>
-        </div>
+        <Input
+          type="text"
+          inputMode="decimal"
+          label="Commission Rate (%)"
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="0"
+          value={commissionInput}
+          onChange={handleCommissionChange}
+          rightElement={<span className="text-xs font-semibold text-slate-400 select-none">%</span>}
+          className="rounded-lg border-slate-200 pl-3 pr-8 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
+        />
       </div>
 
       {/* POS Access & Password Section */}
@@ -301,61 +286,59 @@ function StaffForm({
         {/* Password Input */}
         {Boolean(formData.canAccessPos) && (
           <div className="pt-2 border-t border-slate-200/70">
-            <label className="block mb-1 font-medium text-slate-700">
-              {isEditing
-                ? "POS Login Password (optional)"
-                : "POS Login Password *"}
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-slate-400" />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder={
-                  isEditing
-                    ? "Enter new password to change (leave blank to keep current)"
-                    : "Create POS password for this staff member"
-                }
-                value={formData.password || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-9 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer p-0.5"
-                title={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
-              </button>
-            </div>
-            <p className="mt-1 text-[11px] text-slate-500">
-              {isEditing
-                ? "Leave this blank if you don't want to change their existing POS login password."
-                : "This password allows the staff member to log in to the POS system in the future."}
-            </p>
+            <Input
+              type={showPassword ? "text" : "password"}
+              label={
+                isEditing
+                  ? "POS Login Password (optional)"
+                  : "POS Login Password *"
+              }
+              labelClassName="block mb-0 font-medium text-slate-700"
+              placeholder={
+                isEditing
+                  ? "Enter new password to change (leave blank to keep current)"
+                  : "Create POS password for this staff member"
+              }
+              value={formData.password || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              leftElement={<Lock className="size-3.5 text-slate-400" />}
+              rightElement={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-slate-400 hover:text-slate-600 transition cursor-pointer p-0.5"
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
+              }
+              helperText={
+                isEditing
+                  ? "Leave this blank if you don't want to change their existing POS login password."
+                  : "This password allows the staff member to log in to the POS system in the future."
+              }
+              className="rounded-lg border-slate-200 bg-white py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+            />
           </div>
         )}
       </div>
 
       {/* Specialties */}
-      <div>
-        <label className="block mb-1 font-medium text-slate-700">
-          Specialties (comma-separated)
-        </label>
-        <input
-          type="text"
-          placeholder="e.g. Balayage, Layered Cuts, Keratin Treatment"
-          value={specialtiesInput}
-          onChange={(e) => setSpecialtiesInput(e.target.value)}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-        />
-      </div>
+      <Input
+        type="text"
+        label="Specialties (comma-separated)"
+        labelClassName="block mb-0 font-medium text-slate-700"
+        placeholder="e.g. Balayage, Layered Cuts, Keratin Treatment"
+        value={specialtiesInput}
+        onChange={(e) => setSpecialtiesInput(e.target.value)}
+        className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+      />
 
       {/* Bio / Experience */}
       <div>

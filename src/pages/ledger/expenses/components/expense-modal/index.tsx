@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { Upload, X, Tag, CreditCard } from "lucide-react";
 import SidePanel from "../../../../../components/side-panel";
+import { Input } from "../../../../../components/input";
 import type {
   ExpenseFormData,
   ExpenseRecord,
@@ -65,21 +66,16 @@ function ExpenseFormContent({
   return (
     <form id="expense-form" onSubmit={handleSubmit} className="flex flex-col gap-4 text-xs">
       {/* Expense Title */}
-      <div>
-        <label className="block mb-1.5 font-medium text-slate-700">
-          Expense Title <span className="text-rose-500">*</span>
-        </label>
-        <div className="relative">
-          <input
-            type="text"
-            required
-            placeholder="e.g. Electricity Bill, Shop Rent, Staff Salaries"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
-      </div>
+      <Input
+        type="text"
+        required
+        label={<>Expense Title <span className="text-rose-500">*</span></>}
+        labelClassName="block mb-0 font-medium text-slate-700"
+        placeholder="e.g. Electricity Bill, Shop Rent, Staff Salaries"
+        value={formData.title}
+        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        className="border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+      />
 
       {/* Category & Amount */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -108,28 +104,21 @@ function ExpenseFormContent({
           </div>
         </div>
 
-        <div>
-          <label className="block mb-1.5 font-medium text-slate-700">
-            Amount (LKR) <span className="text-rose-500">*</span>
-          </label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-[11px]">
-              Rs.
-            </span>
-            <input
-              type="number"
-              min="1"
-              step="any"
-              required
-              placeholder="5000"
-              value={formData.amount || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })
-              }
-              className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 font-medium"
-            />
-          </div>
-        </div>
+        <Input
+          type="number"
+          min="1"
+          step="any"
+          required
+          label={<>Amount (LKR) <span className="text-rose-500">*</span></>}
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="5000"
+          value={formData.amount || ""}
+          onChange={(e) =>
+            setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })
+          }
+          leftElement={<span className="text-slate-400 font-semibold text-[11px]">Rs.</span>}
+          className="border-slate-200 py-2 pl-9 pr-3 text-slate-900 focus:border-primary focus:ring-primary/20 font-medium"
+        />
       </div>
 
       {/* Payment Method & Expense Date */}
@@ -157,20 +146,15 @@ function ExpenseFormContent({
           </div>
         </div>
 
-        <div>
-          <label className="block mb-1.5 font-medium text-slate-700">
-            Expense Date <span className="text-rose-500">*</span>
-          </label>
-          <div className="relative">
-            <input
-              type="date"
-              required
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-        </div>
+        <Input
+          type="date"
+          required
+          label={<>Expense Date <span className="text-rose-500">*</span></>}
+          labelClassName="block mb-0 font-medium text-slate-700"
+          value={formData.date}
+          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          className="border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+        />
       </div>
 
       {/* Description (Optional) */}
@@ -211,11 +195,12 @@ function ExpenseFormContent({
             </div>
             <span className="text-xs font-semibold text-slate-700">Upload receipt image or slip</span>
             <span className="text-[10px] text-slate-400">PNG, JPG or WEBP up to 5MB</span>
-            <input
+            <Input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
               className="hidden"
+              wrapperClassName="hidden"
             />
           </label>
         )}

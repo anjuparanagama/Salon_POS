@@ -1,6 +1,7 @@
 import { useState, useRef, type FormEvent, type ChangeEvent } from "react";
 import { Plus, X, ImagePlus, Check } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
+import { Input } from "../../../../components/input";
 import type {
   ServiceFormData,
   ServiceItem,
@@ -156,17 +157,16 @@ function ServiceForm({
   return (
     <form id="service-form" onSubmit={handleSubmit} className="flex flex-col gap-4 text-xs">
       {/* Service Name */}
-      <div>
-        <label className="block mb-1 font-medium text-slate-700">Service Name *</label>
-        <input
-          type="text"
-          required
-          placeholder="e.g. Keratin Hair Therapy"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
-        />
-      </div>
+      <Input
+        type="text"
+        required
+        label="Service Name *"
+        labelClassName="block mb-0 font-medium text-slate-700"
+        placeholder="e.g. Keratin Hair Therapy"
+        value={formData.name}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        className="border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
+      />
 
       {/* Category Section with Inline Add */}
       <div>
@@ -197,7 +197,7 @@ function ServiceForm({
 
         {isAddingCategory ? (
           <div className="flex items-center gap-1.5 p-2 rounded-lg bg-slate-50 border border-primary/30 animate-in fade-in duration-150">
-            <input
+            <Input
               type="text"
               autoFocus
               placeholder="Enter category name (e.g. Hair Coloring)"
@@ -212,7 +212,8 @@ function ServiceForm({
                   setNewCategoryName("");
                 }
               }}
-              className="flex-1 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs text-slate-900 outline-none bg-white focus:border-primary"
+              wrapperClassName="flex-1"
+              className="rounded-md border-slate-200 px-2.5 py-1.5 text-xs text-slate-900 bg-white focus:border-primary"
             />
             <button
               type="button"
@@ -248,41 +249,31 @@ function ServiceForm({
 
       {/* Duration and Price */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">Duration (mins) *</label>
-          <div className="relative">
-            <input
-              type="text"
-              inputMode="numeric"
-              required
-              placeholder="45"
-              value={durationInput}
-              onChange={handleDurationChange}
-              className="w-full rounded-lg border border-slate-200 pl-3 pr-12 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 pointer-events-none">
-              mins
-            </span>
-          </div>
-        </div>
+        <Input
+          type="text"
+          inputMode="numeric"
+          required
+          label="Duration (mins) *"
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="45"
+          value={durationInput}
+          onChange={handleDurationChange}
+          rightElement={<span className="text-xs font-medium text-slate-400 select-none">mins</span>}
+          className="border-slate-200 pl-3 pr-12 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
+        />
 
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">Price (Rs.) *</label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 pointer-events-none">
-              Rs.
-            </span>
-            <input
-              type="text"
-              inputMode="decimal"
-              required
-              placeholder="0.00"
-              value={priceInput}
-              onChange={handlePriceChange}
-              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
-            />
-          </div>
-        </div>
+        <Input
+          type="text"
+          inputMode="decimal"
+          required
+          label="Price (Rs.) *"
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="0.00"
+          value={priceInput}
+          onChange={handlePriceChange}
+          leftElement={<span className="text-xs font-semibold text-slate-400 select-none">Rs.</span>}
+          className="border-slate-200 pl-9 pr-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
+        />
       </div>
 
       {/* Image Gallery Upload (Max 5) */}
@@ -294,13 +285,14 @@ function ServiceForm({
           </span>
         </div>
 
-        <input
+        <Input
           ref={fileInputRef}
           type="file"
           accept="image/*"
           multiple
           onChange={handleFileChange}
           className="hidden"
+          wrapperClassName="hidden"
         />
 
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
@@ -361,21 +353,21 @@ function ServiceForm({
 
       {/* Active Toggle */}
       <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3.5">
-        <label htmlFor="service-active-toggle" className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            id="service-active-toggle"
-            checked={formData.isActive}
-            onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-            className="mt-0.5 rounded border-slate-300 text-primary focus:ring-primary size-4"
-          />
-          <div className="flex flex-col">
-            <span className="font-semibold text-slate-800">Publish as active</span>
-            <span className="text-[11px] text-slate-500">
-              When enabled, this service will be visible to clients and selectable in appointments.
-            </span>
-          </div>
-        </label>
+        <Input
+          type="checkbox"
+          id="service-active-toggle"
+          checked={formData.isActive}
+          onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+          className="mt-0.5 rounded border-slate-300 text-primary focus:ring-primary size-4"
+          label={
+            <div className="flex flex-col">
+              <span className="font-semibold text-slate-800">Publish as active</span>
+              <span className="text-[11px] text-slate-500">
+                When enabled, this service will be visible to clients and selectable in appointments.
+              </span>
+            </div>
+          }
+        />
       </div>
     </form>
   );

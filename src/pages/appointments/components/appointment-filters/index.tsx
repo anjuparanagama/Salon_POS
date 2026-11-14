@@ -5,6 +5,7 @@ import {
   Activity,
   X,
 } from "lucide-react";
+import { Input } from "../../../../components/input";
 import TableToolbar, {
   type AvailableColumn,
   type SearchFieldOption,
@@ -136,11 +137,11 @@ export function AppointmentFilters({
           <span>Booking Date</span>
         </label>
         <div className="flex items-center gap-2">
-          <input
+          <Input
             type="date"
             value={filters.date || ""}
             onChange={(e) => onFilterChange({ date: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer shadow-2xs"
+            className="rounded-lg border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer shadow-2xs"
           />
           {filters.date && (
             <button

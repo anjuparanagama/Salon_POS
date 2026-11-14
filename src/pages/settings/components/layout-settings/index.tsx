@@ -19,6 +19,7 @@ import {
   saveStoredLayoutSettings,
 } from "../../../../helpers/layout-settings.helper";
 import Modal from "../../../../components/modal";
+import { Input } from "../../../../components/input";
 import InvoiceRenderer, {
   type InvoiceData,
   type SalonInfo,
@@ -392,16 +393,15 @@ export function LayoutSettingsView() {
         </p>
 
         <div className="mt-4 flex flex-col gap-4 text-xs">
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">Receipt Top Header Note</label>
-            <input
-              type="text"
-              value={formData.receiptHeader}
-              onChange={(e) => setFormData({ ...formData, receiptHeader: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50"
-              placeholder="e.g. Thank you for pampering yourself at Sribees Salon!"
-            />
-          </div>
+          <Input
+            type="text"
+            label="Receipt Top Header Note"
+            labelClassName="block mb-0 font-medium text-slate-700"
+            value={formData.receiptHeader}
+            onChange={(e) => setFormData({ ...formData, receiptHeader: e.target.value })}
+            className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
+            placeholder="e.g. Thank you for pampering yourself at Sribees Salon!"
+          />
 
           <div>
             <label className="block mb-1 font-medium text-slate-700">Receipt Footer Disclaimer / Social Handles</label>
@@ -417,44 +417,44 @@ export function LayoutSettingsView() {
 
         {/* Print switches */}
         <div className="mt-5 flex flex-col gap-3 pt-3 border-t border-slate-100">
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Print Salon Logo on Top of Invoice</span>
               <p className="text-[11px] text-slate-500">Includes salon brand icon/logo on digital receipts and printed slips.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.showLogoOnReceipt}
               onChange={(e) => setFormData({ ...formData, showLogoOnReceipt: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
 
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Show Assigned Stylist Name on Customer Receipt</span>
               <p className="text-[11px] text-slate-500">Prints specialist attribution under each service line item.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.showSpecialistOnReceipt}
               onChange={(e) => setFormData({ ...formData, showSpecialistOnReceipt: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
 
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Display Duration on Receipt Line Items</span>
               <p className="text-[11px] text-slate-500">Shows minutes taken for appointments and treatments on the invoice.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.showAppointmentDuration}
               onChange={(e) => setFormData({ ...formData, showAppointmentDuration: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
         </div>
       </div>
 
@@ -468,18 +468,18 @@ export function LayoutSettingsView() {
         </p>
 
         <div className="mt-3 flex flex-col gap-3">
-          <label className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between">
             <div>
               <span className="font-semibold text-xs text-slate-800">Compact Table Rows</span>
               <p className="text-[11px] text-slate-500">Reduces vertical cell padding in appointments, products, and customer lists.</p>
             </div>
-            <input
+            <Input
               type="checkbox"
               checked={formData.compactDensity}
               onChange={(e) => setFormData({ ...formData, compactDensity: e.target.checked })}
               className="size-4 accent-primary rounded cursor-pointer"
             />
-          </label>
+          </div>
         </div>
       </div>
 

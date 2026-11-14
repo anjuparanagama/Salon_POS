@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Eye, EyeOff, Loader2, AlertCircle, Gift, CheckCircle2 } from "lucide-react";
+import { Input } from "../../../components/input";
 import { authService } from "../../../services/auth.service";
 import type { OwnerDetailsFormData, ValidateReferralResponse } from "../../../interface/auth.types";
 
@@ -111,144 +112,105 @@ export function Step1OwnerDetails({
 
       <form onSubmit={validateAndSubmit} className="space-y-3.5">
         {/* Full Name Field */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-            Full Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={formData.fullName}
-            onChange={(e) => {
-              onChange({ fullName: e.target.value });
-              if (fieldErrors.fullName) setFieldErrors((prev) => ({ ...prev, fullName: "" }));
-            }}
-            placeholder="e.g. Kasun Perera"
-            disabled={isLoading}
-            className={`w-full rounded-lg bg-primary-subtle border px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-              fieldErrors.fullName ? "border-red-400" : "border-slate-200"
-            }`}
-          />
-          {fieldErrors.fullName && (
-            <p className="mt-1 text-[11px] text-red-600">{fieldErrors.fullName}</p>
-          )}
-        </div>
+        <Input
+          type="text"
+          label={<>Full Name <span className="text-red-500">*</span></>}
+          labelClassName="block text-xs font-semibold text-slate-700"
+          value={formData.fullName}
+          onChange={(e) => {
+            onChange({ fullName: e.target.value });
+            if (fieldErrors.fullName) setFieldErrors((prev) => ({ ...prev, fullName: "" }));
+          }}
+          placeholder="e.g. Kasun Perera"
+          disabled={isLoading}
+          error={fieldErrors.fullName}
+          className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
+        />
 
         {/* Email & Mobile Phone */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Email Address <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              autoComplete="email"
-              value={formData.email}
-              onChange={(e) => {
-                onChange({ email: e.target.value });
-                if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
-              }}
-              placeholder="kasun@example.com"
-              disabled={isLoading}
-              className={`w-full rounded-lg bg-primary-subtle border px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                fieldErrors.email ? "border-red-400" : "border-slate-200"
-              }`}
-            />
-            {fieldErrors.email && (
-              <p className="mt-1 text-[11px] text-red-600">{fieldErrors.email}</p>
-            )}
-          </div>
+          <Input
+            type="email"
+            autoComplete="email"
+            label={<>Email Address <span className="text-red-500">*</span></>}
+            labelClassName="block text-xs font-semibold text-slate-700"
+            value={formData.email}
+            onChange={(e) => {
+              onChange({ email: e.target.value });
+              if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
+            }}
+            placeholder="kasun@example.com"
+            disabled={isLoading}
+            error={fieldErrors.email}
+            className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
+          />
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Mobile Phone <span className="text-red-500">*</span>
-            </label>
-            <div className="flex">
-              <span className="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-200 bg-slate-100 text-slate-600 text-xs font-medium shrink-0">
-                🇱🇰 +94
-              </span>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => {
-                  onChange({ phone: e.target.value });
-                  if (fieldErrors.phone) setFieldErrors((prev) => ({ ...prev, phone: "" }));
-                }}
-                placeholder="77 123 4567"
-                disabled={isLoading}
-                className={`w-full rounded-r-lg bg-primary-subtle border px-3 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                  fieldErrors.phone ? "border-red-400" : "border-slate-200"
-                }`}
-              />
-            </div>
-            {fieldErrors.phone && (
-              <p className="mt-1 text-[11px] text-red-600">{fieldErrors.phone}</p>
-            )}
-          </div>
+          <Input
+            type="tel"
+            label={<>Mobile Phone <span className="text-red-500">*</span></>}
+            labelClassName="block text-xs font-semibold text-slate-700"
+            value={formData.phone}
+            onChange={(e) => {
+              onChange({ phone: e.target.value });
+              if (fieldErrors.phone) setFieldErrors((prev) => ({ ...prev, phone: "" }));
+            }}
+            placeholder="77 123 4567"
+            disabled={isLoading}
+            error={fieldErrors.phone}
+            leftElement={<span className="text-xs font-medium text-slate-600 pl-1">🇱🇰 +94</span>}
+            className="rounded-lg bg-primary-subtle border-slate-200 pl-16 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
+          />
         </div>
 
         {/* Password & Confirm Password */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Password <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={formData.password}
-                onChange={(e) => {
-                  onChange({ password: e.target.value });
-                  if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: "" }));
-                }}
-                placeholder="••••••••••••"
-                disabled={isLoading}
-                className={`w-full rounded-lg bg-primary-subtle border px-3.5 py-2.5 pr-9 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                  fieldErrors.password ? "border-red-400" : "border-slate-200"
-                }`}
-              />
+          <Input
+            type={showPassword ? "text" : "password"}
+            label={<>Password <span className="text-red-500">*</span></>}
+            labelClassName="block text-xs font-semibold text-slate-700"
+            value={formData.password}
+            onChange={(e) => {
+              onChange({ password: e.target.value });
+              if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: "" }));
+            }}
+            placeholder="••••••••••••"
+            disabled={isLoading}
+            error={fieldErrors.password}
+            rightElement={
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
               >
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
-            </div>
-            {fieldErrors.password && (
-              <p className="mt-1 text-[11px] text-red-600">{fieldErrors.password}</p>
-            )}
-          </div>
+            }
+            className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
+          />
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Confirm Password <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                value={formData.confirmPassword}
-                onChange={(e) => {
-                  onChange({ confirmPassword: e.target.value });
-                  if (fieldErrors.confirmPassword) setFieldErrors((prev) => ({ ...prev, confirmPassword: "" }));
-                }}
-                placeholder="••••••••••••"
-                disabled={isLoading}
-                className={`w-full rounded-lg bg-primary-subtle border px-3.5 py-2.5 pr-9 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                  fieldErrors.confirmPassword ? "border-red-400" : "border-slate-200"
-                }`}
-              />
+          <Input
+            type={showConfirmPassword ? "text" : "password"}
+            label={<>Confirm Password <span className="text-red-500">*</span></>}
+            labelClassName="block text-xs font-semibold text-slate-700"
+            value={formData.confirmPassword}
+            onChange={(e) => {
+              onChange({ confirmPassword: e.target.value });
+              if (fieldErrors.confirmPassword) setFieldErrors((prev) => ({ ...prev, confirmPassword: "" }));
+            }}
+            placeholder="••••••••••••"
+            disabled={isLoading}
+            error={fieldErrors.confirmPassword}
+            rightElement={
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
               >
                 {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
-            </div>
-            {fieldErrors.confirmPassword && (
-              <p className="mt-1 text-[11px] text-red-600">{fieldErrors.confirmPassword}</p>
-            )}
-          </div>
+            }
+            className="rounded-lg bg-primary-subtle border-slate-200 px-3.5 py-2.5 text-xs sm:text-sm focus:bg-white focus:border-primary focus:ring-primary/20"
+          />
         </div>
 
         {/* Referral Code Field (Optional) */}
@@ -266,41 +228,41 @@ export function Step1OwnerDetails({
               </span>
             )}
           </label>
-          <div className="relative">
-            <input
-              type="text"
-              value={formData.referralCode || ""}
-              onChange={(e) => {
-                const val = e.target.value.toUpperCase();
-                onChange({ referralCode: val });
-                if (referralStatus) setReferralStatus(null);
-              }}
-              onBlur={() => {
-                if (formData.referralCode?.trim()) {
-                  handleValidateCode(formData.referralCode);
-                }
-              }}
-              placeholder="e.g. GLAM-7X9K2"
-              disabled={isLoading}
-              className={`w-full rounded-lg bg-white border px-3.5 py-2 pr-16 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 uppercase tracking-wider outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                referralStatus?.valid
-                  ? "border-emerald-400 bg-emerald-50/20"
-                  : referralStatus && !referralStatus.valid
-                  ? "border-amber-300"
-                  : "border-slate-200"
-              }`}
-            />
-            {formData.referralCode?.trim() && (
-              <button
-                type="button"
-                onClick={() => handleValidateCode(formData.referralCode || "")}
-                disabled={isLoading || validatingRef}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded bg-slate-100 hover:bg-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition cursor-pointer"
-              >
-                {validatingRef ? <Loader2 className="size-3 animate-spin text-slate-500" /> : "Apply"}
-              </button>
-            )}
-          </div>
+          <Input
+            type="text"
+            value={formData.referralCode || ""}
+            onChange={(e) => {
+              const val = e.target.value.toUpperCase();
+              onChange({ referralCode: val });
+              if (referralStatus) setReferralStatus(null);
+            }}
+            onBlur={() => {
+              if (formData.referralCode?.trim()) {
+                handleValidateCode(formData.referralCode);
+              }
+            }}
+            placeholder="e.g. GLAM-7X9K2"
+            disabled={isLoading}
+            rightElement={
+              formData.referralCode?.trim() ? (
+                <button
+                  type="button"
+                  onClick={() => handleValidateCode(formData.referralCode || "")}
+                  disabled={isLoading || validatingRef}
+                  className="rounded bg-slate-100 hover:bg-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition cursor-pointer"
+                >
+                  {validatingRef ? <Loader2 className="size-3 animate-spin text-slate-500" /> : "Apply"}
+                </button>
+              ) : undefined
+            }
+            className={`w-full rounded-lg bg-white border px-3.5 py-2 pr-16 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 uppercase tracking-wider outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 ${
+              referralStatus?.valid
+                ? "border-emerald-400 bg-emerald-50/20"
+                : referralStatus && !referralStatus.valid
+                ? "border-amber-300"
+                : "border-slate-200"
+            }`}
+          />
 
           {/* Referral Status Feedback */}
           {referralStatus?.valid && (
@@ -322,23 +284,21 @@ export function Step1OwnerDetails({
 
         {/* Terms agreement checkbox */}
         <div className="pt-1">
-          <label className="flex items-start gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={formData.agreedToTerms}
-              onChange={(e) => {
-                onChange({ agreedToTerms: e.target.checked });
-                if (fieldErrors.agreedToTerms) setFieldErrors((prev) => ({ ...prev, agreedToTerms: "" }));
-              }}
-              className="mt-0.5 size-4 rounded border-slate-300 text-primary accent-primary focus:ring-primary/30"
-            />
-            <span className="text-xs text-slate-600 leading-tight">
-              I agree to the <span className="text-primary font-medium">Terms of Service</span> & <span className="text-primary font-medium">Privacy Policy</span>.
-            </span>
-          </label>
-          {fieldErrors.agreedToTerms && (
-            <p className="mt-1 text-[11px] text-red-600">{fieldErrors.agreedToTerms}</p>
-          )}
+          <Input
+            type="checkbox"
+            checked={formData.agreedToTerms}
+            onChange={(e) => {
+              onChange({ agreedToTerms: e.target.checked });
+              if (fieldErrors.agreedToTerms) setFieldErrors((prev) => ({ ...prev, agreedToTerms: "" }));
+            }}
+            label={
+              <span className="text-xs text-slate-600 leading-tight">
+                I agree to the <span className="text-primary font-medium">Terms of Service</span> & <span className="text-primary font-medium">Privacy Policy</span>.
+              </span>
+            }
+            error={fieldErrors.agreedToTerms}
+            className="mt-0.5 size-4 rounded border-slate-300 text-primary accent-primary focus:ring-primary/30"
+          />
         </div>
 
         {/* Primary Action Button */}

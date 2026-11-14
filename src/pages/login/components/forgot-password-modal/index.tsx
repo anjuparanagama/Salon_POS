@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Mail, CheckCircle2, Loader2, ArrowLeft, KeyRound } from "lucide-react";
+import { Input } from "../../../../components/input";
 import type { ForgotPasswordModalProps } from "../../../../interface/auth.types";
 
 function ModalDialog({
@@ -101,31 +102,19 @@ function ModalDialog({
             </div>
           )}
 
-          <div>
-            <label
-              htmlFor="reset-email"
-              className="block text-xs font-semibold text-slate-700 mb-1"
-            >
-              Staff Email Address
-            </label>
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                <Mail className="size-4" />
-              </div>
-              <input
-                id="reset-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g., amanda@sribees.com"
-                disabled={isLoading}
-                className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
-              />
-            </div>
-            <p className="mt-1 text-[11px] text-slate-400">
-              If you forgot your PIN, please contact Amanda Ray (Salon Manager).
-            </p>
-          </div>
+          <Input
+            id="reset-email"
+            type="email"
+            label="Staff Email Address"
+            labelClassName="block text-xs font-semibold text-slate-700"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="e.g., amanda@sribees.com"
+            disabled={isLoading}
+            leftElement={<Mail className="size-4" />}
+            helperText="If you forgot your PIN, please contact Amanda Ray (Salon Manager)."
+            className="rounded-xl border-slate-200 bg-white py-2.5 text-xs text-slate-900 placeholder:text-slate-400 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+          />
 
           <div className="flex items-center gap-2 pt-2">
             <button

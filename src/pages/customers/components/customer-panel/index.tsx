@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent } from "react";
 import SidePanel from "../../../../components/side-panel";
+import { Input } from "../../../../components/input";
 import type { Customer, CustomerFormData, CustomerGender } from "../../../../interface/customer.types";
 
 export type CustomerPanelProps = {
@@ -85,46 +86,39 @@ export function CustomerPanel({
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-xs">
         {/* Full Name */}
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Customer Name <span className="text-rose-500">*</span>
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="e.g. Jessica Miller"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
+        <Input
+          type="text"
+          required
+          label={<>Customer Name <span className="text-rose-500">*</span></>}
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="e.g. Jessica Miller"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+        />
 
         {/* Phone */}
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Number (Phone) <span className="text-rose-500">*</span>
-          </label>
-          <input
-            type="tel"
-            required
-            placeholder="e.g. 0771234567"
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
+        <Input
+          type="tel"
+          required
+          label={<>Number (Phone) <span className="text-rose-500">*</span></>}
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="e.g. 0771234567"
+          value={formData.phone}
+          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+        />
 
         {/* Email */}
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">Email Address</label>
-          <input
-            type="email"
-            placeholder="e.g. jessica.miller@example.com"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
+        <Input
+          type="email"
+          label="Email Address"
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="e.g. jessica.miller@example.com"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+        />
 
         {/* Gender */}
         <div>

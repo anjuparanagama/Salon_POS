@@ -18,6 +18,7 @@ import {
   Power,
 } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
+import { Input } from "../../../../components/input";
 import type {
   Product,
   ProductFormData,
@@ -313,46 +314,44 @@ function ProductForm({
           </h3>
         </div>
 
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Product Name <span className="text-rose-500">*</span>
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="e.g. Moroccan Argan Repair Shampoo (500ml)"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
+        <Input
+          type="text"
+          required
+          label={<>Product Name <span className="text-rose-500">*</span></>}
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="e.g. Moroccan Argan Repair Shampoo (500ml)"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="font-medium text-slate-700">
-                SKU / Product Code <span className="text-rose-500">*</span>
-              </label>
-              <button
-                type="button"
-                onClick={generateSku}
-                className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline cursor-pointer"
-              >
-                <Sparkles className="size-3" />
-                Generate
-              </button>
-            </div>
-            <input
-              type="text"
-              required
-              placeholder="e.g. SHP-ARG-01"
-              value={formData.sku}
-              onChange={(e) =>
-                setFormData({ ...formData, sku: e.target.value })
-              }
-              className="w-full font-mono rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
+          <Input
+            type="text"
+            required
+            label={
+              <div className="flex items-center justify-between w-full">
+                <span className="font-medium text-slate-700">
+                  SKU / Product Code <span className="text-rose-500">*</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={generateSku}
+                  className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline cursor-pointer"
+                >
+                  <Sparkles className="size-3" />
+                  Generate
+                </button>
+              </div>
+            }
+            labelClassName="w-full"
+            placeholder="e.g. SHP-ARG-01"
+            value={formData.sku}
+            onChange={(e) =>
+              setFormData({ ...formData, sku: e.target.value })
+            }
+            className="font-mono bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+          />
 
           <div>
             <label className="block mb-1 font-medium text-slate-700">
@@ -374,21 +373,22 @@ function ProductForm({
           </div>
         </div>
 
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Brand / Manufacturer{" "}
-            <span className="text-slate-400 font-normal">(Optional)</span>
-          </label>
-          <input
-            type="text"
-            placeholder="e.g. Moroccanoil, Olaplex, L'Oreal"
-            value={formData.brand}
-            onChange={(e) =>
-              setFormData({ ...formData, brand: e.target.value })
-            }
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
+        <Input
+          type="text"
+          label={
+            <>
+              Brand / Manufacturer{" "}
+              <span className="text-slate-400 font-normal">(Optional)</span>
+            </>
+          }
+          labelClassName="block mb-0 font-medium text-slate-700"
+          placeholder="e.g. Moroccanoil, Olaplex, L'Oreal"
+          value={formData.brand}
+          onChange={(e) =>
+            setFormData({ ...formData, brand: e.target.value })
+          }
+          className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+        />
 
         <div>
           <label className="block mb-1 font-medium text-slate-700">
@@ -423,12 +423,13 @@ function ProductForm({
             </button>
           </div>
 
-          <input
+          <Input
             ref={fileInputRef}
             type="file"
             accept="image/*"
             onChange={handleFileInputChange}
             className="hidden"
+            wrapperClassName="hidden"
           />
 
           {formData.imageUrl ? (
@@ -479,14 +480,14 @@ function ProductForm({
             /* Direct URL Mode */
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <input
+                <Input
                   type="url"
                   placeholder="https://example.com/product.jpg"
                   value={formData.imageUrl}
                   onChange={(e) =>
                     setFormData({ ...formData, imageUrl: e.target.value })
                   }
-                  className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
                 />
               </div>
 
@@ -559,47 +560,31 @@ function ProductForm({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">
-              Cost Price (Purchase Price){" "}
-              <span className="text-rose-500">*</span>
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-xs">
-                Rs.
-              </span>
-              <input
-                type="text"
-                inputMode="decimal"
-                required
-                placeholder="0.00"
-                value={costPriceInput}
-                onChange={handleCostPriceChange}
-                className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-          </div>
+          <Input
+            type="text"
+            inputMode="decimal"
+            required
+            label={<>Cost Price (Purchase Price) <span className="text-rose-500">*</span></>}
+            labelClassName="block mb-0 font-medium text-slate-700"
+            placeholder="0.00"
+            value={costPriceInput}
+            onChange={handleCostPriceChange}
+            leftElement={<span className="text-slate-400 font-medium text-xs">Rs.</span>}
+            className="bg-white py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+          />
 
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">
-              Selling Price (Retail Price){" "}
-              <span className="text-rose-500">*</span>
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-xs">
-                Rs.
-              </span>
-              <input
-                type="text"
-                inputMode="decimal"
-                required
-                placeholder="0.00"
-                value={sellingPriceInput}
-                onChange={handleSellingPriceChange}
-                className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-          </div>
+          <Input
+            type="text"
+            inputMode="decimal"
+            required
+            label={<>Selling Price (Retail Price) <span className="text-rose-500">*</span></>}
+            labelClassName="block mb-0 font-medium text-slate-700"
+            placeholder="0.00"
+            value={sellingPriceInput}
+            onChange={handleSellingPriceChange}
+            leftElement={<span className="text-slate-400 font-medium text-xs">Rs.</span>}
+            className="bg-white py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+          />
         </div>
 
         {/* Profit Preview Pill */}
@@ -634,14 +619,14 @@ function ProductForm({
               <span className="text-rose-500">*</span>
             </label>
             <div className="flex items-center gap-1.5">
-              <input
+              <Input
                 type="text"
                 inputMode="numeric"
                 required
                 placeholder="0"
                 value={stockInput}
                 onChange={handleStockChange}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
               />
               {isEditing && (
                 <div className="flex items-center gap-1 shrink-0">
@@ -691,23 +676,18 @@ function ProductForm({
             </span>
           </div>
 
-          <div>
-            <label className="block mb-1 font-medium text-slate-700">
-              Low Stock Alert Level <span className="text-rose-500">*</span>
-            </label>
-            <input
-              type="text"
-              inputMode="numeric"
-              required
-              placeholder="5"
-              value={lowStockInput}
-              onChange={handleLowStockChange}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-            <span className="text-[10px] text-slate-400 mt-0.5 block">
-              Triggers warning when stock drops to or below this
-            </span>
-          </div>
+          <Input
+            type="text"
+            inputMode="numeric"
+            required
+            label={<>Low Stock Alert Level <span className="text-rose-500">*</span></>}
+            labelClassName="block mb-0 font-medium text-slate-700"
+            placeholder="5"
+            value={lowStockInput}
+            onChange={handleLowStockChange}
+            helperText="Triggers warning when stock drops to or below this"
+            className="bg-white px-3 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary"
+          />
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "../../lib/cn";
+import { Input } from "../input";
 
 export type SearchFieldOption = {
   label: string;
@@ -135,18 +136,18 @@ export function TableToolbar({
 
             {/* Search Text Input */}
             <div className="relative flex-1 flex items-center">
-              <input
+              <Input
                 type="text"
                 placeholder={searchPlaceholder}
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full bg-transparent pl-3 pr-8 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none"
+                className="w-full h-auto border-0 bg-transparent pl-3 pr-8 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none shadow-none ring-0 focus-visible:ring-0"
               />
               {search ? (
                 <button
                   type="button"
                   onClick={() => onSearchChange("")}
-                  className="absolute right-2.5 size-4 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                  className="absolute right-2.5 size-4 text-slate-400 hover:text-slate-600 transition cursor-pointer z-10"
                   title="Clear search"
                 >
                   <X className="size-3.5" />
@@ -285,7 +286,7 @@ export function TableToolbar({
                         className="flex items-center justify-between px-2 py-1 rounded-md hover:bg-slate-50 cursor-pointer text-slate-700 select-none"
                       >
                         <span>{col.label}</span>
-                        <input
+                        <Input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => onToggleColumn(col.key)}

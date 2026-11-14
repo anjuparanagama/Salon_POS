@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, X } from "lucide-react";
+import { Input } from "../input";
 
 export type SearchBarProps = {
   placeholder?: string;
@@ -104,7 +105,7 @@ export function SearchBar({
       </div>
 
       {/* Search Input Field */}
-      <input
+      <Input
         ref={searchInputRef}
         type="text"
         tabIndex={isSearchOpen ? 0 : -1}
@@ -124,7 +125,7 @@ export function SearchBar({
         }}
         placeholder={resolvedPlaceholder}
         className={[
-          "min-w-0 flex-1 bg-transparent pr-1 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none transition-opacity duration-200",
+          "min-w-0 flex-1 h-auto border-0 bg-transparent px-0 py-0 pr-1 text-xs text-slate-800 placeholder:text-slate-400 shadow-none ring-0 focus-visible:ring-0 focus:outline-none transition-opacity duration-200",
           isSearchOpen
             ? "opacity-100 delay-100 pointer-events-auto"
             : "opacity-0 pointer-events-none",

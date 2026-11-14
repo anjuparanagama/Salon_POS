@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Loader2, ArrowLeft, AlertCircle, RefreshCw, Sparkles, Mail, Phone } from "lucide-react";
+import { Input } from "../../../components/input";
 
 interface Step2OtpVerificationProps {
   maskedEmail: string;
@@ -161,7 +162,7 @@ export function Step2OtpVerification({
           </label>
           <div className="flex items-center justify-center gap-2 sm:gap-2.5">
             {digits.map((digit, idx) => (
-              <input
+              <Input
                 key={idx}
                 ref={(el) => {
                   inputRefs.current[idx] = el;
@@ -174,7 +175,8 @@ export function Step2OtpVerification({
                 onKeyDown={(e) => handleKeyDown(idx, e)}
                 onPaste={handlePaste}
                 disabled={isLoading}
-                className={`size-11 sm:size-12 rounded-lg border text-center text-lg font-bold font-mono transition-all outline-none ${
+                wrapperClassName="w-auto"
+                className={`size-11 sm:size-12 rounded-lg border text-center text-lg font-bold font-mono transition-all outline-none p-0 ${
                   digit
                     ? "border-primary bg-primary-subtle text-primary ring-2 ring-primary/20"
                     : "border-slate-200 bg-primary-subtle text-slate-800 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20"

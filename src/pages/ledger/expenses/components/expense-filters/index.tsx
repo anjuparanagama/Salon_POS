@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Calendar, CreditCard, Tag } from "lucide-react";
+import { Input } from "../../../../../components/input";
 import TableToolbar, {
   type AvailableColumn,
   type SearchFieldOption,
@@ -148,19 +149,19 @@ export function ExpenseFilters({
           <span>Date Range</span>
         </label>
         <div className="flex items-center gap-1.5">
-          <input
+          <Input
             type="date"
             value={filters.startDate || ""}
             onChange={(e) => onFilterChange({ startDate: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer shadow-2xs"
+            className="rounded-lg border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer shadow-2xs"
             title="Start Date"
           />
           <span className="text-slate-400">to</span>
-          <input
+          <Input
             type="date"
             value={filters.endDate || ""}
             onChange={(e) => onFilterChange({ endDate: e.target.value })}
-            className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer shadow-2xs"
+            className="rounded-lg border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary/20 cursor-pointer shadow-2xs"
             title="End Date"
           />
         </div>
