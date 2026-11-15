@@ -8,6 +8,7 @@ import {
   SlidersHorizontal,
   UserCog,
   Gift,
+  Globe,
 } from "lucide-react";
 import Header from "../../components/header";
 import SettingsCard from "./components/settings-card";
@@ -18,6 +19,7 @@ import LayoutSettingsView from "./components/layout-settings";
 import NotificationSettingsView from "./components/notification-settings";
 import CategorySettingsView from "./components/category-settings";
 import ReferralSettingsView from "./components/referral-settings";
+import SharedWebSettingsView from "./components/shared-web-settings";
 import type { SettingsCardItem, SettingsSectionId } from "./types";
 import { Button } from "../../components/button";
 
@@ -98,6 +100,17 @@ export const SETTINGS_ITEMS: SettingsCardItem[] = [
     badgeBorder: "border border-primary-lighter",
     accentColor: "text-primary hover:text-primary-dark",
     borderColor: "hover:border-primary-light",
+  },
+  {
+    id: "shared-web",
+    title: "Shared Web",
+    description: "Public salon booking website, custom slug, brand theme, booking rules, and social SEO.",
+    icon: Globe,
+    bannerBg: "bg-[#F0FDF4]",
+    badgeBg: "bg-white text-teal-600",
+    badgeBorder: "border border-teal-100",
+    accentColor: "text-teal-600 hover:text-teal-700",
+    borderColor: "hover:border-teal-300",
   },
 ];
 
@@ -315,6 +328,7 @@ export function Settings() {
             <CategorySettingsView activeTab={categoryTab} onTabChange={setCategoryTab} />
           )}
           {activeSection === "referrals" && <ReferralSettingsView />}
+          {activeSection === "shared-web" && <SharedWebSettingsView />}
         </div>
       )}
     </div>

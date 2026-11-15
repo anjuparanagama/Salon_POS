@@ -8,6 +8,14 @@ export type {
   GeneralSettingsUpdateRequest,
 } from "../../interface/settings.types";
 
+export type {
+  SharedWebSettingsState,
+  SharedWebSettingsUpdateRequest,
+  SharedWebBusinessHour,
+  SharedWebHoliday,
+  SharedWebStats,
+} from "../../interface/shared-web.types";
+
 export interface AppointmentsSettingsState {
   defaultDuration: number;
   slotInterval: number;

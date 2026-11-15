@@ -7,7 +7,8 @@ export type SettingsSectionId =
   | "layout"
   | "notifications"
   | "categories"
-  | "referrals";
+  | "referrals"
+  | "shared-web";
 
 export interface SettingsCardItem {
   id: SettingsSectionId;
