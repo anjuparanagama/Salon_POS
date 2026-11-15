@@ -25,6 +25,7 @@ import InvoiceRenderer, {
   type InvoiceData,
   type SalonInfo,
 } from "../../../../components/invoice-template";
+import { getActiveSalonProfile } from "../../../../helpers/salon-profile.helper";
 
 export function LayoutSettingsView() {
   const [formData, setFormData] = useState<LayoutSettingsState>(() => getStoredLayoutSettings());
@@ -38,28 +39,7 @@ export function LayoutSettingsView() {
   );
 
   // Read salon general settings for realistic preview
-  const salonInfo: SalonInfo = (() => {
-    try {
-      const saved = localStorage.getItem("sribees_general_settings");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return {
-          name: parsed.salonName || "Sribees Luxury Salon & Spa",
-          address: parsed.address || "123 Beauty Avenue, Colombo 03, Sri Lanka",
-          phone: parsed.phone || "+94 11 234 5678",
-          email: parsed.email || "info@sribeessalon.com",
-        };
-      }
-    } catch {
-      // fallback
-    }
-    return {
-      name: "Sribees Salon & Spa",
-      address: "123 Beauty Avenue, Colombo 03, Sri Lanka",
-      phone: "+94 11 234 5678",
-      email: "info@sribeessalon.com",
-    };
-  })();
+  const salonInfo: SalonInfo = getActiveSalonProfile();
 
   const sampleInvoice: InvoiceData = {
     invoiceNumber: "INV-2026-0042",

@@ -130,6 +130,7 @@ export function CheckoutSuccessView({
           <div className="flex flex-col gap-4 text-xs text-slate-800">
             <div className="max-h-[65vh] overflow-y-auto p-1 rounded-xl bg-slate-100/30">
               <InvoiceRenderer
+                salon={completedInvoice.salon}
                 invoice={{
                   invoiceNumber: completedInvoice.invoice_number,
                   date: completedInvoice.created_at

@@ -5,8 +5,8 @@ export const DEFAULT_LAYOUT_SETTINGS: LayoutSettingsState = {
   compactDensity: false,
   showLogoOnReceipt: true,
   showSpecialistOnReceipt: true,
-  receiptHeader: "Thank you for pampering yourself at Sribees Salon & Spa!",
-  receiptFooter: "Follow us on Instagram @sribeessalon • Hotline: 077 123 4567",
+  receiptHeader: "Thank you for pampering yourself with us!",
+  receiptFooter: "Thank you for your visit • We look forward to seeing you again!",
   showAppointmentDuration: true,
 };
 

@@ -57,6 +57,14 @@ export interface InvoiceDetailResponse {
     phone: string;
     email?: string;
   } | null;
+  salon?: {
+    id?: string;
+    name?: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    logo_url?: string | null;
+  } | null;
   appointment?: {
     id: string;
     appointment_number: string;

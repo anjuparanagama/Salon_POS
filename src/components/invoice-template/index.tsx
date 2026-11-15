@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { formatPrice } from "../../helpers/price.helper";
 import type { InvoiceTemplateId, LayoutSettingsState } from "../../pages/settings/types";
+import { getActiveSalonProfile, type SalonProfileInfo } from "../../helpers/salon-profile.helper";
 
 export interface InvoiceItemData {
   id?: string;
@@ -45,43 +46,40 @@ export interface InvoiceData {
   notes?: string;
 }
 
-export interface SalonInfo {
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-}
+export type SalonInfo = SalonProfileInfo;
 
 export interface InvoiceRendererProps {
   invoice: InvoiceData;
-  salon?: SalonInfo;
+  salon?: Partial<SalonInfo> | null;
   layoutSettings?: Partial<LayoutSettingsState>;
   templateOverride?: InvoiceTemplateId;
   containerId?: string;
 }
 
-const DEFAULT_SALON_INFO: SalonInfo = {
-  name: "Sribees Salon & Spa",
-  address: "123 Beauty Avenue, Colombo 03, Sri Lanka",
-  phone: "+94 11 234 5678",
-  email: "info@sribeessalon.com",
-};
-
 export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({
   invoice,
-  salon = DEFAULT_SALON_INFO,
+  salon,
   layoutSettings = {},
   templateOverride,
   containerId = "printable-invoice",
 }) => {
+  const activeSalon = getActiveSalonProfile(salon);
   const template: InvoiceTemplateId =
     templateOverride || layoutSettings.selectedInvoiceTemplate || "modern";
 
   const showLogo = layoutSettings.showLogoOnReceipt ?? true;
   const showSpecialist = layoutSettings.showSpecialistOnReceipt ?? true;
   const showDuration = layoutSettings.showAppointmentDuration ?? true;
-  const headerNote = layoutSettings.receiptHeader;
-  const footerNote = layoutSettings.receiptFooter;
+
+  // Dynamically replace legacy hardcoded salon names in header/footer notes
+  const rawHeaderNote = layoutSettings.receiptHeader;
+  const rawFooterNote = layoutSettings.receiptFooter;
+  const headerNote = rawHeaderNote
+    ? rawHeaderNote.replace(/Sribees (Luxury )?Salon & Spa/gi, activeSalon.name)
+    : undefined;
+  const footerNote = rawFooterNote
+    ? rawFooterNote.replace(/@sribeessalon/gi, `@${activeSalon.name.toLowerCase().replace(/\s+/g, "")}`)
+    : undefined;
 
   const isPaid = (invoice.paymentStatus || "PAID").toUpperCase() === "PAID";
   const statusLabel = (invoice.paymentStatus || "PAID").toUpperCase();
@@ -112,22 +110,28 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({
             )}
             <div>
               <h2 className="text-lg font-bold tracking-tight text-slate-900 leading-tight">
-                {salon.name}
+                {activeSalon.name}
               </h2>
               <div className="mt-1 space-y-0.5 text-[11px] text-slate-500">
-                <p className="flex items-center gap-1.5">
-                  <MapPin className="size-3 text-slate-400 shrink-0" />
-                  <span>{salon.address}</span>
-                </p>
+                {activeSalon.address && (
+                  <p className="flex items-center gap-1.5">
+                    <MapPin className="size-3 text-slate-400 shrink-0" />
+                    <span>{activeSalon.address}</span>
+                  </p>
+                )}
                 <p className="flex items-center gap-3">
-                  <span className="flex items-center gap-1">
-                    <Phone className="size-3 text-slate-400 shrink-0" />
-                    <span>{salon.phone}</span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Mail className="size-3 text-slate-400 shrink-0" />
-                    <span>{salon.email}</span>
-                  </span>
+                  {activeSalon.phone && (
+                    <span className="flex items-center gap-1">
+                      <Phone className="size-3 text-slate-400 shrink-0" />
+                      <span>{activeSalon.phone}</span>
+                    </span>
+                  )}
+                  {activeSalon.email && (
+                    <span className="flex items-center gap-1">
+                      <Mail className="size-3 text-slate-400 shrink-0" />
+                      <span>{activeSalon.email}</span>
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
@@ -300,10 +304,14 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({
             </div>
           )}
           <h2 className="text-sm font-black uppercase tracking-wider text-slate-950">
-            *** {salon.name} ***
+            *** {activeSalon.name} ***
           </h2>
-          <p className="text-[10px] text-slate-600 mt-0.5">{salon.address}</p>
-          <p className="text-[10px] text-slate-600">Tel: {salon.phone}</p>
+          {activeSalon.address && (
+            <p className="text-[10px] text-slate-600 mt-0.5">{activeSalon.address}</p>
+          )}
+          {activeSalon.phone && (
+            <p className="text-[10px] text-slate-600">Tel: {activeSalon.phone}</p>
+          )}
         </div>
 
         {/* Top Header Note if configured */}
@@ -475,9 +483,14 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({
                 Exclusive Salon & Day Spa
               </span>
               <h2 className="text-xl font-serif font-bold text-white tracking-wide">
-                {salon.name}
+                {activeSalon.name}
               </h2>
-              <p className="text-[11px] text-slate-300 mt-0.5">{salon.address}</p>
+              {activeSalon.address && (
+                <p className="text-[11px] text-slate-300 mt-0.5">{activeSalon.address}</p>
+              )}
+              {activeSalon.phone && (
+                <p className="text-[10px] text-amber-200/80 mt-0.5">Tel: {activeSalon.phone}</p>
+              )}
             </div>
           </div>
 

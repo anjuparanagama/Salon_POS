@@ -13,6 +13,7 @@ import type { Appointment } from "../../../../interface/appointment.types";
 import { formatAppointmentId } from "../../../../helpers/format-id.helper";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { getStoredLayoutSettings } from "../../../../helpers/layout-settings.helper";
+import { getActiveSalonProfile } from "../../../../helpers/salon-profile.helper";
 import InvoiceRenderer, {
   type InvoiceData,
   type SalonInfo,
@@ -88,29 +89,8 @@ function AppointmentInvoiceDialog({
     appointment.invoiceNumber ||
     `INV-2026-${cleanAptNum}`;
 
-  // Read salon general settings
-  const salonInfo: SalonInfo = (() => {
-    try {
-      const saved = localStorage.getItem("sribees_general_settings");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return {
-          name: parsed.salonName || "Sribees Luxury Salon & Spa",
-          address: parsed.address || "123 Beauty Avenue, Colombo 03, Sri Lanka",
-          phone: parsed.phone || "+94 11 234 5678",
-          email: parsed.email || "info@sribeessalon.com",
-        };
-      }
-    } catch {
-      // fallback
-    }
-    return {
-      name: "Sribees Salon & Spa",
-      address: "123 Beauty Avenue, Colombo 03, Sri Lanka",
-      phone: "+94 11 234 5678",
-      email: "info@sribeessalon.com",
-    };
-  })();
+  // Read salon profile dynamically
+  const salonInfo: SalonInfo = getActiveSalonProfile(invoiceDetails?.salon);
 
   // Construct items from appointment
   const items =

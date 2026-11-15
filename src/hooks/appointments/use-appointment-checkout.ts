@@ -14,6 +14,7 @@ import {
   type CheckoutPaymentPayload,
 } from "../../services/checkout.service";
 import { formatPrice } from "../../helpers/price.helper";
+import { getActiveSalonProfile } from "../../helpers/salon-profile.helper";
 
 export interface UseAppointmentCheckoutProps {
   isOpen: boolean;
@@ -312,9 +313,10 @@ export function useAppointmentCheckout({
       )
       .join("\n");
 
+    const salon = getActiveSalonProfile(completedInvoice.salon);
     const pdfReceiptLink = checkoutService.getPublicReceiptPdfUrl(completedInvoice.id);
 
-    return `✨ *Sribees Salon & Spa - Official Receipt* ✨
+    return `✨ *${salon.name} - Official Receipt* ✨
 
 Dear *${completedInvoice.customer?.name || clientName || "Valued Customer"}*,
 Thank you for visiting us! Here is your bill summary:
@@ -332,8 +334,8 @@ ${completedInvoice.discount > 0 ? `🏷️ *Discount:* -${formatPrice(completedI
 📄 *View / Download PDF Receipt:*
 ${pdfReceiptLink}
 
-Thank you for choosing Sribees Salon & Spa! 💖
-Hotline: +94 11 234 5678`;
+Thank you for choosing ${salon.name}! 💖
+${salon.phone ? `Hotline: ${salon.phone}` : ""}`.trim();
   };
 
   const cleanRecipientPhone = () => {
