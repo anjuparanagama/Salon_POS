@@ -130,4 +130,8 @@ export const API_ENDPOINTS = {
     BASE: "/api/v1/salon/referrals",
     SUMMARY: "/api/v1/salon/referrals/summary",
   },
+  SETTINGS: {
+    GENERAL: "/api/v1/salon/settings/general",
+    RESET_GENERAL: "/api/v1/salon/settings/general/reset",
+  },
 } as const;

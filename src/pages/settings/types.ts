@@ -1,38 +1,12 @@
-import type { ComponentType } from "react";
-
-export type SettingsSectionId =
-  | "general"
-  | "appointments"
-  | "staff"
-  | "layout"
-  | "notifications"
-  | "categories"
-  | "referrals";
-
-export interface SettingsCardItem {
-  id: SettingsSectionId;
-  title: string;
-  description: string;
-  icon: ComponentType<{ className?: string; strokeWidth?: number; "aria-hidden"?: boolean | "true" | "false" }>;
-  bannerBg: string;
-  badgeBg: string;
-  accentColor: string;
-  borderColor: string;
-  badgeBorder: string;
-}
-
-export interface GeneralSettingsState {
-  salonName: string;
-  phone: string;
-  email: string;
-  address: string;
-  currency: string;
-  taxRate: number;
-  timeZone: string;
-  language?: string;
-  openingTime: string;
-  closingTime: string;
-}
+export type {
+  SettingsSectionId,
+  SettingsCardItem,
+  GeneralSettingsState,
+  BusinessHourItem,
+  BusinessHourUpdateItem,
+  GeneralSettingsApiResponse,
+  GeneralSettingsUpdateRequest,
+} from "../../interface/settings.types";
 
 export interface AppointmentsSettingsState {
   defaultDuration: number;

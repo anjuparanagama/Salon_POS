@@ -20,15 +20,15 @@ export interface UseCategorySettingsProps {
 export function useCategorySettings({ activeTab = "product" }: UseCategorySettingsProps = {}) {
   // State for Product Categories
   const [productCats, setProductCats] = useState<CategoryItem[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   // State for Service Categories
   const [serviceCats, setServiceCats] = useState<CategoryItem[]>([]);
-  const [loadingServices, setLoadingServices] = useState(false);
+  const [loadingServices, setLoadingServices] = useState(true);
 
   // State for Expense Categories
   const [expenseCats, setExpenseCats] = useState<CategoryItem[]>([]);
-  const [loadingExpenses, setLoadingExpenses] = useState(false);
+  const [loadingExpenses, setLoadingExpenses] = useState(true);
 
   // Grid Controls & Table Preferences
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,9 +95,33 @@ export function useCategorySettings({ activeTab = "product" }: UseCategorySettin
   };
 
   useEffect(() => {
-    loadProductCategories();
-    loadServiceCategories();
-    loadExpenseCategories();
+    let isMounted = true;
+    void Promise.all([
+      productsService.getCategories(),
+      servicesService.getCategories(),
+      ledgerService.getExpenseCategories(),
+    ])
+      .then(([prods, svcs, exps]) => {
+        if (isMounted) {
+          setProductCats(prods);
+          setServiceCats(svcs);
+          setExpenseCats(exps);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load categories:", err);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoadingProducts(false);
+          setLoadingServices(false);
+          setLoadingExpenses(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const activeCategories =
@@ -176,16 +200,11 @@ export function useCategorySettings({ activeTab = "product" }: UseCategorySettin
 
   const totalItems = filteredAndSorted.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
   const paginatedCategories = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
+    const start = (safeCurrentPage - 1) * pageSize;
     return filteredAndSorted.slice(start, start + pageSize);
-  }, [filteredAndSorted, currentPage, pageSize]);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
+  }, [filteredAndSorted, safeCurrentPage, pageSize]);
 
   const handleSort = (field: CategorySortField) => {
     if (sortField === field) {
@@ -386,7 +405,7 @@ export function useCategorySettings({ activeTab = "product" }: UseCategorySettin
     setSearchField,
     pageSize,
     setPageSize,
-    currentPage,
+    currentPage: safeCurrentPage,
     setCurrentPage,
     sortField,
     sortAsc,

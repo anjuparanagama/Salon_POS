@@ -1,10 +1,20 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, RotateCcw, Save, Languages } from "lucide-react";
+import {
+  Check,
+  RotateCcw,
+  Save,
+  Languages,
+  Clock,
+  Calendar,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
-import type { GeneralSettingsState } from "../../types";
+import type { GeneralSettingsState, BusinessHourItem } from "../../../../interface/settings.types";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "../../../../interface/i18n.types";
+import { settingsService, DEFAULT_GENERAL_SETTINGS } from "../../../../services/settings.service";
 
 export type GeneralTabType = "profile" | "financial" | "operations";
 
@@ -12,19 +22,6 @@ export interface GeneralSettingsViewProps {
   activeTab?: GeneralTabType;
   onTabChange?: (tab: GeneralTabType) => void;
 }
-
-const defaultGeneral: GeneralSettingsState = {
-  salonName: "Sribees Luxury Salon & Spa",
-  phone: "+94 77 123 4567",
-  email: "contact@sribeessalon.com",
-  address: "No. 42, Galle Road, Colombo 03, Sri Lanka",
-  currency: "LKR (Rs.)",
-  taxRate: 2.5,
-  timeZone: "Asia/Colombo (GMT+5:30)",
-  language: "en",
-  openingTime: "09:00",
-  closingTime: "20:00",
-};
 
 export function GeneralSettingsView({
   activeTab: controlledTab,
@@ -35,16 +32,43 @@ export function GeneralSettingsView({
   const [internalTab] = useState<GeneralTabType>("profile");
   const activeTab = controlledTab ?? internalTab;
 
-  const [formData, setFormData] = useState<GeneralSettingsState>(() => {
-    try {
-      const saved = localStorage.getItem("sribees_general_settings");
-      return saved ? JSON.parse(saved) : defaultGeneral;
-    } catch {
-      return defaultGeneral;
-    }
-  });
-
+  const [formData, setFormData] = useState<GeneralSettingsState>(DEFAULT_GENERAL_SETTINGS);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Fetch real salon settings from Backend API
+  useEffect(() => {
+    let mounted = true;
+    async function loadSettings() {
+      setIsLoading(true);
+      setErrorMsg(null);
+      try {
+        const data = await settingsService.getGeneralSettings();
+        if (mounted) {
+          setFormData(data);
+          if (data.language && data.language !== currentLang) {
+            void i18n.changeLanguage(data.language);
+            localStorage.setItem("salon_pos_lng", data.language);
+          }
+        }
+      } catch (err) {
+        console.error("Failed loading settings from API:", err);
+        if (mounted) {
+          setErrorMsg("Could not connect to backend server. Using local settings cache.");
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+    loadSettings();
+    return () => {
+      mounted = false;
+    };
+  }, [currentLang, i18n]);
 
   const handleLanguageChange = (code: SupportedLanguage) => {
     void i18n.changeLanguage(code);
@@ -52,26 +76,82 @@ export function GeneralSettingsView({
     setFormData((prev) => ({ ...prev, language: code }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      localStorage.setItem("sribees_general_settings", JSON.stringify(formData));
-    } catch {
-      // ignore
-    }
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2500);
+  const handleBusinessHourChange = (
+    dayIndex: number,
+    field: keyof BusinessHourItem,
+    value: string | boolean
+  ) => {
+    setFormData((prev) => {
+      const hours = prev.businessHours ? [...prev.businessHours] : [];
+      if (hours[dayIndex]) {
+        hours[dayIndex] = {
+          ...hours[dayIndex],
+          [field]: value,
+        };
+      }
+      return { ...prev, businessHours: hours };
+    });
   };
 
-  const handleReset = () => {
-    setFormData(defaultGeneral);
-    localStorage.removeItem("sribees_general_settings");
-    void i18n.changeLanguage("en");
-    localStorage.setItem("salon_pos_lng", "en");
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setErrorMsg(null);
+    try {
+      const updated = await settingsService.updateGeneralSettings(formData);
+      setFormData(updated);
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2500);
+    } catch (err) {
+      console.error("Failed saving general settings:", err);
+      setErrorMsg("Failed to save settings to server. Please check your network connection.");
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  const handleReset = async () => {
+    if (!window.confirm("Are you sure you want to reset all general settings to system defaults?")) {
+      return;
+    }
+    setIsSaving(true);
+    setErrorMsg(null);
+    try {
+      const resetData = await settingsService.resetGeneralSettings();
+      setFormData(resetData);
+      void i18n.changeLanguage("en");
+      localStorage.setItem("salon_pos_lng", "en");
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2500);
+    } catch (err) {
+      console.error("Failed resetting general settings:", err);
+      setErrorMsg("Failed resetting settings on server.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+        <Loader2 className="size-8 text-primary animate-spin" />
+        <p className="mt-3 text-xs font-medium text-slate-500">
+          Loading Salon General Settings from server...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-slate-900">
+      {/* Alert banner if error occurred */}
+      {errorMsg && (
+        <div className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-4 py-2.5 text-xs text-amber-800">
+          <AlertCircle className="size-4 shrink-0 text-amber-600" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
       {/* ========================================================= */}
       {/* TAB 1: SALON PROFILE INFORMATION                          */}
       {/* ========================================================= */}
@@ -127,7 +207,7 @@ export function GeneralSettingsView({
             <div>
               <label className="block mb-1 font-medium text-slate-700">Display Language (පද්ධති භාෂාව)</label>
               <select
-                value={currentLang}
+                value={formData.language || currentLang}
                 onChange={(e) => handleLanguageChange(e.target.value as SupportedLanguage)}
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer font-medium"
               >
@@ -150,7 +230,7 @@ export function GeneralSettingsView({
           <div className="border-b border-slate-100 pb-3 mb-4">
             <h3 className="text-sm font-bold text-slate-800">Financial & Regional Preferences</h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Currency formats, time zones, display language, and sales taxes applied at checkout.
+              Currency formats, time zones, default tax rate, and system interface language.
             </p>
           </div>
 
@@ -210,7 +290,7 @@ export function GeneralSettingsView({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {SUPPORTED_LANGUAGES.map((lang) => {
-                const isSelected = currentLang === lang.code;
+                const isSelected = (formData.language || currentLang) === lang.code;
                 return (
                   <Button
                     key={lang.code}
@@ -249,14 +329,15 @@ export function GeneralSettingsView({
           <div className="border-b border-slate-100 pb-3 mb-4">
             <h3 className="text-sm font-bold text-slate-800">Salon Daily Operating Hours</h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Controls the appointment scheduling grid range and booking limits.
+              Controls appointment booking calendar slots, cashier terminal opening, and business hours.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          {/* Global Quick Times */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs mb-6">
             <Input
               type="time"
-              label="Opening Time"
+              label="Standard Opening Time"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.openingTime}
               onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
@@ -265,13 +346,82 @@ export function GeneralSettingsView({
 
             <Input
               type="time"
-              label="Closing Time"
+              label="Standard Closing Time"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.closingTime}
               onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
               className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
           </div>
+
+          {/* 7-Day Business Hours Schedule */}
+          {formData.businessHours && formData.businessHours.length > 0 && (
+            <div className="border-t border-slate-100 pt-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Calendar className="size-4 text-primary" />
+                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Weekly Operating Schedule (7 Days)
+                </h4>
+              </div>
+
+              <div className="divide-y divide-slate-100 rounded-xl border border-slate-200/80 overflow-hidden">
+                {formData.businessHours.map((bh, idx) => (
+                  <div
+                    key={bh.day_of_week}
+                    className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 gap-3 text-xs transition ${
+                      bh.is_closed ? "bg-slate-50/80 text-slate-400" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 w-40">
+                      <span className="font-bold text-slate-800">{bh.day_name}</span>
+                      {bh.is_closed && (
+                        <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                          Closed
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <Clock className="size-3.5 text-slate-400" />
+                        <input
+                          type="time"
+                          disabled={bh.is_closed}
+                          value={bh.opening_time}
+                          onChange={(e) =>
+                            handleBusinessHourChange(idx, "opening_time", e.target.value)
+                          }
+                          className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs disabled:opacity-50 disabled:bg-slate-100"
+                        />
+                        <span className="text-slate-400">to</span>
+                        <input
+                          type="time"
+                          disabled={bh.is_closed}
+                          value={bh.closing_time}
+                          onChange={(e) =>
+                            handleBusinessHourChange(idx, "closing_time", e.target.value)
+                          }
+                          className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs disabled:opacity-50 disabled:bg-slate-100"
+                        />
+                      </div>
+
+                      <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={bh.is_closed}
+                          onChange={(e) =>
+                            handleBusinessHourChange(idx, "is_closed", e.target.checked)
+                          }
+                          className="rounded border-slate-300 text-primary focus:ring-primary/20"
+                        />
+                        <span className="text-[11px] font-medium text-slate-600">Mark Closed</span>
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -280,7 +430,8 @@ export function GeneralSettingsView({
         <Button
           type="button"
           onClick={handleReset}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+          disabled={isSaving}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer disabled:opacity-50"
         >
           <RotateCcw className="size-3.5" />
           <span>Reset Defaults</span>
@@ -288,13 +439,19 @@ export function GeneralSettingsView({
 
         <Button
           type="submit"
+          disabled={isSaving}
           className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer ${
             isSaved
               ? "bg-emerald-600 hover:bg-emerald-700"
               : "bg-primary hover:bg-primary-dark"
-          }`}
+          } disabled:opacity-60`}
         >
-          {isSaved ? (
+          {isSaving ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              <span>Saving Changes...</span>
+            </>
+          ) : isSaved ? (
             <>
               <Check className="size-4" />
               <span>Settings Saved!</span>

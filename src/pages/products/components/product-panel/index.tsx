@@ -74,16 +74,7 @@ export type ProductPanelProps = {
   editingProduct?: Product | null;
 };
 
-const categoryOptions = [
-  { value: "shampoo", label: "Shampoo" },
-  { value: "hair_care", label: "Hair Care" },
-  { value: "skin_care", label: "Skin Care" },
-  { value: "styling", label: "Styling Products" },
-  { value: "color", label: "Color & Bleach" },
-  { value: "treatment", label: "Treatment" },
-  { value: "equipment", label: "Equipment & Tools" },
-  { value: "other", label: "Other Supplies" },
-];
+const categoryOptions: Array<{ value: string; label: string }> = [];
 
 const sampleImagePresets = [
   {
@@ -145,7 +136,6 @@ function ProductForm({
           .filter((c) => c.value !== "all" && c.active !== false)
           .map((c) => ({ value: c.value, label: c.label }));
         if (validCats.length > 0) {
-          // If current category is not in list, keep it
           if (formData.category && !validCats.some((c) => c.value === formData.category)) {
             validCats.unshift({
               value: formData.category,
@@ -153,6 +143,9 @@ function ProductForm({
             });
           }
           setCategoriesList(validCats);
+          if (!formData.category) {
+            setFormData((prev) => ({ ...prev, category: validCats[0].value }));
+          }
         }
       })
       .catch(() => {});
@@ -799,7 +792,7 @@ export function ProductPanel({
     : {
         name: "",
         sku: "",
-        category: "shampoo",
+        category: "",
         brand: "",
         description: "",
         imageUrl: "",
