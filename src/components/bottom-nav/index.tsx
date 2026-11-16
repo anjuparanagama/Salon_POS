@@ -18,6 +18,7 @@ import {
   Smartphone,
   Share,
   PlusSquare,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../../context/use-auth";
 import { usePwaInstall } from "../../hooks/usePwaInstall";
@@ -28,6 +29,7 @@ export type BottomNavProps = {
   activeHref?: string;
   onNavigate?: (item: SidebarItem) => void;
   onSettingsClick?: () => void;
+  onPackagesClick?: () => void;
   onLogoutClick?: () => void;
   onPosClick?: () => void;
 };
@@ -36,6 +38,7 @@ export function BottomNav({
   activeHref = "/dashboard",
   onNavigate,
   onSettingsClick,
+  onPackagesClick,
   onLogoutClick,
   onPosClick,
 }: BottomNavProps) {
@@ -86,6 +89,7 @@ export function BottomNav({
     ROUTES.LEDGER_EXPENSES,
     ROUTES.LEDGER,
     ROUTES.SETTINGS,
+    ROUTES.PACKAGES,
   ].some((path) => activeHref === path || activeHref.startsWith(path));
 
   const mainTabs: Array<{
@@ -166,6 +170,14 @@ export function BottomNav({
       description: "Salon profile, receipts & preferences",
       badgeColor: "bg-blue-500/20 text-blue-300 border-blue-500/30",
       iconBg: "bg-blue-500/15 text-blue-400",
+    },
+    {
+      label: "Packages",
+      href: ROUTES.PACKAGES,
+      icon: Sparkles,
+      description: "SaaS subscriptions & plan upgrades",
+      badgeColor: "bg-rose-500/20 text-rose-300 border-rose-500/30",
+      iconBg: "bg-gradient-to-tr from-[#D81B60]/30 to-[#EC4899]/30 text-pink-300",
     },
   ];
 
@@ -361,6 +373,8 @@ export function BottomNav({
                         setIsMoreOpen(false);
                         if (item.label === "Settings" && onSettingsClick) {
                           onSettingsClick();
+                        } else if (item.label === "Packages" && onPackagesClick) {
+                          onPackagesClick();
                         } else {
                           handleTabClick({ label: item.label, href: item.href, icon: item.icon });
                         }

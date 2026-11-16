@@ -143,6 +143,12 @@ function AppContent() {
           { label: t("nav.financialLedger", "Financial Ledger") },
           { label: t("nav.transactions", "Transactions & Refunds"), href: ROUTES.LEDGER_TRANSACTIONS, isCurrent: true },
         ];
+      case ROUTES.PACKAGES:
+        return [
+          { label: t("nav.home", "Home"), href: ROUTES.DASHBOARD, icon: Home },
+          { label: "Subscription" },
+          { label: "Packages & Pricing", href: ROUTES.PACKAGES, isCurrent: true },
+        ];
       case ROUTES.SETTINGS: {
         const params = new URLSearchParams(location.search);
         const section = params.get("section");
@@ -200,6 +206,8 @@ function AppContent() {
       onNavigate={(item) => navigate(item.href)}
       onSettingsClick={() => navigate(ROUTES.SETTINGS)}
       settingsHref={ROUTES.SETTINGS}
+      onPackagesClick={() => navigate(ROUTES.PACKAGES)}
+      packagesHref={ROUTES.PACKAGES}
       onLogoutClick={handleLogout}
       logoutHref={ROUTES.LOGIN}
       topHeaderProps={{

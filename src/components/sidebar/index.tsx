@@ -4,12 +4,12 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-  CircleHelp,
   Clock,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
+  Sparkles,
   X,
 } from "lucide-react";
 import { sidebarRoutes } from "../../routes/sidebar.routes";
@@ -27,10 +27,10 @@ export type SidebarProps = {
   activeHref?: string;
   onNavigate?: (item: SidebarItem) => void;
   onSettingsClick?: () => void;
-  onHelpClick?: () => void;
+  onPackagesClick?: () => void;
   onLogoutClick?: () => void;
   settingsHref?: string;
-  helpHref?: string;
+  packagesHref?: string;
   logoutHref?: string;
 };
 
@@ -39,10 +39,10 @@ export function Sidebar({
   items = sidebarRoutes,
   onNavigate,
   onSettingsClick,
-  onHelpClick,
+  onPackagesClick,
   onLogoutClick,
   settingsHref = "/settings",
-  helpHref = "/help",
+  packagesHref = "/packages",
   logoutHref = "/logout",
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -144,7 +144,7 @@ export function Sidebar({
   const afterActive = hasActiveItem ? filteredItems.slice(activeIndex + 1) : [];
 
   const isSettingsActive = activeHref === settingsHref;
-  const isHelpActive = activeHref === helpHref;
+  const isPackagesActive = activeHref === packagesHref;
 
   const handleSettings = (e: React.MouseEvent) => {
     if (onSettingsClick) {
@@ -156,13 +156,13 @@ export function Sidebar({
     }
   };
 
-  const handleHelp = (e: React.MouseEvent) => {
-    if (onHelpClick) {
+  const handlePackages = (e: React.MouseEvent) => {
+    if (onPackagesClick) {
       e.preventDefault();
-      onHelpClick();
+      onPackagesClick();
     } else if (onNavigate) {
       e.preventDefault();
-      onNavigate({ label: "Help", href: helpHref, icon: CircleHelp });
+      onNavigate({ label: "Packages", href: packagesHref, icon: Sparkles });
     }
   };
 
@@ -176,7 +176,7 @@ export function Sidebar({
     }
   };
 
-  const defaultBottomIndex = isSettingsActive ? 0 : isHelpActive ? 1 : 0;
+  const defaultBottomIndex = isSettingsActive ? 0 : isPackagesActive ? 1 : 0;
   const carouselIndex = userCarouselIndex ?? defaultBottomIndex;
 
   const canAccessSettings = hasPermission("manageStaff");
@@ -195,12 +195,12 @@ export function Sidebar({
         ]
       : []),
     {
-      id: "help",
-      label: "Help",
-      icon: CircleHelp,
-      href: helpHref,
-      isActive: isHelpActive,
-      onClick: handleHelp,
+      id: "packages",
+      label: "Packages",
+      icon: Sparkles,
+      href: packagesHref,
+      isActive: isPackagesActive,
+      onClick: handlePackages,
     },
     {
       id: "logout",

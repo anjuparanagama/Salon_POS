@@ -6,7 +6,6 @@ import {
   BookOpen,
   TrendingUp,
   TrendingDown,
-  // ArrowLeftRight,
   Users,
   UserCheck,
 } from "lucide-react";
@@ -26,6 +25,7 @@ export const ROUTES = {
   LEDGER_EXPENSES: "/ledger/expenses",
   LEDGER_TRANSACTIONS: "/ledger/transactions",
   SETTINGS: "/settings",
+  PACKAGES: "/packages",
   CHECKOUT: "/checkout",
 } as const;
 
@@ -75,11 +75,6 @@ export const sidebarRoutes: SidebarItem[] = [
         href: ROUTES.LEDGER_EXPENSES,
         icon: TrendingDown,
       },
-      // {
-      //   label: "Transactions",
-      //   href: ROUTES.LEDGER_TRANSACTIONS,
-      //   icon: ArrowLeftRight,
-      // },
     ],
   },
 ];

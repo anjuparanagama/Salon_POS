@@ -12,6 +12,7 @@ import LedgerIncome from "../pages/ledger/income";
 import LedgerExpenses from "../pages/ledger/expenses";
 import LedgerTransactions from "../pages/ledger/transactions";
 import Settings from "../pages/settings";
+import PackagesPage from "../pages/packages";
 import CheckoutPage from "../pages/checkout";
 import { ROUTES } from "./sidebar.routes";
 import { useAuth } from "../context/use-auth";
@@ -122,6 +123,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute requiredPermission="manageStaff">
             <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.PACKAGES}
+        element={
+          <ProtectedRoute>
+            <PackagesPage />
           </ProtectedRoute>
         }
       />

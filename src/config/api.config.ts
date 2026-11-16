@@ -138,4 +138,8 @@ export const API_ENDPOINTS = {
     SHARED_WEB_PUBLISH: "/api/v1/salon/settings/shared-web/publish",
     SHARED_WEB_UNPUBLISH: "/api/v1/salon/settings/shared-web/unpublish",
   },
+  PACKAGES: {
+    BASE: "/api/v1/salon/packages",
+    REQUEST_UPGRADE: "/api/v1/salon/packages/request-upgrade",
+  },
 } as const;

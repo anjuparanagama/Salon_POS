@@ -10,10 +10,10 @@ export type MainLayoutProps = PropsWithChildren<{
   sidebarItems?: SidebarItem[];
   onNavigate?: (item: SidebarItem) => void;
   onSettingsClick?: () => void;
-  onHelpClick?: () => void;
+  onPackagesClick?: () => void;
   onLogoutClick?: () => void;
   settingsHref?: string;
-  helpHref?: string;
+  packagesHref?: string;
   logoutHref?: string;
   showTopHeader?: boolean;
   topHeaderProps?: TopHeaderProps;
@@ -25,10 +25,10 @@ export function MainLayout({
   sidebarItems,
   onNavigate,
   onSettingsClick,
-  onHelpClick,
+  onPackagesClick,
   onLogoutClick,
   settingsHref,
-  helpHref,
+  packagesHref,
   logoutHref,
   showTopHeader = true,
   topHeaderProps,
@@ -51,10 +51,10 @@ export function MainLayout({
           items={sidebarItems}
           onNavigate={onNavigate}
           onSettingsClick={onSettingsClick}
-          onHelpClick={onHelpClick}
+          onPackagesClick={onPackagesClick}
           onLogoutClick={onLogoutClick}
           settingsHref={settingsHref}
-          helpHref={helpHref}
+          packagesHref={packagesHref}
           logoutHref={logoutHref}
         />
       </div>
@@ -72,6 +72,7 @@ export function MainLayout({
         activeHref={activeHref}
         onNavigate={onNavigate}
         onSettingsClick={onSettingsClick}
+        onPackagesClick={onPackagesClick}
         onLogoutClick={onLogoutClick}
         onPosClick={topHeaderProps?.onPosClick}
       />
