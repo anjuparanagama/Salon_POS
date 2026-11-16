@@ -28,6 +28,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
         },
+        '/uploads': {
+          target: backendTarget,
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
   }

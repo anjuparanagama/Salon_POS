@@ -42,6 +42,7 @@ export interface GeneralSettingsState {
   phone: string;
   email: string;
   address: string;
+  logoUrl?: string | null;
   currency: string;
   taxRate: number;
   timeZone: string;
@@ -58,6 +59,7 @@ export interface GeneralSettingsApiResponse {
   phone: string;
   email: string;
   address: string;
+  logo_url?: string | null;
   currency: string;
   tax_rate: number;
   time_zone: string;
@@ -73,6 +75,7 @@ export interface GeneralSettingsUpdateRequest {
   phone?: string;
   email?: string;
   address?: string;
+  logo_url?: string | null;
   currency?: string;
   tax_rate?: number;
   time_zone?: string;

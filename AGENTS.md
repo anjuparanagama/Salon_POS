@@ -2,6 +2,10 @@
 
 You are working on the **Salon POS** project. Always follow the project structure, folder conventions, and architectural patterns defined below when creating or modifying code.
 
+## Strict File Reading & Exploration Rules
+- **Do NOT read unnecessary or generated files**: Never search, open, or read inside `node_modules/`, `.next/`, `dist/`, `build/`, `cache/`, `*.pyc`, `.pytest_cache/`, sourcemaps, or lockfiles.
+- **Read ONLY strictly required source files**: Scope searches to relevant source directories and only inspect files directly needed for the user's task.
+
 ---
 
 ## 1. Directory Structure & File Conventions

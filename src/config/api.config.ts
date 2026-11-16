@@ -133,6 +133,7 @@ export const API_ENDPOINTS = {
   SETTINGS: {
     GENERAL: "/api/v1/salon/settings/general",
     RESET_GENERAL: "/api/v1/salon/settings/general/reset",
+    LOGO: "/api/v1/salon/settings/logo",
     SHARED_WEB: "/api/v1/salon/settings/shared-web",
     SHARED_WEB_PUBLISH: "/api/v1/salon/settings/shared-web/publish",
     SHARED_WEB_UNPUBLISH: "/api/v1/salon/settings/shared-web/unpublish",

@@ -13,6 +13,7 @@ export const DEFAULT_GENERAL_SETTINGS: GeneralSettingsState = {
   phone: "+94 77 123 4567",
   email: "contact@sribeessalon.com",
   address: "No. 42, Galle Road, Colombo 03, Sri Lanka",
+  logoUrl: null,
   currency: "LKR (Rs.)",
   taxRate: 2.5,
   timeZone: "Asia/Colombo (GMT+5:30)",
@@ -27,6 +28,7 @@ function mapApiResponseToState(data: GeneralSettingsApiResponse): GeneralSetting
     phone: data.phone || DEFAULT_GENERAL_SETTINGS.phone,
     email: data.email || DEFAULT_GENERAL_SETTINGS.email,
     address: data.address || DEFAULT_GENERAL_SETTINGS.address,
+    logoUrl: data.logo_url || null,
     currency: data.currency || DEFAULT_GENERAL_SETTINGS.currency,
     taxRate: typeof data.tax_rate === "number" ? data.tax_rate : DEFAULT_GENERAL_SETTINGS.taxRate,
     timeZone: data.time_zone || DEFAULT_GENERAL_SETTINGS.timeZone,
@@ -44,6 +46,7 @@ function mapStateToUpdateRequest(state: Partial<GeneralSettingsState>): GeneralS
   if (state.phone !== undefined) req.phone = state.phone;
   if (state.email !== undefined) req.email = state.email;
   if (state.address !== undefined) req.address = state.address;
+  if (state.logoUrl !== undefined) req.logo_url = state.logoUrl;
   if (state.currency !== undefined) req.currency = state.currency;
   if (state.taxRate !== undefined) req.tax_rate = state.taxRate;
   if (state.timeZone !== undefined) req.time_zone = state.timeZone;
@@ -114,5 +117,24 @@ export const settingsService = {
       // ignore
     }
     return mapped;
+  },
+
+  async uploadSalonLogo(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await apiClient.post<{ logo_url: string; message: string }>(
+      API_ENDPOINTS.SETTINGS.LOGO,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return res.data.logo_url;
+  },
+
+  async deleteSalonLogo(): Promise<void> {
+    await apiClient.delete(API_ENDPOINTS.SETTINGS.LOGO);
   },
 };

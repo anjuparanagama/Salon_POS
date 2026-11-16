@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Check,
@@ -9,12 +9,17 @@ import {
   Calendar,
   AlertCircle,
   Loader2,
+  Upload,
+  Image as ImageIcon,
+  Trash2,
+  Camera,
 } from "lucide-react";
 import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type { GeneralSettingsState, BusinessHourItem } from "../../../../interface/settings.types";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "../../../../interface/i18n.types";
 import { settingsService, DEFAULT_GENERAL_SETTINGS } from "../../../../services/settings.service";
+import { API_BASE_URL } from "../../../../config/api.config";
 
 export type GeneralTabType = "profile" | "financial" | "operations";
 
@@ -37,6 +42,70 @@ export function GeneralSettingsView({
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [logoUploadError, setLogoUploadError] = useState<string | null>(null);
+
+  const displayLogoUrl =
+    formData.logoUrl && formData.logoUrl.startsWith("/uploads/") && !import.meta.env.DEV && API_BASE_URL
+      ? `${API_BASE_URL}${formData.logoUrl}`
+      : formData.logoUrl;
+
+  const handleLogoFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/svg+xml", "image/gif"];
+    if (!validTypes.includes(file.type)) {
+      setLogoUploadError("Please upload a valid image (PNG, JPG, WEBP, or SVG).");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setLogoUploadError("Image file size must be less than 5MB.");
+      return;
+    }
+
+    setLogoUploadError(null);
+    setIsUploadingLogo(true);
+
+    // Instant local preview
+    const previewUrl = URL.createObjectURL(file);
+    setFormData((prev) => ({ ...prev, logoUrl: previewUrl }));
+
+    try {
+      const uploadedUrl = await settingsService.uploadSalonLogo(file);
+      setFormData((prev) => ({ ...prev, logoUrl: uploadedUrl }));
+    } catch (err: unknown) {
+      console.error("Logo upload error:", err);
+      setLogoUploadError("Could not upload to server immediately. Logo is cached for this session.");
+    } finally {
+      setIsUploadingLogo(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    if (!window.confirm("Are you sure you want to remove the salon logo?")) {
+      return;
+    }
+    setIsUploadingLogo(true);
+    setLogoUploadError(null);
+    try {
+      await settingsService.deleteSalonLogo();
+    } catch (err) {
+      console.warn("Backend logo delete skipped or offline:", err);
+    } finally {
+      setFormData((prev) => ({ ...prev, logoUrl: null }));
+      setIsUploadingLogo(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
 
   // Fetch real salon settings from Backend API
   useEffect(() => {
@@ -162,6 +231,110 @@ export function GeneralSettingsView({
             <p className="text-xs text-slate-500 mt-0.5">
               These details appear on customer invoices, appointment reminders, and receipts.
             </p>
+          </div>
+
+          {/* Salon Brand Logo Upload Section */}
+          <div className="mb-6 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 sm:p-5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5">
+              {/* Logo Preview Avatar */}
+              <div className="relative group shrink-0">
+                <div className="size-24 rounded-2xl border-2 border-dashed border-slate-300 bg-white flex items-center justify-center overflow-hidden shadow-2xs transition-all group-hover:border-primary">
+                  {displayLogoUrl ? (
+                    <img
+                      src={displayLogoUrl}
+                      alt={formData.salonName || "Salon Logo"}
+                      className="size-full object-contain p-1.5"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-slate-400">
+                      <ImageIcon className="size-8 stroke-1 text-slate-300 group-hover:text-primary transition-colors" />
+                      <span className="text-[10px] font-medium mt-1">No Logo</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Quick overlay change button when logo exists */}
+                {displayLogoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    title="Change logo"
+                    className="absolute inset-0 rounded-2xl bg-black/45 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-[10px] font-medium"
+                  >
+                    <Camera className="size-5 mb-0.5" />
+                    Change
+                  </button>
+                )}
+              </div>
+
+              {/* Logo Details & Actions */}
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    Salon Logo (ව්‍යාපාරික ලාංඡනය)
+                  </h4>
+                  {displayLogoUrl && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 text-[10px] font-semibold">
+                      <Check className="size-2.5" /> Uploaded
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Upload your official salon brand logo to appear on customer invoices, POS receipts, and appointment notifications.
+                </p>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  Recommended: Square PNG, JPG, WEBP, or SVG (Max 5MB).
+                </p>
+
+                <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                    onChange={handleLogoFileChange}
+                    className="hidden"
+                  />
+
+                  <Button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingLogo || isSaving}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition cursor-pointer shadow-2xs disabled:opacity-50"
+                  >
+                    {isUploadingLogo ? (
+                      <>
+                        <Loader2 className="size-3.5 animate-spin text-primary" />
+                        <span>Uploading Logo...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="size-3.5 text-primary" />
+                        <span>{displayLogoUrl ? "Upload New Logo" : "Upload Salon Logo"}</span>
+                      </>
+                    )}
+                  </Button>
+
+                  {displayLogoUrl && (
+                    <Button
+                      type="button"
+                      onClick={handleRemoveLogo}
+                      disabled={isUploadingLogo || isSaving}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50/60 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition cursor-pointer shadow-2xs disabled:opacity-50"
+                    >
+                      <Trash2 className="size-3.5 text-rose-600" />
+                      <span>Remove Logo</span>
+                    </Button>
+                  )}
+                </div>
+
+                {logoUploadError && (
+                  <p className="mt-2 text-xs text-rose-600 flex items-center gap-1">
+                    <AlertCircle className="size-3.5 shrink-0" />
+                    <span>{logoUploadError}</span>
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
