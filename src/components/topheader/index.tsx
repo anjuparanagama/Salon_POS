@@ -6,6 +6,7 @@ import SearchBar from "../search-bar";
 import NotificationButton from "../notification-button";
 import UserProfileDropdown from "../user-profile-dropdown";
 import { Button } from "../button";
+import { PwaInstallButton } from "../pwa-install";
 
 export type { UserProfile, BreadcrumbItem };
 
@@ -60,15 +61,29 @@ export function TopHeader({
   return (
     <header
       className={[
-        "flex w-full shrink-0 items-center justify-between border-b border-slate-100 bg-[#FFF4F7] py-2 px-4 sm:px-6 transition-all",
+        "flex w-full shrink-0 items-center justify-between border-b border-slate-100 bg-[#FFF4F7] py-2 px-3 sm:px-6 transition-all",
         className,
       ].join(" ")}
     >
-      {/* Left side: Breadcrumb navigation */}
-      <Breadcrumb items={breadcrumbs} onItemClick={onBreadcrumbClick} />
+      {/* Left side: Mobile Brand Logo on mobile screens, Breadcrumb on desktop screens */}
+      <div className="flex items-center min-w-0">
+        {/* Brand logo pill for mobile screens where left sidebar is hidden */}
+        <div className="flex md:hidden items-center shrink-0 bg-gradient-to-r from-[#3A0524] to-[#5B0638] px-2.5 py-1 rounded-xl shadow-xs">
+          <img
+            src="/logo.png"
+            alt="Salora Logo"
+            className="h-5 w-auto max-w-[70px] object-contain drop-shadow-xs"
+          />
+        </div>
 
-      {/* Right side: Search, Language, Notifications, User Profile */}
-      <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 ml-4">
+        {/* Breadcrumb Navigation: Hidden on mobile (< md), visible on tablet & desktop (>= md) */}
+        <div className="hidden md:flex items-center min-w-0">
+          <Breadcrumb items={breadcrumbs} onItemClick={onBreadcrumbClick} />
+        </div>
+      </div>
+
+      {/* Right side: Search, PWA Install, POS Terminal, Notifications, User Profile */}
+      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 ml-2 sm:ml-4">
         {/* Search Bar Component */}
         <SearchBar
           placeholder={searchPlaceholder}
@@ -76,6 +91,9 @@ export function TopHeader({
           onSubmit={onSearchSubmit}
           onClick={onSearchClick}
         />
+
+        {/* PWA Install Button (appears if browser supports installation and not yet installed) */}
+        <PwaInstallButton />
 
         {/* POS Terminal Direct Button */}
         <Button
