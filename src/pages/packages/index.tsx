@@ -2,16 +2,13 @@ import { useState, useEffect } from "react";
 import {
   Sparkles,
   Check,
-  Building2,
   Users,
   Scissors,
   ShieldCheck,
-  PhoneCall,
   X,
   ArrowRight,
   HelpCircle,
   Clock,
-  Layers,
   ChevronDown,
   PackageSearch,
 } from "lucide-react";
@@ -102,8 +99,8 @@ export function PackagesPage() {
       a: "We support Visa, MasterCard, LankaPay, direct bank transfers, and automated online subscription recurring debit cards.",
     },
     {
-      q: "How do multi-branch limits and staff permissions work?",
-      a: "Each package allows a specific number of branches and staff profiles. Branch managers can view their respective branch's sales, while you retain master executive visibility across all salon locations.",
+      q: "How do staff limits and stylist commissions work?",
+      a: "Each package accommodates your salon team size with role-based access. Salon managers retain full financial visibility, while stylists can manage their appointment calendars and track commissions.",
     },
   ];
 
@@ -122,7 +119,7 @@ export function PackagesPage() {
           Transparent Plans Tailored for Every Salon
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-2xl mx-auto">
-          From independent boutique salons to multi-branch luxury spa empires. Select the perfect package with walk-in POS billing, client scheduling, staff commissions, and financial analytics.
+          From independent boutique salons to premier luxury spas. Select the perfect package with walk-in POS billing, client scheduling, staff commissions, and financial analytics.
         </p>
 
         {/* Current Active Plan Pill if subscribed */}
@@ -283,23 +280,16 @@ export function PackagesPage() {
                     <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                       Capacity Limits
                     </div>
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="rounded-xl bg-[#FFF4F7] p-2 border border-pink-100/60">
-                        <Building2 className="size-4 mx-auto text-[#D81B60] mb-0.5" />
-                        <div className="text-xs font-bold text-slate-800">{plan.max_branches}</div>
-                        <div className="text-[10px] text-slate-500">
-                          {plan.max_branches === 1 ? "Branch" : "Branches"}
-                        </div>
-                      </div>
-                      <div className="rounded-xl bg-[#FFF4F7] p-2 border border-pink-100/60">
+                    <div className="grid grid-cols-2 gap-3 text-center">
+                      <div className="rounded-xl bg-[#FFF4F7] p-2.5 border border-pink-100/60">
                         <Users className="size-4 mx-auto text-[#D81B60] mb-0.5" />
                         <div className="text-xs font-bold text-slate-800">{plan.max_staff}</div>
-                        <div className="text-[10px] text-slate-500">Staff</div>
+                        <div className="text-[10px] text-slate-500">Staff Members</div>
                       </div>
-                      <div className="rounded-xl bg-[#FFF4F7] p-2 border border-pink-100/60">
+                      <div className="rounded-xl bg-[#FFF4F7] p-2.5 border border-pink-100/60">
                         <Scissors className="size-4 mx-auto text-[#D81B60] mb-0.5" />
                         <div className="text-xs font-bold text-slate-800">{plan.max_services}</div>
-                        <div className="text-[10px] text-slate-500">Services</div>
+                        <div className="text-[10px] text-slate-500">Services & Treatments</div>
                       </div>
                     </div>
                   </div>
@@ -355,43 +345,7 @@ export function PackagesPage() {
       )}
 
       {/* ======================================================== */}
-      {/* 3. ENTERPRISE / CUSTOM SETUP BANNER */}
-      {/* ======================================================== */}
-      <div className="rounded-3xl bg-gradient-to-r from-[#3A0524] via-[#5B0638] to-[#2D031C] p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="space-y-2 max-w-xl text-center md:text-left">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-0.5 text-[11px] font-semibold text-pink-200">
-            <Layers className="size-3 text-pink-300" />
-            <span>Salon Franchises & Chains</span>
-          </div>
-          <h3 className="text-xl sm:text-2xl font-bold">
-            Need a Custom Multi-Branch Deployment?
-          </h3>
-          <p className="text-xs sm:text-sm text-pink-100/80 leading-relaxed">
-            If you operate more than 10 salons or require custom hardware integrations, POS fiscal printer drivers, and dedicated SLA servers, our team is ready to build your custom package.
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
-          <a
-            href="tel:+94771234567"
-            className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-xs font-bold text-[#3A0524] shadow-sm hover:bg-pink-50 transition active:scale-95"
-          >
-            <PhoneCall className="size-4 text-[#D81B60]" />
-            <span>Call +94 77 123 4567</span>
-          </a>
-          <a
-            href="https://wa.me/94771234567"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-xs font-bold text-white hover:bg-white/20 transition active:scale-95"
-          >
-            <span>WhatsApp Support</span>
-          </a>
-        </div>
-      </div>
-
-      {/* ======================================================== */}
-      {/* 4. FREQUENTLY ASKED QUESTIONS (FAQ) */}
+      {/* 3. FREQUENTLY ASKED QUESTIONS (FAQ) */}
       {/* ======================================================== */}
       <div className="space-y-4 max-w-3xl mx-auto pt-4">
         <div className="text-center space-y-1">
@@ -512,7 +466,7 @@ export function PackagesPage() {
                     rows={2}
                     value={upgradeNotes}
                     onChange={(e) => setUpgradeNotes(e.target.value)}
-                    placeholder="e.g. Requesting extra branch setup, direct debit payment or billing inquiry..."
+                    placeholder="e.g. Inquiries regarding staff limits, custom services, or payment methods..."
                     className="w-full rounded-xl border border-slate-200 p-2.5 text-xs text-slate-800 focus:border-[#D81B60] focus:ring-1 focus:ring-[#D81B60] focus:outline-none"
                   />
                 </div>
