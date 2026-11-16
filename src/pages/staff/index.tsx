@@ -15,6 +15,7 @@ import StaffPanel from "./components/staff-panel";
 import StaffViewPanel from "./components/staff-view-panel";
 import Header from "../../components/header";
 import { Button } from "../../components/button";
+import { useConfirmationModal } from "../../components/confirmation-modal";
 
 export function Staff() {
   const { t } = useTranslation(["common"]);
@@ -31,6 +32,8 @@ export function Staff() {
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [viewingStaff, setViewingStaff] = useState<StaffMember | null>(null);
+
+  const { confirm, ConfirmationDialog } = useConfirmationModal();
 
   const [filters, setFilters] = useState<StaffFilterState>({
     search: "",
@@ -85,7 +88,14 @@ export function Staff() {
   };
 
   const handleDelete = async (staffId: string) => {
-    if (window.confirm("Are you sure you want to delete this staff member?")) {
+    const confirmed = await confirm({
+      title: "Delete Staff Member",
+      message: "Are you sure you want to delete this staff member? Their POS access and appointment schedules will be permanently revoked.",
+      confirmText: "Delete Staff",
+      cancelText: "Cancel",
+      variant: "danger",
+    });
+    if (confirmed) {
       await deleteStaff(staffId);
     }
   };
@@ -266,6 +276,8 @@ export function Staff() {
         staff={viewingStaff}
         onEdit={handleOpenEdit}
       />
+      {/* Confirmation Modal */}
+      <ConfirmationDialog />
     </div>
   );
 }

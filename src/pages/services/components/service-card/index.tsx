@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Clock, Edit3, Check, X, Sparkles, Image as ImageIcon } from "lucide-react";
 import type { ServiceItem, ServiceCategoryItem } from "../../../../interface/service.types";
 import { formatPrice } from "../../../../helpers/price.helper";
@@ -31,28 +32,41 @@ export function ServiceCard({
     style: predefinedBadge?.style || "bg-slate-50 text-slate-700 border-slate-200",
   };
 
+  const [imageError, setImageError] = useState(false);
   const images = service.images || [];
   const coverImage = images[0];
 
   return (
     <article className="group flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-xs transition hover:border-primary-lighter hover:shadow-md overflow-hidden">
       <div>
-        {/* Cover Image if present */}
-        {coverImage && (
-          <div className="relative mb-3 aspect-[16/10] w-full overflow-hidden rounded-lg bg-slate-100">
-            <img
-              src={coverImage}
-              alt={service.name}
-              className="size-full object-cover transition duration-300 group-hover:scale-105"
-            />
-            {images.length > 1 && (
-              <span className="absolute bottom-2 right-2 flex items-center gap-1 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-xs">
-                <ImageIcon className="size-3" />
-                <span>+{images.length - 1}</span>
+        {/* Cover Image or Consistent "No Image Available" Placeholder */}
+        <div className="relative mb-3 aspect-[16/10] w-full overflow-hidden rounded-lg bg-slate-50 border border-slate-100">
+          {coverImage && !imageError ? (
+            <>
+              <img
+                src={coverImage}
+                alt={service.name}
+                onError={() => setImageError(true)}
+                className="size-full object-cover transition duration-300 group-hover:scale-105"
+              />
+              {images.length > 1 && (
+                <span className="absolute bottom-2 right-2 flex items-center gap-1 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-xs">
+                  <ImageIcon className="size-3" />
+                  <span>+{images.length - 1}</span>
+                </span>
+              )}
+            </>
+          ) : (
+            <div className="flex size-full flex-col items-center justify-center bg-slate-50/80 border border-dashed border-slate-200/90 text-slate-400 select-none transition-colors group-hover:bg-slate-100/60">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-white shadow-2xs border border-slate-100 text-slate-400 group-hover:text-primary transition-colors">
+                <ImageIcon className="size-4.5 stroke-[1.5]" />
+              </div>
+              <span className="mt-1.5 text-[11px] font-medium text-slate-400 group-hover:text-slate-600 transition-colors">
+                No image available
               </span>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {/* Top badges */}
         <div className="flex items-center justify-between gap-2">

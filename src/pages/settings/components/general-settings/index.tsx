@@ -20,6 +20,7 @@ import type { GeneralSettingsState, BusinessHourItem } from "../../../../interfa
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "../../../../interface/i18n.types";
 import { settingsService, DEFAULT_GENERAL_SETTINGS } from "../../../../services/settings.service";
 import { API_BASE_URL } from "../../../../config/api.config";
+import { useConfirmationModal } from "../../../../components/confirmation-modal";
 
 export type GeneralTabType = "profile" | "financial" | "operations";
 
@@ -46,6 +47,8 @@ export function GeneralSettingsView({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [logoUploadError, setLogoUploadError] = useState<string | null>(null);
+
+  const { confirm, ConfirmationDialog } = useConfirmationModal();
 
   const displayLogoUrl =
     formData.logoUrl && formData.logoUrl.startsWith("/uploads/") && !import.meta.env.DEV && API_BASE_URL
@@ -89,9 +92,15 @@ export function GeneralSettingsView({
   };
 
   const handleRemoveLogo = async () => {
-    if (!window.confirm("Are you sure you want to remove the salon logo?")) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: "Remove Salon Logo",
+      message: "Are you sure you want to remove the salon brand logo? Customer receipts and booking portal will default to text.",
+      confirmText: "Remove Logo",
+      cancelText: "Cancel",
+      variant: "danger",
+    });
+    if (!confirmed) return;
+
     setIsUploadingLogo(true);
     setLogoUploadError(null);
     try {
@@ -180,9 +189,15 @@ export function GeneralSettingsView({
   };
 
   const handleReset = async () => {
-    if (!window.confirm("Are you sure you want to reset all general settings to system defaults?")) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: "Reset General Settings",
+      message: "Are you sure you want to reset all general settings to system defaults? Operating hours, currency, and tax rate will revert to initial presets.",
+      confirmText: "Reset Defaults",
+      cancelText: "Cancel",
+      variant: "warning",
+    });
+    if (!confirmed) return;
+
     setIsSaving(true);
     setErrorMsg(null);
     try {
@@ -643,6 +658,9 @@ export function GeneralSettingsView({
           )}
         </Button>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmationDialog />
     </form>
   );
 }

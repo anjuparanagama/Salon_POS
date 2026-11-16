@@ -16,6 +16,7 @@ import CustomerViewPanel from "./components/customer-view-panel";
 import Header from "../../components/header";
 import { useCustomers } from "../../hooks/customers";
 import { Button } from "../../components/button";
+import { useConfirmationModal } from "../../components/confirmation-modal";
 
 export function Customers() {
   const { t } = useTranslation(["common"]);
@@ -52,6 +53,8 @@ export function Customers() {
     pageSize: 100,
   });
 
+  const { confirm, ConfirmationDialog } = useConfirmationModal();
+
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [historyCustomer, setHistoryCustomer] = useState<Customer | null>(null);
@@ -87,9 +90,15 @@ export function Customers() {
   };
 
   const handleDelete = async (customerId: string) => {
-    if (!window.confirm("Are you sure you want to delete this customer?")) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: "Delete Customer",
+      message: "Are you sure you want to delete this customer record? Their appointment history, preferences, and notes will be permanently removed.",
+      confirmText: "Delete Customer",
+      cancelText: "Cancel",
+      variant: "danger",
+    });
+    if (!confirmed) return;
+
     setActionError(null);
     try {
       await deleteCustomer(customerId);
@@ -293,6 +302,9 @@ export function Customers() {
         customer={historyCustomer}
         onEdit={handleOpenEdit}
       />
+
+      {/* Confirmation Modal Dialog */}
+      <ConfirmationDialog />
     </div>
   );
 }
