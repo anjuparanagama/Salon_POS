@@ -4,7 +4,7 @@
  * Architecture: Offline-first App Shell with Stale-While-Revalidate for Assets and Network-First for API
  */
 
-const CACHE_NAME = 'salora-pos-v1.0.0';
+const CACHE_NAME = 'salora-pos-v1.0.1';
 
 // Core Application Shell to pre-cache on install
 const PRECACHE_ASSETS = [
@@ -12,9 +12,11 @@ const PRECACHE_ASSETS = [
   '/index.html',
   '/manifest.webmanifest',
   '/favicon.svg',
+  '/pwalogo.png',
   '/logo.png',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
+  '/icons/icon-maskable.png',
   '/icons/apple-touch-icon.png'
 ];
 
