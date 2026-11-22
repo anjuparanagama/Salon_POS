@@ -4,7 +4,6 @@ import {
   Copy,
   Gift,
   HelpCircle,
-  Loader2,
   Share2,
   Sparkles,
   Users,
@@ -12,6 +11,7 @@ import {
   Award,
 } from "lucide-react";
 import { referralService } from "../../../../services/referral.service";
+import { SplitViewSkeleton } from "@/components/skeleton";
 import type { ReferralSummary } from "../../../../interface/referral.types";
 import { Button } from "../../../../components/button";
 
@@ -79,12 +79,7 @@ export function ReferralSettingsView() {
   };
 
   if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-primary" />
-        <span className="ml-2 text-sm text-slate-500">Loading referral program...</span>
-      </div>
-    );
+    return <SplitViewSkeleton />;
   }
 
   const referralCode = summary?.referral_code || "SRI-REFER";

@@ -1,12 +1,18 @@
 import { Layers, Sparkles, CheckCircle2, XCircle } from "lucide-react";
 import { StatCard } from "../../../../components/stat-card";
+import { StatCardsGridSkeleton } from "../../../../components/skeleton";
 import type { ServiceStats as ServiceStatsType } from "../../../../interface/service.types";
 
 export type ServiceStatsProps = {
   stats: ServiceStatsType;
+  isLoading?: boolean;
 };
 
-export function ServiceStats({ stats }: ServiceStatsProps) {
+export function ServiceStats({ stats, isLoading = false }: ServiceStatsProps) {
+  if (isLoading) {
+    return <StatCardsGridSkeleton count={4} />;
+  }
+
   return (
     <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <StatCard

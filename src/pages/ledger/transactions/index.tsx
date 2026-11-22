@@ -90,7 +90,7 @@ export function LedgerTransactions() {
       />
 
       {/* 3 Summary Cards: Total Transactions, Total Received, Total Refunded */}
-      <TransactionStats stats={stats} />
+      <TransactionStats stats={stats} isLoading={isLoading} />
 
       {/* Filters (Search, Date Range, Type, Payment Method) */}
       <TransactionFilters

@@ -6,13 +6,19 @@ import {
   CalendarX,
 } from "lucide-react";
 import { StatCard } from "../../../../components/stat-card";
+import { StatCardsGridSkeleton } from "../../../../components/skeleton";
 import type { AppointmentStats as StatsType } from "../../../../interface/appointment.types";
 
 export type AppointmentStatsProps = {
   stats: StatsType;
+  isLoading?: boolean;
 };
 
-export function AppointmentStats({ stats }: AppointmentStatsProps) {
+export function AppointmentStats({ stats, isLoading = false }: AppointmentStatsProps) {
+  if (isLoading) {
+    return <StatCardsGridSkeleton count={4} />;
+  }
+
   const { t } = useTranslation(["appointments", "common"]);
 
   const total = Number(stats?.total) || 0;

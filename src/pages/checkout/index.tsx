@@ -1,4 +1,5 @@
 import { ArrowLeft, RotateCcw, AlertCircle } from "lucide-react";
+import { SplitViewSkeleton } from "../../components/skeleton";
 import Header from "../../components/header";
 import { formatAppointmentId } from "../../helpers/format-id.helper";
 import { ROUTES } from "../../routes/sidebar.routes";
@@ -105,8 +106,10 @@ export function CheckoutPage() {
         }
       />
 
-      {/* 2. SUCCESS RECEIPT VIEW (AFTER CHECKOUT) */}
-      {completedInvoice ? (
+      {/* 2. SKELETON LOADING OR SUCCESS RECEIPT VIEW */}
+      {isLoadingData && !completedInvoice ? (
+        <SplitViewSkeleton />
+      ) : completedInvoice ? (
         <CheckoutSuccessView
           completedInvoice={completedInvoice}
           isReceiptModalOpen={isReceiptModalOpen}

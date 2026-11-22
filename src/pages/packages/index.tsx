@@ -17,6 +17,7 @@ import {
   type PricingPlan,
   type CurrentSubscription,
 } from "../../services/packages.service";
+import { Skeleton } from "../../components/skeleton";
 
 export function PackagesPage() {
   const [plans, setPlans] = useState<PricingPlan[]>([]);
@@ -177,18 +178,18 @@ export function PackagesPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-3xl bg-white p-7 border border-pink-100/80 shadow-xs animate-pulse space-y-5"
+              className="rounded-3xl bg-white p-7 border border-slate-100 shadow-xs space-y-5"
             >
-              <div className="h-6 w-36 bg-pink-100/50 rounded-xl" />
-              <div className="h-4 w-52 bg-slate-100 rounded-md" />
-              <div className="h-10 w-32 bg-pink-100/40 rounded-xl" />
-              <div className="h-20 bg-pink-50/60 rounded-2xl" />
+              <Skeleton className="h-6 w-36 rounded-xl" />
+              <Skeleton className="h-4 w-52 rounded-md opacity-70" />
+              <Skeleton className="h-10 w-32 rounded-xl" />
+              <Skeleton className="h-20 w-full rounded-2xl opacity-60" />
               <div className="space-y-2 pt-2">
-                <div className="h-3 w-full bg-slate-100 rounded-md" />
-                <div className="h-3 w-5/6 bg-slate-100 rounded-md" />
-                <div className="h-3 w-4/6 bg-slate-100 rounded-md" />
+                <Skeleton className="h-3.5 w-full rounded-md opacity-80" />
+                <Skeleton className="h-3.5 w-5/6 rounded-md opacity-80" />
+                <Skeleton className="h-3.5 w-4/6 rounded-md opacity-80" />
               </div>
-              <div className="h-11 w-full bg-pink-100/60 rounded-2xl mt-4" />
+              <Skeleton className="h-11 w-full rounded-2xl mt-4" />
             </div>
           ))}
         </div>

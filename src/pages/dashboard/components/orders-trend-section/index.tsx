@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 import { Loader2, Scissors, ShoppingBag } from "lucide-react";
+import { Skeleton } from "@/components/skeleton";
 import type { ChartTimeFilter, TrendChartPoint } from "../../../../interface/dashboard.types";
 import { CHART_TIME_FILTER_OPTIONS } from "../../data/dashboard.mock";
 import TimeFilterSelect from "../time-filter-select";
@@ -100,9 +101,14 @@ export function OrdersTrendSection() {
 
         {/* Bar Chart Container */}
         {isServiceLoading && serviceData.length === 0 ? (
-          <div className="mt-4 flex h-64 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
-            <Loader2 className="size-8 animate-spin text-primary" />
-            <span className="text-xs font-medium text-slate-500">Loading service orders...</span>
+          <div className="mt-4 h-64 w-full flex items-end gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50/30">
+            <Skeleton className="h-28 flex-1 rounded-t-lg" />
+            <Skeleton className="h-44 flex-1 rounded-t-lg" />
+            <Skeleton className="h-36 flex-1 rounded-t-lg" />
+            <Skeleton className="h-52 flex-1 rounded-t-lg" />
+            <Skeleton className="h-40 flex-1 rounded-t-lg" />
+            <Skeleton className="h-48 flex-1 rounded-t-lg" />
+            <Skeleton className="h-32 flex-1 rounded-t-lg" />
           </div>
         ) : serviceData.length === 0 ? (
           <div className="mt-4 flex h-64 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
@@ -183,9 +189,14 @@ export function OrdersTrendSection() {
 
         {/* Bar Chart Container */}
         {isProductLoading && productData.length === 0 ? (
-          <div className="mt-4 flex h-64 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
-            <Loader2 className="size-8 animate-spin text-sky-600" />
-            <span className="text-xs font-medium text-slate-500">Loading product orders...</span>
+          <div className="mt-4 h-64 w-full flex items-end gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50/30">
+            <Skeleton className="h-36 flex-1 rounded-t-lg" />
+            <Skeleton className="h-24 flex-1 rounded-t-lg" />
+            <Skeleton className="h-48 flex-1 rounded-t-lg" />
+            <Skeleton className="h-32 flex-1 rounded-t-lg" />
+            <Skeleton className="h-56 flex-1 rounded-t-lg" />
+            <Skeleton className="h-40 flex-1 rounded-t-lg" />
+            <Skeleton className="h-28 flex-1 rounded-t-lg" />
           </div>
         ) : productData.length === 0 ? (
           <div className="mt-4 flex h-64 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">

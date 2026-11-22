@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { StatCardsGridSkeleton } from "@/components/skeleton";
 import type { SummaryFilterOption } from "../../../../interface/dashboard.types";
 import { SUMMARY_FILTER_OPTIONS } from "../../data/dashboard.mock";
 import TimeFilterSelect from "../time-filter-select";
@@ -30,29 +31,8 @@ export function SummarySection() {
       </div>
 
       {/* Cards Grid */}
-      {isLoading && cards.length === 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { id: 1, label: "Revenues" },
-            { id: 2, label: "Appointments" },
-            { id: 3, label: "Customers" },
-            { id: 4, label: "Sold Products" },
-          ].map((item) => (
-            <div
-              key={item.id}
-              className="relative min-w-0 overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 p-4 shadow-xs flex items-center justify-between gap-3 animate-pulse"
-            >
-              <div className="min-w-0 flex-1 space-y-2.5">
-                <div className="h-3 w-20 rounded-md bg-slate-200" />
-                <div className="h-6 w-28 rounded-md bg-slate-300" />
-                <div className="h-4 w-24 rounded-md bg-slate-200" />
-              </div>
-              <div className="flex size-14 shrink-0 items-center justify-center rounded-full border-4 border-slate-200/80 bg-slate-50">
-                <Loader2 className="size-5 animate-spin text-slate-400" />
-              </div>
-            </div>
-          ))}
-        </div>
+      {isLoading ? (
+        <StatCardsGridSkeleton count={4} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {cards.map((card) => (

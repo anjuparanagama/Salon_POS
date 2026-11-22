@@ -1,4 +1,5 @@
-import { Eye, Edit3, Trash2, Phone, Mail, AlertCircle, ShieldCheck, Loader2 } from "lucide-react";
+import { Eye, Edit3, Trash2, Phone, Mail, AlertCircle, ShieldCheck } from "lucide-react";
+import { TableSkeleton } from "@/components/skeleton";
 import type { StaffMember, StaffRole } from "../../../../interface/staff.types";
 import { formatStaffId } from "../../../../helpers/format-id.helper";
 import { Button } from "../../../../components/button";
@@ -44,12 +45,7 @@ export function StaffList({
   visibleColumns = {},
 }: StaffListProps) {
   if (isLoading && staffList.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
-        <Loader2 className="size-8 animate-spin text-primary" />
-        <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading staff members...</h3>
-      </div>
-    );
+    return <TableSkeleton rows={5} columns={5} />;
   }
 
   if (staffList.length === 0) {

@@ -3,6 +3,7 @@ import { Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 import SidePanel from "../../../../components/side-panel";
 import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
+import { Select } from "../../../../components/select";
 import { staffService } from "../../../../services/staff.service";
 import type {
   StaffMember,
@@ -145,34 +146,29 @@ function StaffForm({
           type="text"
           required
           label="Full Name *"
-          labelClassName="block mb-0 font-medium text-slate-700"
           placeholder="e.g. Amelia Vance"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+          className="h-10 rounded-lg border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
         />
 
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Salon Role *
-          </label>
-          <select
-            value={formData.role}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                role: e.target.value as StaffRole,
-              })
-            }
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          >
-            {dynamicRoles.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Salon Role *"
+          value={formData.role}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              role: e.target.value as StaffRole,
+            })
+          }
+          className="h-10 rounded-lg border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:ring-primary/20"
+        >
+          {dynamicRoles.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </Select>
       </div>
 
       {/* Phone & Email */}
@@ -181,60 +177,53 @@ function StaffForm({
           type="tel"
           required
           label="Phone Number *"
-          labelClassName="block mb-0 font-medium text-slate-700"
           placeholder="e.g. +1 (555) 234-5678"
           value={formData.phone}
           onChange={(e) =>
             setFormData({ ...formData, phone: e.target.value })
           }
-          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+          className="h-10 rounded-lg border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
         />
 
         <Input
           type="email"
           required
           label="Email Address *"
-          labelClassName="block mb-0 font-medium text-slate-700"
           placeholder="e.g. amelia@salonpos.com"
           value={formData.email}
           onChange={(e) =>
             setFormData({ ...formData, email: e.target.value })
           }
-          className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+          className="h-10 rounded-lg border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
         />
       </div>
 
       {/* Status (Active / Inactive) & Commission */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block mb-1 font-medium text-slate-700">
-            Status *
-          </label>
-          <select
-            value={formData.status === "inactive" ? "inactive" : "active"}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                status: e.target.value as StaffStatus,
-              })
-            }
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
+        <Select
+          label="Status *"
+          value={formData.status === "inactive" ? "inactive" : "active"}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              status: e.target.value as StaffStatus,
+            })
+          }
+          className="h-10 rounded-lg border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:ring-primary/20"
+        >
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </Select>
 
         <Input
           type="text"
           inputMode="decimal"
           label="Commission Rate (%)"
-          labelClassName="block mb-0 font-medium text-slate-700"
           placeholder="0"
           value={commissionInput}
           onChange={handleCommissionChange}
           rightElement={<span className="text-xs font-semibold text-slate-400 select-none">%</span>}
-          className="rounded-lg border-slate-200 pl-3 pr-8 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
+          className="h-10 rounded-lg border-slate-200 pl-3 pr-8 py-2 text-sm text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
         />
       </div>
 
@@ -334,16 +323,15 @@ function StaffForm({
       <Input
         type="text"
         label="Specialties (comma-separated)"
-        labelClassName="block mb-0 font-medium text-slate-700"
         placeholder="e.g. Balayage, Layered Cuts, Keratin Treatment"
         value={specialtiesInput}
         onChange={(e) => setSpecialtiesInput(e.target.value)}
-        className="rounded-lg border-slate-200 px-3 py-2 text-slate-900 focus:border-primary focus:ring-primary/20"
+        className="h-10 rounded-lg border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-primary focus:ring-primary/20 bg-white"
       />
 
       {/* Bio / Experience */}
-      <div>
-        <label className="block mb-1 font-medium text-slate-700">
+      <div className="flex w-full flex-col gap-1.5">
+        <label className="text-sm font-medium text-slate-700">
           Professional Bio & Notes
         </label>
         <textarea
@@ -351,7 +339,7 @@ function StaffForm({
           placeholder="e.g. 7+ years of experience in luxury color blending and precision styling."
           value={formData.bio || ""}
           onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 resize-y"
         />
       </div>
     </form>

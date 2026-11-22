@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Layers, Share2, Loader2 } from "lucide-react";
+import { Plus, Layers, Share2 } from "lucide-react";
+import { CardGridSkeleton } from "../../components/skeleton";
 import Pagination from "../../components/pagination";
 import type {
   ServiceItem,
@@ -223,7 +224,7 @@ export function Services() {
       />
 
       {/* KPI Stats */}
-      <ServiceStats stats={stats} />
+      <ServiceStats stats={stats} isLoading={isLoading} />
 
       {/* Filter and Search controls */}
       <ServiceFilters
@@ -239,10 +240,7 @@ export function Services() {
 
       {/* Service Cards Grid */}
       {isLoading && services.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
-          <Loader2 className="size-8 animate-spin text-primary" />
-          <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading services...</h3>
-        </div>
+        <CardGridSkeleton count={6} />
       ) : filteredServices.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center">
           <div className="flex size-12 items-center justify-center rounded-full bg-slate-50 text-slate-400">

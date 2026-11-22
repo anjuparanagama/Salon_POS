@@ -155,7 +155,7 @@ export function LedgerIncome() {
       />
 
       {/* 3 Summary Cards */}
-      <IncomeStats stats={stats} />
+      <IncomeStats stats={stats} isLoading={isLoading} />
 
       {/* Filters (Date Range, Income Type, Search) */}
       <IncomeFilters

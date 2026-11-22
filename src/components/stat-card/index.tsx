@@ -1,5 +1,6 @@
 import type { ElementType, ReactNode } from "react";
 import { cn } from "../../lib/cn";
+import { Skeleton } from "../skeleton";
 
 export type StatCardColor =
   | "primary"
@@ -19,6 +20,7 @@ export type StatCardProps = {
   iconColor?: string;
   className?: string;
   onClick?: () => void;
+  isLoading?: boolean;
 };
 
 const COLOR_CLASSES: Record<StatCardColor, string> = {
@@ -40,7 +42,25 @@ export function StatCard({
   iconColor,
   className,
   onClick,
+  isLoading = false,
 }: StatCardProps) {
+  if (isLoading) {
+    return (
+      <article
+        className={cn(
+          "w-full min-w-0 flex h-24 items-center justify-between rounded-2xl bg-white px-5 py-4 border border-slate-100 shadow-xs",
+          className,
+        )}
+      >
+        <div className="flex flex-col min-w-0 flex-1 pr-3 justify-center gap-2">
+          <Skeleton className="h-3.5 w-24 rounded-full" />
+          <Skeleton className="h-6 w-20 rounded-md" />
+        </div>
+        <Skeleton variant="circular" className="size-11 shrink-0" />
+      </article>
+    );
+  }
+
   const resolvedIconColor = iconColor || COLOR_CLASSES[color] || COLOR_CLASSES.primary;
   const labelTooltip = typeof label === "string" ? label : undefined;
   const valueTooltip = typeof value === "string" || typeof value === "number" ? String(value) : undefined;

@@ -39,62 +39,21 @@ export function toBackendStatus(status: string): string {
   return status;
 }
 
-const KNOWN_CUSTOMERS: Record<string, { name: string; phone: string }> = {
-  "c1000000-0000-0000-0000-000000000001": { name: "Emma Wilson", phone: "+1 (555) 234-5678" },
-  "c1000000-0000-0000-0000-000000000002": { name: "Sophia Brown", phone: "+1 (555) 345-6789" },
-  "c1000000-0000-0000-0000-000000000003": { name: "Mia Johnson", phone: "+1 (555) 456-7890" },
-  "c1000000-0000-0000-0000-000000000004": { name: "Ava Smith", phone: "+1 (555) 567-8901" },
-  "c1000000-0000-0000-0000-000000000005": { name: "Charlotte Davis", phone: "+1 (555) 678-9012" },
-  "c1000000-0000-0000-0000-000000000006": { name: "Harper Lee", phone: "+1 (555) 789-0123" },
-  "c1000000-0000-0000-0000-000000000007": { name: "Chloe Martin", phone: "+1 (555) 890-1234" },
-  "c1000000-0000-0000-0000-000000000008": { name: "Grace Taylor", phone: "+1 (555) 901-2345" },
-  "10000000-0000-0000-0000-000000000001": { name: "Nimal Perera", phone: "+94 77 100 0001" },
-  "10000000-0000-0000-0000-000000000002": { name: "Kumari Silva", phone: "+94 77 100 0002" },
-  "10000000-0000-0000-0000-000000000003": { name: "Amal Fernando", phone: "+94 77 100 0003" },
-  "10000000-0000-0000-0000-000000000004": { name: "Samanthi Jayasuriya", phone: "+94 77 100 0004" },
-  "10000000-0000-0000-0000-000000000005": { name: "Ruwan Dias", phone: "+94 77 100 0005" },
-};
-
-const KNOWN_STAFF: Record<string, string> = {
-  "f1000000-0000-0000-0000-000000000001": "Amelia Vance",
-  "f1000000-0000-0000-0000-000000000002": "Olivia Wilde",
-  "f1000000-0000-0000-0000-000000000003": "Isabella Gomez",
-  "f1000000-0000-0000-0000-000000000004": "Noah Sterling",
-  "f1000000-0000-0000-0000-000000000005": "Sophia Chen",
-  "f1000000-0000-0000-0000-000000000006": "Chathuri",
-  "f1000000-0000-0000-0000-000000000007": "Dilshan",
-  "f1000000-0000-0000-0000-000000000008": "Ishara",
-  "f1000000-0000-0000-0000-000000000009": "Malith",
-  "f1000000-0000-0000-0000-000000000010": "Tharushi",
-  "20000000-0000-0000-0000-000000000001": "Chathuri",
-  "20000000-0000-0000-0000-000000000002": "Dilshan",
-  "20000000-0000-0000-0000-000000000003": "Ishara",
-  "20000000-0000-0000-0000-000000000004": "Malith",
-  "20000000-0000-0000-0000-000000000005": "Tharushi",
-};
+// In-memory registries populated purely dynamically at runtime from backend API responses
+const staffRegistry = new Map<string, string>();
+const serviceRegistry = new Map<string, string>();
 
 export function registerStaff(id: string, name: string) {
   if (id && name) {
-    KNOWN_STAFF[id] = name;
+    staffRegistry.set(id.toLowerCase(), name);
   }
 }
 
 export function registerService(id: string, name: string) {
   if (id && name) {
-    KNOWN_SERVICES[name.toLowerCase().trim()] = id;
+    serviceRegistry.set(name.toLowerCase().trim(), id);
   }
 }
-
-const KNOWN_SERVICES: Record<string, string> = {
-  "haircut & styling": "e1000000-0000-0000-0000-000000000001",
-  "balayage color & highlights": "e1000000-0000-0000-0000-000000000002",
-  "deluxe manicure & pedicure": "e1000000-0000-0000-0000-000000000003",
-  "hydra deep facial": "e1000000-0000-0000-0000-000000000004",
-  "bridal full glam makeup": "e1000000-0000-0000-0000-000000000005",
-  "aromatherapy full body massage": "e1000000-0000-0000-0000-000000000006",
-  "keratin smoothing complex": "e1000000-0000-0000-0000-000000000007",
-  "gel nail extension set": "e1000000-0000-0000-0000-000000000008",
-};
 
 export function to24HourTime(timeStr?: string): string {
   if (!timeStr) return "10:00:00";
@@ -119,20 +78,20 @@ export function to24HourTime(timeStr?: string): string {
   return "10:00:00";
 }
 
-export function resolveServiceId(name?: string): string {
-  if (!name) return "e1000000-0000-0000-0000-000000000001";
+export function resolveServiceId(name?: string): string | undefined {
+  if (!name) return undefined;
   const key = name.toLowerCase().trim();
-  if (KNOWN_SERVICES[key]) return KNOWN_SERVICES[key];
-  for (const [k, v] of Object.entries(KNOWN_SERVICES)) {
+  if (serviceRegistry.has(key)) return serviceRegistry.get(key);
+  for (const [k, v] of serviceRegistry.entries()) {
     if (key.includes(k) || k.includes(key)) return v;
   }
-  return "e1000000-0000-0000-0000-000000000001";
+  return undefined;
 }
 
 export function resolveStaffId(name?: string): string | undefined {
-  if (!name) return "f1000000-0000-0000-0000-000000000001";
+  if (!name) return undefined;
   const key = name.toLowerCase().trim();
-  for (const [id, staffName] of Object.entries(KNOWN_STAFF)) {
+  for (const [id, staffName] of staffRegistry.entries()) {
     if (
       staffName.toLowerCase() === key ||
       staffName.toLowerCase().includes(key) ||
@@ -141,24 +100,7 @@ export function resolveStaffId(name?: string): string | undefined {
       return id;
     }
   }
-  return "f1000000-0000-0000-0000-000000000001";
-}
-
-export function resolveCustomerId(clientName?: string, clientPhone?: string): string {
-  const normPhone = (clientPhone || "").replace(/\D/g, "");
-  const normName = (clientName || "").toLowerCase().trim();
-
-  for (const [id, cust] of Object.entries(KNOWN_CUSTOMERS)) {
-    const custPhone = cust.phone.replace(/\D/g, "");
-    if (normPhone && custPhone && (custPhone.endsWith(normPhone) || normPhone.endsWith(custPhone))) {
-      return id;
-    }
-    if (normName && cust.name.toLowerCase() === normName) {
-      return id;
-    }
-  }
-
-  return "c1000000-0000-0000-0000-000000000001";
+  return undefined;
 }
 
 export function normalizeAppointment(
@@ -172,21 +114,28 @@ export function normalizeAppointment(
 
   const serviceName =
     (raw.serviceName as string) ||
+    (raw.service_name as string) ||
     fallbackFormData?.serviceName ||
     (rawServices.length > 0
-      ? rawServices.map((s) => (s.name || s.service_name || "Service") as string).join(", ")
-      : "Haircut & Styling");
+      ? rawServices.map((s) => (s.name || s.service_name || "") as string).filter(Boolean).join(", ")
+      : "");
 
   const totalDuration = rawServices.length > 0
-    ? rawServices.reduce((acc, s) => acc + (Number(s.duration_minutes || s.duration || 0) * Number(s.quantity || 1)), 0)
-    : Number(raw.durationMinutes || fallbackFormData?.durationMinutes || 45);
+    ? rawServices.reduce(
+        (acc, s) => acc + (Number(s.duration_minutes || s.duration || 0) * Number(s.quantity || 1)),
+        0
+      )
+    : Number(raw.duration_minutes || raw.durationMinutes || fallbackFormData?.durationMinutes || 0);
 
   const totalPrice = rawServices.length > 0
-    ? rawServices.reduce((acc, s) => acc + (Number(s.unit_price || s.price || 0) * Number(s.quantity || 1)), 0)
-    : Number(raw.price || fallbackFormData?.price || 45);
+    ? rawServices.reduce(
+        (acc, s) => acc + (Number(s.unit_price || s.price || 0) * Number(s.quantity || 1)),
+        0
+      )
+    : Number(raw.total_amount || raw.price || fallbackFormData?.price || 0);
 
-  const rawDate = (raw.date || raw.appointment_date || fallbackFormData?.date || new Date().toISOString().split("T")[0]) as string;
-  let rawTime = (raw.time || raw.start_time || fallbackFormData?.time || "09:00 AM") as string;
+  const rawDate = (raw.appointment_date || raw.date || fallbackFormData?.date || "") as string;
+  let rawTime = (raw.start_time || raw.time || fallbackFormData?.time || "") as string;
   if (/^\d{2}:\d{2}(:\d{2})?$/.test(rawTime)) {
     const [hhStr, mmStr] = rawTime.split(":");
     let hh = parseInt(hhStr, 10);
@@ -196,34 +145,32 @@ export function normalizeAppointment(
     rawTime = `${String(hh).padStart(2, "0")}:${mm} ${ampm}`;
   }
 
-  const customerId = raw.customer_id ? String(raw.customer_id).toLowerCase() : "";
-  const knownCustomer = customerId ? KNOWN_CUSTOMERS[customerId] : undefined;
-
-  const clientName =
-    (raw.clientName as string) ||
-    (raw.customer_name as string) ||
-    (raw.customerName as string) ||
-    fallbackFormData?.clientName ||
-    knownCustomer?.name ||
-    (customerId ? `Client #${customerId.slice(-4)}` : "Walk-in Client");
-
-  const clientPhone =
-    (raw.clientPhone as string) ||
-    (raw.customer_phone as string) ||
-    (raw.customerPhone as string) ||
-    fallbackFormData?.clientPhone ||
-    knownCustomer?.phone ||
-    "+1 (555) 000-0000";
-
-  const staffId = raw.assigned_staff_id ? String(raw.assigned_staff_id).toLowerCase() : "";
-  const knownStaffName = staffId ? KNOWN_STAFF[staffId] : undefined;
+  const staffId = raw.assigned_staff_id
+    ? String(raw.assigned_staff_id).toLowerCase()
+    : raw.staffId
+    ? String(raw.staffId).toLowerCase()
+    : "";
 
   const staffName =
-    (raw.staffName as string) ||
     (raw.staff_name as string) ||
+    (raw.staffName as string) ||
     fallbackFormData?.staffName ||
-    knownStaffName ||
-    "Amelia Vance";
+    (staffId ? staffRegistry.get(staffId) : undefined) ||
+    "";
+
+  const clientName =
+    (raw.customer_name as string) ||
+    (raw.customerName as string) ||
+    (raw.clientName as string) ||
+    fallbackFormData?.clientName ||
+    "Walk-in Client";
+
+  const clientPhone =
+    (raw.customer_phone as string) ||
+    (raw.customerPhone as string) ||
+    (raw.clientPhone as string) ||
+    fallbackFormData?.clientPhone ||
+    "";
 
   const appointmentNumber =
     (raw.appointment_number as string) ||
@@ -234,13 +181,13 @@ export function normalizeAppointment(
     rawServices.length > 0
       ? rawServices.map((s) => ({
           id: String(s.service_id || s.id || ""),
-          name: String(s.name || s.service_name || "Service"),
+          name: String(s.name || s.service_name || ""),
           price: Number(s.unit_price || s.price || 0),
-          durationMinutes: Number(s.duration_minutes || s.duration || 45),
+          durationMinutes: Number(s.duration_minutes || s.duration || 0),
         }))
       : fallbackFormData?.services || [
           {
-            id: String(raw.serviceId || firstService?.service_id || firstService?.id || "svc-1"),
+            id: String(raw.serviceId || raw.service_id || firstService?.service_id || firstService?.id || ""),
             name: serviceName,
             price: totalPrice,
             durationMinutes: totalDuration,
@@ -253,15 +200,15 @@ export function normalizeAppointment(
     clientName,
     clientPhone,
     clientAvatar: typeof raw.clientAvatar === "string" ? raw.clientAvatar : undefined,
-    serviceId: String(raw.serviceId || firstService?.service_id || firstService?.id || "svc-1"),
+    serviceId: String(raw.serviceId || raw.service_id || firstService?.service_id || firstService?.id || ""),
     serviceName,
     services: normalizedServices,
-    staffId: String(raw.staffId || raw.assigned_staff_id || "st-1"),
+    staffId: staffId || String(raw.staffId || ""),
     staffName,
     staffAvatar: typeof raw.staffAvatar === "string" ? raw.staffAvatar : undefined,
     date: rawDate,
     time: rawTime,
-    durationMinutes: totalDuration || 45,
+    durationMinutes: totalDuration,
     price: totalPrice,
     status: normalizeStatus(raw.status as string),
     notes: typeof raw.notes === "string" ? raw.notes : fallbackFormData?.notes,
@@ -358,7 +305,7 @@ export const appointmentsService = {
     const servicesToSend =
       payload.services && payload.services.length > 0
         ? payload.services.map((s) => ({
-            service_id: s.id || resolveServiceId(s.name),
+            service_id: s.id || resolveServiceId(s.name) || serviceId,
             name: s.name,
             unit_price: Number(s.price || 0),
             duration_minutes: Math.max(5, Number(s.durationMinutes || 15)),
@@ -367,15 +314,14 @@ export const appointmentsService = {
         : [
             {
               service_id: serviceId,
-              name: payload.serviceName || "Haircut & Styling",
-              unit_price: Number(payload.price || 45),
+              name: payload.serviceName || "",
+              unit_price: Number(payload.price || 0),
               duration_minutes: Math.max(5, Number(payload.durationMinutes || 15)),
               quantity: 1,
             },
           ];
 
-    // Send the entered client details; the backend finds the customer by phone
-    // or creates a new one. (Never fall back to a hardcoded customer ID.)
+    // Send entered client details; backend finds customer by phone or creates a new one
     const requestBody = {
       customer_name: (payload.clientName || "").trim(),
       customer_phone: (payload.clientPhone || "").trim(),
@@ -400,12 +346,12 @@ export const appointmentsService = {
     if (payload.time) {
       patchBody.start_time = to24HourTime(payload.time);
     }
-    if (payload.staffId || payload.staffName) {
+    if (payload.staffId !== undefined || payload.staffName !== undefined) {
       patchBody.assigned_staff_id = payload.staffId || resolveStaffId(payload.staffName) || null;
     }
     if (payload.services && payload.services.length > 0) {
       patchBody.services = payload.services.map((s) => ({
-        service_id: s.id || resolveServiceId(s.name),
+        service_id: s.id || resolveServiceId(s.name) || payload.serviceId,
         name: s.name,
         unit_price: Number(s.price || 0),
         duration_minutes: Math.max(5, Number(s.durationMinutes || 15)),
@@ -414,9 +360,9 @@ export const appointmentsService = {
     } else if (payload.serviceName || payload.price !== undefined || payload.durationMinutes !== undefined) {
       patchBody.services = [
         {
-          service_id: resolveServiceId(payload.serviceName),
-          name: payload.serviceName || "Haircut & Styling",
-          unit_price: Number(payload.price ?? 45),
+          service_id: payload.serviceId || resolveServiceId(payload.serviceName),
+          name: payload.serviceName || "",
+          unit_price: Number(payload.price ?? 0),
           duration_minutes: Math.max(5, Number(payload.durationMinutes ?? 15)),
           quantity: 1,
         },
@@ -455,4 +401,3 @@ export const appointmentsService = {
 };
 
 export default appointmentsService;
-

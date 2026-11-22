@@ -35,6 +35,7 @@ import {
   DEFAULT_GENERAL_SETTINGS,
 } from "../../../../services/settings.service";
 import { API_BASE_URL } from "../../../../config/api.config";
+import { FormSkeleton } from "@/components/skeleton";
 import { useConfirmationModal } from "../../../../components/confirmation-modal";
 
 export type GeneralTabType = "profile" | "financial" | "operations";
@@ -262,14 +263,7 @@ export function GeneralSettingsView({
   };
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
-        <Loader2 className="size-8 text-primary animate-spin" />
-        <p className="mt-3 text-xs font-medium text-slate-500">
-          Loading Salon General Settings from server...
-        </p>
-      </div>
-    );
+    return <FormSkeleton />;
   }
 
   return (

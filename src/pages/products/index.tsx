@@ -415,7 +415,7 @@ export function Products() {
       />
 
       {/* 2. Summary Cards */}
-      <ProductStats stats={stats} />
+      <ProductStats stats={stats} isLoading={isLoading} />
 
       {/* 3. Search & Filters */}
       <ProductFilters

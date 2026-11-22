@@ -247,7 +247,7 @@ export function Customers() {
       )}
 
       {/* KPI Stats */}
-      <CustomerStats stats={stats} />
+      <CustomerStats stats={stats} isLoading={isLoading} />
 
       {/* Filters Bar (Exact Appointment Page Pattern) */}
       <CustomerFilters

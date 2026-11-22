@@ -213,7 +213,7 @@ export function LedgerExpenses() {
       />
 
       {/* 3 Summary Cards */}
-      <ExpenseStats stats={stats} />
+      <ExpenseStats stats={stats} isLoading={isLoading} />
 
       {/* Filters (Search, Date Range, Category, Segmented Bar) */}
       <ExpenseFilters

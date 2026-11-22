@@ -7,6 +7,7 @@ import {
   Tooltip,
 } from "recharts";
 import { CreditCard, Loader2, PackageCheck, Sparkles } from "lucide-react";
+import { Skeleton } from "@/components/skeleton";
 import type {
   ChartTimeFilter,
   PaymentTypeItem,
@@ -101,9 +102,10 @@ export function BreakdownChartsSection() {
 
         <div className="mt-3 flex flex-col divide-y divide-slate-100/60 min-h-[160px]">
           {isProductsLoading && topProducts.length === 0 ? (
-            <div className="flex h-40 flex-col items-center justify-center gap-3">
-              <Loader2 className="size-6 animate-spin text-sky-600" />
-              <span className="text-xs font-medium text-slate-400">Loading top products...</span>
+            <div className="flex flex-col gap-3 py-2">
+              <Skeleton className="h-9 w-full rounded-xl" />
+              <Skeleton className="h-9 w-full rounded-xl" />
+              <Skeleton className="h-9 w-full rounded-xl" />
             </div>
           ) : topProducts.length === 0 ? (
             <div className="flex h-40 flex-col items-center justify-center gap-1.5 text-center">
@@ -171,9 +173,10 @@ export function BreakdownChartsSection() {
 
         <div className="mt-3 flex flex-col divide-y divide-slate-100/60 min-h-[160px]">
           {isServicesLoading && topServices.length === 0 ? (
-            <div className="flex h-40 flex-col items-center justify-center gap-3">
-              <Loader2 className="size-6 animate-spin text-primary" />
-              <span className="text-xs font-medium text-slate-400">Loading top services...</span>
+            <div className="flex flex-col gap-3 py-2">
+              <Skeleton className="h-9 w-full rounded-xl" />
+              <Skeleton className="h-9 w-full rounded-xl" />
+              <Skeleton className="h-9 w-full rounded-xl" />
             </div>
           ) : topServices.length === 0 ? (
             <div className="flex h-40 flex-col items-center justify-center gap-1.5 text-center">
@@ -250,9 +253,8 @@ export function BreakdownChartsSection() {
           {/* Donut Chart */}
           <div className="mt-2 h-44 w-full">
             {isPaymentLoading && paymentTypes.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-3">
-                <Loader2 className="size-6 animate-spin text-indigo-600" />
-                <span className="text-xs font-medium text-slate-400">Loading payment distribution...</span>
+              <div className="flex h-full items-center justify-center">
+                <Skeleton variant="circular" className="size-32" />
               </div>
             ) : paymentTypes.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center gap-1.5 text-center">

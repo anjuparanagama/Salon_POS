@@ -4,8 +4,8 @@ import {
   Package,
   AlertCircle,
   AlertTriangle,
-  Loader2,
 } from "lucide-react";
+import { TableSkeleton } from "@/components/skeleton";
 import type { Product } from "../../../../interface/product.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { Button } from "../../../../components/button";
@@ -34,12 +34,7 @@ export function ProductList({
   visibleColumns = {},
 }: ProductListProps) {
   if (isLoading && products.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white p-12 text-center shadow-xs">
-        <Loader2 className="size-8 animate-spin text-primary" />
-        <h3 className="mt-3 text-sm font-semibold text-slate-800">Loading products...</h3>
-      </div>
-    );
+    return <TableSkeleton rows={6} columns={7} />;
   }
 
   if (products.length === 0) {

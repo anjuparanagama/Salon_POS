@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
+import { FormSkeleton } from "../../../../components/skeleton";
 import { sharedWebService } from "../../../../services/shared-web.service";
 import type {
   SharedWebSettingsState,
@@ -255,12 +256,7 @@ export function SharedWebSettingsView() {
   };
 
   if (loading) {
-    return (
-      <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white p-8 shadow-xs">
-        <div className="size-8 animate-spin rounded-full border-3 border-primary border-t-transparent" />
-        <p className="text-xs font-semibold text-slate-500">Loading Shared Web settings...</p>
-      </div>
-    );
+    return <FormSkeleton />;
   }
 
   const publicLink = `${window.location.origin}/public/salons/${formData.slug || "salon"}`;

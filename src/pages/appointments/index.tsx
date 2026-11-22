@@ -333,7 +333,7 @@ export function Appointments() {
       />
 
       {/* KPI Stats row */}
-      <AppointmentStats stats={stats} />
+      <AppointmentStats stats={stats} isLoading={isLoading} />
 
       {/* Filters & Control bar */}
       <AppointmentFilters

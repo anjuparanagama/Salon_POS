@@ -394,9 +394,9 @@ export function ServiceModal({
         isActive: editingService.isActive,
         images: editingService.images || [],
       }
-    : {
-        ...defaultInitialData,
-        category: categories.length > 0 ? categories[0].value : defaultInitialData.category,
+    : {
+        ...defaultInitialData,
+        category: categories.length > 0 ? categories[0].value : defaultInitialData.category,
       };
 
   const handleFormSubmit = (data: ServiceFormData) => {

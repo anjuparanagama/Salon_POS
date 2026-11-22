@@ -1,4 +1,5 @@
-import { Edit3, Trash2, Phone, Mail, AlertCircle, Calendar, History, Loader2 } from "lucide-react";
+import { Edit3, Trash2, Phone, Mail, AlertCircle, Calendar, History } from "lucide-react";
+import { TableSkeleton } from "@/components/skeleton";
 import type { Customer, CustomerGender } from "../../../../interface/customer.types";
 import { formatPrice } from "../../../../helpers/price.helper";
 import { Button } from "../../../../components/button";
@@ -40,12 +41,7 @@ export function CustomerList({
   const isColVisible = (key: string) => visibleColumns[key] !== false;
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-white p-12 text-center shadow-xs">
-        <Loader2 className="size-7 animate-spin text-primary" />
-        <p className="mt-3 text-xs font-medium text-slate-600">Loading customers...</p>
-      </div>
-    );
+    return <TableSkeleton rows={6} columns={5} />;
   }
 
   if (customers.length === 0) {
