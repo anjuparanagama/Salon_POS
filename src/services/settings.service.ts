@@ -124,12 +124,7 @@ export const settingsService = {
     formData.append("file", file);
     const res = await apiClient.post<{ logo_url: string; message: string }>(
       API_ENDPOINTS.SETTINGS.LOGO,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
+      formData
     );
     return res.data.logo_url;
   },

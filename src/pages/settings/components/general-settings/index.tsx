@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef, type FormEvent, type ChangeEvent } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  type FormEvent,
+  type ChangeEvent,
+} from "react";
 import { useTranslation } from "react-i18next";
 import {
   Check,
@@ -16,9 +22,18 @@ import {
 } from "lucide-react";
 import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
-import type { GeneralSettingsState, BusinessHourItem } from "../../../../interface/settings.types";
-import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "../../../../interface/i18n.types";
-import { settingsService, DEFAULT_GENERAL_SETTINGS } from "../../../../services/settings.service";
+import type {
+  GeneralSettingsState,
+  BusinessHourItem,
+} from "../../../../interface/settings.types";
+import {
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage,
+} from "../../../../interface/i18n.types";
+import {
+  settingsService,
+  DEFAULT_GENERAL_SETTINGS,
+} from "../../../../services/settings.service";
 import { API_BASE_URL } from "../../../../config/api.config";
 import { useConfirmationModal } from "../../../../components/confirmation-modal";
 
@@ -33,12 +48,15 @@ export function GeneralSettingsView({
   activeTab: controlledTab,
 }: GeneralSettingsViewProps = {}) {
   const { i18n } = useTranslation();
-  const currentLang = (i18n.language?.split("-")[0] || "en") as SupportedLanguage;
+  const currentLang = (i18n.language?.split("-")[0] ||
+    "en") as SupportedLanguage;
 
   const [internalTab] = useState<GeneralTabType>("profile");
   const activeTab = controlledTab ?? internalTab;
 
-  const [formData, setFormData] = useState<GeneralSettingsState>(DEFAULT_GENERAL_SETTINGS);
+  const [formData, setFormData] = useState<GeneralSettingsState>(
+    DEFAULT_GENERAL_SETTINGS,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -50,18 +68,32 @@ export function GeneralSettingsView({
 
   const { confirm, ConfirmationDialog } = useConfirmationModal();
 
-  const displayLogoUrl =
-    formData.logoUrl && formData.logoUrl.startsWith("/uploads/") && !import.meta.env.DEV && API_BASE_URL
-      ? `${API_BASE_URL}${formData.logoUrl}`
-      : formData.logoUrl;
+  const displayLogoUrl = formData.logoUrl
+    ? formData.logoUrl.startsWith("http://") ||
+      formData.logoUrl.startsWith("https://") ||
+      formData.logoUrl.startsWith("blob:") ||
+      formData.logoUrl.startsWith("data:")
+      ? formData.logoUrl
+      : API_BASE_URL
+        ? `${API_BASE_URL}${formData.logoUrl}`
+        : formData.logoUrl
+    : null;
 
   const handleLogoFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/svg+xml", "image/gif"];
+    const validTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/svg+xml",
+      "image/gif",
+    ];
     if (!validTypes.includes(file.type)) {
-      setLogoUploadError("Please upload a valid image (PNG, JPG, WEBP, or SVG).");
+      setLogoUploadError(
+        "Please upload a valid image (PNG, JPG, WEBP, or SVG).",
+      );
       return;
     }
 
@@ -80,9 +112,17 @@ export function GeneralSettingsView({
     try {
       const uploadedUrl = await settingsService.uploadSalonLogo(file);
       setFormData((prev) => ({ ...prev, logoUrl: uploadedUrl }));
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error("Logo upload error:", err);
-      setLogoUploadError("Could not upload to server immediately. Logo is cached for this session.");
+      const serverMsg =
+        err?.response?.data?.detail ||
+        err?.response?.data?.message ||
+        "Could not upload to server immediately. Logo is cached for this session.";
+      setLogoUploadError(
+        typeof serverMsg === "string"
+          ? serverMsg
+          : "Could not upload to server immediately. Logo is cached for this session.",
+      );
     } finally {
       setIsUploadingLogo(false);
       if (fileInputRef.current) {
@@ -94,7 +134,8 @@ export function GeneralSettingsView({
   const handleRemoveLogo = async () => {
     const confirmed = await confirm({
       title: "Remove Salon Logo",
-      message: "Are you sure you want to remove the salon brand logo? Customer receipts and booking portal will default to text.",
+      message:
+        "Are you sure you want to remove the salon brand logo? Customer receipts and booking portal will default to text.",
       confirmText: "Remove Logo",
       cancelText: "Cancel",
       variant: "danger",
@@ -134,7 +175,9 @@ export function GeneralSettingsView({
       } catch (err) {
         console.error("Failed loading settings from API:", err);
         if (mounted) {
-          setErrorMsg("Unable to connect to the server. Working with saved offline settings.");
+          setErrorMsg(
+            "Unable to connect to the server. Working with saved offline settings.",
+          );
         }
       } finally {
         if (mounted) {
@@ -157,7 +200,7 @@ export function GeneralSettingsView({
   const handleBusinessHourChange = (
     dayIndex: number,
     field: keyof BusinessHourItem,
-    value: string | boolean
+    value: string | boolean,
   ) => {
     setFormData((prev) => {
       const hours = prev.businessHours ? [...prev.businessHours] : [];
@@ -182,7 +225,9 @@ export function GeneralSettingsView({
       setTimeout(() => setIsSaved(false), 2500);
     } catch (err) {
       console.error("Failed saving general settings:", err);
-      setErrorMsg("Failed to save settings to server. Please check your network connection.");
+      setErrorMsg(
+        "Failed to save settings to server. Please check your network connection.",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -191,7 +236,8 @@ export function GeneralSettingsView({
   const handleReset = async () => {
     const confirmed = await confirm({
       title: "Reset General Settings",
-      message: "Are you sure you want to reset all general settings to system defaults? Operating hours, currency, and tax rate will revert to initial presets.",
+      message:
+        "Are you sure you want to reset all general settings to system defaults? Operating hours, currency, and tax rate will revert to initial presets.",
       confirmText: "Reset Defaults",
       cancelText: "Cancel",
       variant: "warning",
@@ -227,7 +273,10 @@ export function GeneralSettingsView({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-slate-900">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-5 text-slate-900"
+    >
       {/* Alert banner if error occurred */}
       {errorMsg && (
         <div className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-4 py-2.5 text-xs text-amber-800">
@@ -242,9 +291,12 @@ export function GeneralSettingsView({
       {activeTab === "profile" && (
         <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs animate-in fade-in duration-150">
           <div className="border-b border-slate-100 pb-3 mb-4">
-            <h3 className="text-sm font-bold text-slate-800">Salon Profile Information</h3>
+            <h3 className="text-sm font-bold text-slate-800">
+              Salon Profile Information
+            </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              These details appear on customer invoices, appointment reminders, and receipts.
+              These details appear on customer invoices, appointment reminders,
+              and receipts.
             </p>
           </div>
 
@@ -263,7 +315,9 @@ export function GeneralSettingsView({
                   ) : (
                     <div className="flex flex-col items-center justify-center text-slate-400">
                       <ImageIcon className="size-8 stroke-1 text-slate-300 group-hover:text-primary transition-colors" />
-                      <span className="text-[10px] font-medium mt-1">No Logo</span>
+                      <span className="text-[10px] font-medium mt-1">
+                        No Logo
+                      </span>
                     </div>
                   )}
                 </div>
@@ -286,7 +340,7 @@ export function GeneralSettingsView({
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Salon Logo (ව්‍යාපාරික ලාංඡනය)
+                    Salon Logo
                   </h4>
                   {displayLogoUrl && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 text-[10px] font-semibold">
@@ -295,7 +349,8 @@ export function GeneralSettingsView({
                   )}
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
-                  Upload your official salon brand logo to appear on customer invoices, POS receipts, and appointment notifications.
+                  Upload your official salon brand logo to appear on customer
+                  invoices, POS receipts, and appointment notifications.
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   Recommended: Square PNG, JPG, WEBP, or SVG (Max 5MB).
@@ -324,7 +379,11 @@ export function GeneralSettingsView({
                     ) : (
                       <>
                         <Upload className="size-3.5 text-primary" />
-                        <span>{displayLogoUrl ? "Upload New Logo" : "Upload Salon Logo"}</span>
+                        <span>
+                          {displayLogoUrl
+                            ? "Upload New Logo"
+                            : "Upload Salon Logo"}
+                        </span>
                       </>
                     )}
                   </Button>
@@ -359,7 +418,9 @@ export function GeneralSettingsView({
               label="Salon Business Name"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.salonName}
-              onChange={(e) => setFormData({ ...formData, salonName: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, salonName: e.target.value })
+              }
               className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
 
@@ -369,7 +430,9 @@ export function GeneralSettingsView({
               label="Official Phone Number"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
               className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
 
@@ -379,7 +442,9 @@ export function GeneralSettingsView({
               label="Contact Email"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
 
@@ -388,15 +453,21 @@ export function GeneralSettingsView({
               label="Physical Address / Branch"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
+              }
               className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
 
             <div>
-              <label className="block mb-1 font-medium text-slate-700">Display Language (පද්ධති භාෂාව)</label>
+              <label className="block mb-1 font-medium text-slate-700">
+                Display Language
+              </label>
               <select
                 value={formData.language || currentLang}
-                onChange={(e) => handleLanguageChange(e.target.value as SupportedLanguage)}
+                onChange={(e) =>
+                  handleLanguageChange(e.target.value as SupportedLanguage)
+                }
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer font-medium"
               >
                 {SUPPORTED_LANGUAGES.map((lang) => (
@@ -416,18 +487,25 @@ export function GeneralSettingsView({
       {activeTab === "financial" && (
         <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs animate-in fade-in duration-150">
           <div className="border-b border-slate-100 pb-3 mb-4">
-            <h3 className="text-sm font-bold text-slate-800">Financial & Regional Preferences</h3>
+            <h3 className="text-sm font-bold text-slate-800">
+              Financial & Regional Preferences
+            </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Currency formats, time zones, default tax rate, and system interface language.
+              Currency formats, time zones, default tax rate, and system
+              interface language.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div>
-              <label className="block mb-1 font-medium text-slate-700">Operating Currency</label>
+              <label className="block mb-1 font-medium text-slate-700">
+                Operating Currency
+              </label>
               <select
                 value={formData.currency}
-                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, currency: e.target.value })
+                }
                 className="w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer"
               >
                 <option value="LKR (Rs.)">LKR (Rs.) - Sri Lankan Rupee</option>
@@ -445,40 +523,54 @@ export function GeneralSettingsView({
               label="Default Service Tax (%)"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.taxRate}
-              onChange={(e) => setFormData({ ...formData, taxRate: Number(e.target.value) })}
+              onChange={(e) =>
+                setFormData({ ...formData, taxRate: Number(e.target.value) })
+              }
               className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
 
             <div>
-              <label className="block mb-1 font-medium text-slate-700">Time Zone</label>
+              <label className="block mb-1 font-medium text-slate-700">
+                Time Zone
+              </label>
               <select
                 value={formData.timeZone}
-                onChange={(e) => setFormData({ ...formData, timeZone: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, timeZone: e.target.value })
+                }
                 className="w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 cursor-pointer"
               >
-                <option value="Asia/Colombo (GMT+5:30)">Asia/Colombo (GMT+5:30)</option>
-                <option value="Asia/Dubai (GMT+4:00)">Asia/Dubai (GMT+4:00)</option>
-                <option value="Asia/Singapore (GMT+8:00)">Asia/Singapore (GMT+8:00)</option>
+                <option value="Asia/Colombo (GMT+5:30)">
+                  Asia/Colombo (GMT+5:30)
+                </option>
+                <option value="Asia/Dubai (GMT+4:00)">
+                  Asia/Dubai (GMT+4:00)
+                </option>
+                <option value="Asia/Singapore (GMT+8:00)">
+                  Asia/Singapore (GMT+8:00)
+                </option>
                 <option value="UTC (GMT+0:00)">UTC (GMT+0:00)</option>
               </select>
             </div>
           </div>
 
-          {/* Display Language (පද්ධති භාෂාව) */}
+          {/* Display Language*/}
           <div className="mt-6 border-t border-slate-100 pt-5">
             <div className="flex items-center gap-2 mb-1">
               <Languages className="size-4 text-primary" />
               <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                System Language / පද්ධති භාෂාව
+                System Language
               </h4>
             </div>
             <p className="text-xs text-slate-500 mb-3.5">
-              Select the interface display language for the salon POS system, navigation, and reports.
+              Select the interface display language for the salon POS system,
+              navigation, and reports.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {SUPPORTED_LANGUAGES.map((lang) => {
-                const isSelected = (formData.language || currentLang) === lang.code;
+                const isSelected =
+                  (formData.language || currentLang) === lang.code;
                 return (
                   <Button
                     key={lang.code}
@@ -491,7 +583,9 @@ export function GeneralSettingsView({
                     }`}
                   >
                     <div>
-                      <p className={`text-sm font-bold ${isSelected ? "text-primary" : "text-slate-800"}`}>
+                      <p
+                        className={`text-sm font-bold ${isSelected ? "text-primary" : "text-slate-800"}`}
+                      >
                         {lang.nativeLabel}
                       </p>
                       <p className="text-[11px] text-slate-500">{lang.label}</p>
@@ -515,9 +609,12 @@ export function GeneralSettingsView({
       {activeTab === "operations" && (
         <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs animate-in fade-in duration-150">
           <div className="border-b border-slate-100 pb-3 mb-4">
-            <h3 className="text-sm font-bold text-slate-800">Salon Daily Operating Hours</h3>
+            <h3 className="text-sm font-bold text-slate-800">
+              Salon Daily Operating Hours
+            </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Controls appointment booking calendar slots, cashier terminal opening, and business hours.
+              Controls appointment booking calendar slots, cashier terminal
+              opening, and business hours.
             </p>
           </div>
 
@@ -528,7 +625,9 @@ export function GeneralSettingsView({
               label="Standard Opening Time"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.openingTime}
-              onChange={(e) => setFormData({ ...formData, openingTime: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, openingTime: e.target.value })
+              }
               className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
 
@@ -537,7 +636,9 @@ export function GeneralSettingsView({
               label="Standard Closing Time"
               labelClassName="block mb-0 font-medium text-slate-700"
               value={formData.closingTime}
-              onChange={(e) => setFormData({ ...formData, closingTime: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, closingTime: e.target.value })
+              }
               className="rounded-xl border-slate-200 px-3.5 py-2 text-slate-900 focus:border-primary focus:ring-primary/20 bg-slate-50/50"
             />
           </div>
@@ -557,11 +658,15 @@ export function GeneralSettingsView({
                   <div
                     key={bh.day_of_week}
                     className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 gap-3 text-xs transition ${
-                      bh.is_closed ? "bg-slate-50/80 text-slate-400" : "bg-white"
+                      bh.is_closed
+                        ? "bg-slate-50/80 text-slate-400"
+                        : "bg-white"
                     }`}
                   >
                     <div className="flex items-center gap-3 w-40">
-                      <span className="font-bold text-slate-800">{bh.day_name}</span>
+                      <span className="font-bold text-slate-800">
+                        {bh.day_name}
+                      </span>
                       {bh.is_closed && (
                         <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
                           Closed
@@ -577,7 +682,11 @@ export function GeneralSettingsView({
                           disabled={bh.is_closed}
                           value={bh.opening_time}
                           onChange={(e) =>
-                            handleBusinessHourChange(idx, "opening_time", e.target.value)
+                            handleBusinessHourChange(
+                              idx,
+                              "opening_time",
+                              e.target.value,
+                            )
                           }
                           className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs disabled:opacity-50 disabled:bg-slate-100"
                         />
@@ -587,7 +696,11 @@ export function GeneralSettingsView({
                           disabled={bh.is_closed}
                           value={bh.closing_time}
                           onChange={(e) =>
-                            handleBusinessHourChange(idx, "closing_time", e.target.value)
+                            handleBusinessHourChange(
+                              idx,
+                              "closing_time",
+                              e.target.value,
+                            )
                           }
                           className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs disabled:opacity-50 disabled:bg-slate-100"
                         />
@@ -598,11 +711,17 @@ export function GeneralSettingsView({
                           type="checkbox"
                           checked={bh.is_closed}
                           onChange={(e) =>
-                            handleBusinessHourChange(idx, "is_closed", e.target.checked)
+                            handleBusinessHourChange(
+                              idx,
+                              "is_closed",
+                              e.target.checked,
+                            )
                           }
                           className="rounded border-slate-300 text-primary focus:ring-primary/20"
                         />
-                        <span className="text-[11px] font-medium text-slate-600">Mark Closed</span>
+                        <span className="text-[11px] font-medium text-slate-600">
+                          Mark Closed
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -651,8 +770,8 @@ export function GeneralSettingsView({
                 {activeTab === "profile"
                   ? "Save Salon Profile"
                   : activeTab === "financial"
-                  ? "Save Financial Preferences"
-                  : "Save Operating Hours"}
+                    ? "Save Financial Preferences"
+                    : "Save Operating Hours"}
               </span>
             </>
           )}
