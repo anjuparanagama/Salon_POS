@@ -134,7 +134,7 @@ export function GeneralSettingsView({
       } catch (err) {
         console.error("Failed loading settings from API:", err);
         if (mounted) {
-          setErrorMsg("Could not connect to backend server. Using local settings cache.");
+          setErrorMsg("Unable to connect to the server. Working with saved offline settings.");
         }
       } finally {
         if (mounted) {

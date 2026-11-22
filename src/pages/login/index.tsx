@@ -107,25 +107,51 @@ export function Login() {
       setStatus("error");
       if (axios.isAxiosError(err)) {
         if (!err.response) {
+          if (import.meta.env.DEV) {
+            console.error(
+              "[Auth Debug] Connection error: Backend server unreachable. Check network or API URL.",
+              err
+            );
+          }
           setErrors({
             general:
-              "Unable to connect to the backend server. Please verify your connection or API URL in .env.",
+              "Unable to connect to Salora. Please check your internet connection and try again.",
           });
         } else if (err.response.status === 401) {
           const detail =
             typeof err.response.data?.detail === "string"
               ? err.response.data.detail
-              : "Invalid email or password.";
+              : "Incorrect email or password. Please try again.";
           setErrors({ general: detail });
+        } else if (err.response.status === 403) {
+          setErrors({
+            general:
+              "Your account does not have permission to access the portal. Please contact your salon administrator.",
+          });
         } else if (err.response.status === 422) {
           setErrors({
             general: "Please enter a valid email address and password.",
           });
+        } else if (err.response.status === 429) {
+          setErrors({
+            general:
+              "Too many login attempts. Please wait a moment before trying again.",
+          });
+        } else if (err.response.status >= 500) {
+          if (import.meta.env.DEV) {
+            console.error("[Auth Debug] Server error:", err.response.data);
+          }
+          setErrors({
+            general:
+              "Our service is temporarily unavailable. Please try again in a few moments.",
+          });
         } else {
           const detail =
-            typeof err.response.data?.detail === "string"
+            typeof err.response.data?.detail === "string" &&
+            !err.response.data.detail.toLowerCase().includes("traceback") &&
+            !err.response.data.detail.toLowerCase().includes("internal server")
               ? err.response.data.detail
-              : "An unexpected error occurred during login. Please try again.";
+              : "Unable to sign in right now. Please try again.";
           setErrors({ general: detail });
         }
       } else {
@@ -168,12 +194,17 @@ export function Login() {
 
           <LoginForm
             formData={passwordForm}
-            onChange={(fields) =>
-              setPasswordForm((prev) => ({ ...prev, ...fields }))
-            }
+            onChange={(fields) => {
+              setPasswordForm((prev) => ({ ...prev, ...fields }));
+              // Automatically clear errors on typing so they don't block user experience
+              if (errors.general || errors.email || errors.password) {
+                setErrors({});
+              }
+            }}
             onSubmit={handlePasswordSubmit}
             status={status}
             errors={errors}
+            onDismissError={() => setErrors({})}
             onRegisterClick={() => navigate(ROUTES.REGISTER)}
             onForgotPasswordClick={() => {
               setSuccessNotice(null);

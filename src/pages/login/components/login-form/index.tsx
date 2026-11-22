@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Loader2, AlertCircle, X } from "lucide-react";
 import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import type {
@@ -16,6 +16,7 @@ export type LoginFormProps = {
   errors: AuthErrorState;
   onRegisterClick: () => void;
   onForgotPasswordClick?: () => void;
+  onDismissError?: () => void;
 };
 
 export function LoginForm({
@@ -26,6 +27,7 @@ export function LoginForm({
   errors,
   onRegisterClick: _onRegisterClick,
   onForgotPasswordClick,
+  onDismissError,
 }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isLoading = status === "loading";
@@ -44,9 +46,25 @@ export function LoginForm({
 
       {/* Global Error Banner */}
       {errors.general && (
-        <div className="mb-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-700">
-          <AlertCircle className="size-4 shrink-0 text-red-600 mt-0.5" />
-          <span>{errors.general}</span>
+        <div
+          role="alert"
+          aria-live="polite"
+          className="mb-4 flex items-start justify-between gap-2.5 rounded-xl border border-rose-200 bg-rose-50/95 p-3 text-xs text-rose-800 shadow-xs animate-in fade-in slide-in-from-top-1 duration-200"
+        >
+          <div className="flex items-start gap-2.5 flex-1">
+            <AlertCircle className="size-4 shrink-0 text-rose-600 mt-0.5" />
+            <span className="leading-relaxed font-medium">{errors.general}</span>
+          </div>
+          {onDismissError && (
+            <button
+              type="button"
+              onClick={onDismissError}
+              aria-label="Dismiss error"
+              className="text-rose-400 hover:text-rose-700 transition cursor-pointer p-0.5 -mr-1 -mt-0.5 rounded-md hover:bg-rose-100"
+            >
+              <X className="size-3.5" />
+            </button>
+          )}
         </div>
       )}
 

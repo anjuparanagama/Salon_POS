@@ -151,7 +151,7 @@ export function SharedWebSettingsView() {
           setErrorMsg(
             err instanceof Error
               ? err.message
-              : "Failed to load Shared Web settings from backend server."
+              : "Unable to load online booking settings. Please check your connection and try again."
           );
         }
       } finally {
