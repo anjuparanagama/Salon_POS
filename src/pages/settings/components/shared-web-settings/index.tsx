@@ -24,6 +24,7 @@ import { Button } from "../../../../components/button";
 import { Input } from "../../../../components/input";
 import { FormSkeleton } from "../../../../components/skeleton";
 import { sharedWebService } from "../../../../services/shared-web.service";
+import { PUBLIC_WEB_URL } from "../../../../config/api.config";
 import type {
   SharedWebSettingsState,
   SharedWebSettingsUpdateRequest,
@@ -37,30 +38,40 @@ const THEME_OPTIONS = [
     name: "Modern Chic (Default)",
     description: "Vibrant rose accents with crisp typography, balanced borders, and contemporary layouts.",
     previewBg: "from-pink-500 to-rose-600",
+    primary: "#380721",
+    secondary: "#EA7860",
   },
   {
     id: "luxury",
     name: "Royal Executive Luxury",
     description: "Opulent champagne gold, dark navy hues, serif elegance, and VIP styling.",
     previewBg: "from-amber-600 to-slate-900",
+    primary: "#18141F",
+    secondary: "#D49520",
   },
   {
     id: "minimal",
     name: "Minimalist Studio",
     description: "Subtle monochrome palettes, sleek modern lines, and focus on clean white space.",
     previewBg: "from-slate-700 to-slate-950",
+    primary: "#1E293B",
+    secondary: "#0284C7",
   },
   {
     id: "vibrant",
     name: "Vibrant Tropical",
     description: "Energetic emerald & violet tones, tropical aesthetic, and expressive creative vibe.",
     previewBg: "from-emerald-500 to-teal-700",
+    primary: "#064E3B",
+    secondary: "#7C3AED",
   },
   {
     id: "dark",
     name: "Midnight Salon & Spa",
     description: "Deep obsidian theme with glowing neon highlights for modern nightlife & boutique salons.",
     previewBg: "from-purple-900 to-slate-950",
+    primary: "#0D0C15",
+    secondary: "#A855F7",
   },
 ];
 
@@ -165,9 +176,10 @@ export function SharedWebSettingsView() {
     };
   }, []);
 
+  const publicLink = `${PUBLIC_WEB_URL}/salon/${formData.slug || "sribees"}`;
+
   const handleCopyLink = () => {
-    const fullUrl = `${window.location.origin}/public/salons/${formData.slug || "salon"}`;
-    navigator.clipboard.writeText(fullUrl);
+    navigator.clipboard.writeText(publicLink);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2200);
   };
@@ -259,8 +271,6 @@ export function SharedWebSettingsView() {
     return <FormSkeleton />;
   }
 
-  const publicLink = `${window.location.origin}/public/salons/${formData.slug || "salon"}`;
-
   return (
     <div className="flex flex-col gap-6 text-slate-900">
       {/* Top Banner: Public Link & Publication Status */}
@@ -323,7 +333,7 @@ export function SharedWebSettingsView() {
             </Button>
 
             <a
-              href={`/public/salons/${formData.slug || "salon"}`}
+              href={publicLink}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition"
@@ -492,7 +502,7 @@ export function SharedWebSettingsView() {
                   />
                 </div>
                 <p className="mt-1 text-[11px] text-slate-500">
-                  Public URL: <strong className="text-slate-800">/public/salons/{formData.slug || "your-salon"}</strong>
+                  Public URL: <strong className="text-slate-800">{PUBLIC_WEB_URL}/salon/{formData.slug || "your-salon"}</strong>
                 </p>
               </div>
 
@@ -615,7 +625,14 @@ export function SharedWebSettingsView() {
                   return (
                     <div
                       key={thm.id}
-                      onClick={() => setFormData({ ...formData, theme: thm.id })}
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          theme: thm.id,
+                          primary_color: thm.primary,
+                          secondary_color: thm.secondary,
+                        })
+                      }
                       className={`relative flex flex-col justify-between rounded-xl border p-4 cursor-pointer transition ${
                         isSelected
                           ? "border-primary bg-primary-subtle/30 ring-1 ring-primary"

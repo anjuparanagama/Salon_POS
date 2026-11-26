@@ -1,7 +1,5 @@
 const rawBaseUrl =
-  import.meta.env.VITE_API_BASE_URL ||
-  import.meta.env.VITE_API_URL ||
-  "";
+  import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
 
 // In local development (port 5173), use relative path "" so Vite's proxy forwards
 // requests to the backend target configured in .env. This avoids CORS blocking, especially when backend
@@ -12,10 +10,7 @@ export const API_BASE_URL =
     : rawBaseUrl.replace(/\/+$/, "");
 
 // Public customer-facing web client URL (salora-web / Share_web)
-export const PUBLIC_WEB_URL = (
-  import.meta.env.VITE_PUBLIC_WEB_URL ||
-  (import.meta.env.DEV ? "http://localhost:3000" : "https://salora.lk")
-).replace(/\/+$/, "");
+export const PUBLIC_WEB_URL = import.meta.env.VITE_PUBLIC_WEB_URL;
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -72,7 +67,8 @@ export const API_ENDPOINTS = {
     HISTORY: (id: string) => `/api/v1/salon/appointments/${id}/history`,
     INVOICE: (id: string) => `/api/v1/salon/appointments/${id}/invoice`,
     CHECKOUT: (id: string) => `/api/v1/salon/appointments/${id}/checkout`,
-    PAYMENTS: (invoiceId: string) => `/api/v1/salon/appointments/invoices/${invoiceId}/payments`,
+    PAYMENTS: (invoiceId: string) =>
+      `/api/v1/salon/appointments/invoices/${invoiceId}/payments`,
   },
   INVOICES: {
     CHECKOUT: "/api/v1/salon/invoices/checkout",
@@ -85,7 +81,8 @@ export const API_ENDPOINTS = {
       return `/api/v1/salon/invoices/${id}/pdf${q ? `?${q}` : ""}`;
     },
     WHATSAPP: (id: string) => `/api/v1/salon/invoices/${id}/whatsapp`,
-    WHATSAPP_HISTORY: (id: string) => `/api/v1/salon/invoices/${id}/whatsapp/history`,
+    WHATSAPP_HISTORY: (id: string) =>
+      `/api/v1/salon/invoices/${id}/whatsapp/history`,
   },
   STAFF: {
     BASE: "/api/v1/salon/staff",
@@ -116,7 +113,8 @@ export const API_ENDPOINTS = {
       STATS: "/api/v1/salon/ledger/expenses/stats",
       SUMMARY: "/api/v1/salon/ledger/expenses/summary",
       CATEGORIES: "/api/v1/salon/ledger/expenses/categories",
-      CATEGORY_BY_ID: (id: string) => `/api/v1/salon/ledger/expenses/categories/${id}`,
+      CATEGORY_BY_ID: (id: string) =>
+        `/api/v1/salon/ledger/expenses/categories/${id}`,
       BY_ID: (id: string) => `/api/v1/salon/ledger/expenses/${id}`,
     },
     TRANSACTIONS: {
